@@ -1,0 +1,32 @@
+# .NET / C#
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+*.DotSettings.user
+
+# Node / JS
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Mobile / Flutter / React Native
+.dart_tool/
+.packages
+build/
+.gradle/
+local.properties
+*.apk
+*.aab
+ios/Pods/
+ios/.symlinks/
+
+# OS Files
+Thumbs.db
+[Dd]esktop.ini
+.DS_Store
