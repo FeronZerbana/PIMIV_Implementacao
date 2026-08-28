@@ -17,3 +17,4 @@
 4. **Core Domain Unificado**: Todas as regras de negócio de precificação, estoque, checkout, cupons e pagamento devem seguir estritamente o definido em `Vault/01-Core-Domain/Business-Rules.md`.
 5. **Sincronização Contínua**: Toda alteração, refatoração ou commit deve ser documentada no Vault utilizando a skill `vault-sync`.
 6. **Diagnóstico Legado First**: Mapeie débitos e regras ocultas em `Vault/02-Legacy-Analysis/Debt-And-Bottlenecks.md` antes de reescrever módulos para ASP.NET Core MVC.
+7. **Guia Prático Git**: Para instruções detalhadas de criação de sub-branches (`feat/web/...`), prevenção de `detached HEAD` e regras de push, consulte `GIT-INSTRUCTIONS.md` na raiz do repositório agregador.
