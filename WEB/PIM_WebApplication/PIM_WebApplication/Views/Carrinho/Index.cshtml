@@ -1,0 +1,181 @@
+@model PIM_WebApplication.ViewModels.CarrinhoViewModel
+@{
+    ViewData["Title"] = "Meu Carrinho";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/carrinho.css" asp-append-version="true" />
+}
+
+<div class="cart-page-wrapper">
+    <div class="cart-left">
+        <div class="cart-header">
+            <span class="cart-header-icon">🛒</span>
+            <div>
+                <h2 class="cart-title">Seu carrinho</h2>
+                <p class="cart-subtitle">Revise seus itens selecionados e conclua o pedido.</p>
+            </div>
+        </div>
+
+        @if (!Model.Itens.Any())
+        {
+            <div class="cart-empty">
+                <div class="cart-empty-emoji">🛒</div>
+                <p>Seu carrinho está vazio.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn-hero">Explorar produtos</a>
+            </div>
+        }
+        else
+        {
+            <div class="cart-table-head">
+                <span>Produto</span>
+                <span>Preço</span>
+                <span>Quantidade</span>
+                <span>Subtotal</span>
+            </div>
+
+            <div id="cart-items-list">
+                @foreach (var item in Model.Itens)
+                {
+                    <div class="cart-item">
+                        <div class="cart-item-produto">
+                            <div class="cart-item-thumb">@item.Emoji</div>
+                            <div class="cart-item-info">
+                                <div class="cart-item-nome">@item.Nome</div>
+                                <div class="cart-item-desc">Tamanho: @item.Tamanho - Saldo: @item.EstoqueDisponivel un</div>
+                                <form asp-controller="Carrinho" asp-action="Remover" method="post" style="display:inline;">
+                                    <input type="hidden" name="idProduto" value="@item.IdProduto" />
+                                    <button type="submit" class="cart-item-remover">🗑️ Remover</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="cart-item-preco">
+                            R$ @item.Preco.ToString("N2")
+                        </div>
+
+                        <div class="cart-item-qty">
+                            <form asp-controller="Carrinho" asp-action="AlterarQuantidade" method="post" style="display:inline;">
+                                <input type="hidden" name="idProduto" value="@item.IdProduto" />
+                                <input type="hidden" name="delta" value="-1" />
+                                <button type="submit" class="qty-btn">−</button>
+                            </form>
+
+                            <span class="qty-num">@item.Quantidade</span>
+
+                            <form asp-controller="Carrinho" asp-action="AlterarQuantidade" method="post" style="display:inline;">
+                                <input type="hidden" name="idProduto" value="@item.IdProduto" />
+                                <input type="hidden" name="delta" value="1" />
+                                <button type="submit" class="qty-btn" @(item.Quantidade >= item.EstoqueDisponivel ? "disabled style='opacity:0.4;cursor:not-allowed'" : "")>+</button>
+                            </form>
+                        </div>
+
+                        <div class="cart-item-subtotal">
+                            R$ @item.Subtotal.ToString("N2")
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="cart-coupon">
+                <div class="coupon-icon">🏷️</div>
+                <form asp-controller="Carrinho" asp-action="AplicarCupom" method="post" style="display:flex; flex:1; gap:0.8rem;">
+                    <input type="text" name="codigoCupom" value="@Model.CupomAplicado" placeholder="Cupom (ex: FRETE22, DEV10, SHOPNOW15)" />
+                    <button type="submit" class="btn-coupon">Aplicar</button>
+                </form>
+            </div>
+        }
+
+        <a asp-controller="Home" asp-action="Index" class="btn-back">&larr; Continuar comprando</a>
+    </div>
+
+    <div class="cart-right">
+        <div class="cart-summary">
+            <div class="summary-title">
+                <span>📦</span> Resumo da compra
+            </div>
+
+            <div class="summary-row">
+                <span>Subtotal (@Model.TotalQuantidade @(Model.TotalQuantidade == 1 ? "produto" : "produtos"))</span>
+                <span>R$ @Model.Subtotal.ToString("N2")</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Descontos</span>
+                <span class="summary-desconto">– R$ @Model.Desconto.ToString("N2")</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Frete <span class="frete-info" title="Grátis acima de R$ 99,00">ⓘ</span></span>
+                <span class="summary-frete">@(Model.Frete == 0 ? "Grátis" : $"R$ {Model.Frete:N2}")</span>
+            </div>
+
+            <div class="summary-divider"></div>
+
+            <div class="summary-total-row">
+                <span>Total</span>
+                <span class="summary-total-value">R$ @Model.Total.ToString("N2")</span>
+            </div>
+
+            <div class="summary-parcelamento">
+                @if (Model.Total > 0)
+                {
+                    <span>em até 4x de R$ @Model.ValorParcela sem juros</span>
+                }
+            </div>
+
+            @if (Model.Itens.Any())
+            {
+                <form asp-controller="Carrinho" asp-action="Finalizar" method="post">
+                    <button type="submit" class="btn-finalizar">🔒 Finalizar compra</button>
+                </form>
+            }
+            else
+            {
+                <button class="btn-finalizar" disabled style="opacity: 0.5; cursor: not-allowed;">🔒 Carrinho Vazio</button>
+            }
+
+            <div class="summary-seguro">🛡️ Ambiente 100% seguro</div>
+        </div>
+
+        <div class="cart-benefits">
+            <div class="cart-benefits-title">Por que comprar na ShopNow?</div>
+            <div class="benefit-item">
+                <span class="benefit-icon">🚚</span>
+                <div>
+                    <strong>Frete grátis</strong>
+                    <p>Em compras acima de R$ 99,00</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">⚡</span>
+                <div>
+                    <strong>Entrega rápida</strong>
+                    <p>Para todo o Brasil</p>
+                </div>
+            </div>
+            <div class="benefit-item">
+                <span class="benefit-icon">↩️</span>
+                <div>
+                    <strong>Devolução grátis</strong>
+                    <p>Até 7 dias após o recebimento</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cart-trust-bar">
+    <div class="trust-item">
+        🛡️ <div><strong>Compra segura</strong><span>Seus dados protegidos</span></div>
+    </div>
+    <div class="trust-item">
+        🎧 <div><strong>Atendimento 24h</strong><span>Suporte para desenvolvedores</span></div>
+    </div>
+    <div class="trust-item">
+        💳 <div><strong>Parcele em até 4x</strong><span>Sem juros no cartão</span></div>
+    </div>
+    <div class="trust-item">
+        🏆 <div><strong>Satisfação garantida</strong><span>Qualidade assegurada</span></div>
+    </div>
+</div>

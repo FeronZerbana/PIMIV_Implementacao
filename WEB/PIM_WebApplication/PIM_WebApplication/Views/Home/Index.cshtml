@@ -1,0 +1,90 @@
+@model PIM_WebApplication.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Loja Online";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
+
+<div class="hero">
+    <img src="~/img/hero.jpg" alt="Fundo Hero" class="hero-bg" />
+    <div class="hero-content">
+        <h1>Compre o que há de <span>melhor</span> de TI Aqui.</h1>
+        <p>Produtos selecionados, entrega rápida e os melhores preços do mercado. Sua loja dev favorita, 24 horas por dia.</p>
+        <div class="hero-btns">
+            <a href="#destaques" class="btn-hero">Ver produtos</a>
+            <a asp-controller="Home" asp-action="Ofertas" class="btn-outline">Nossas ofertas</a>
+        </div>
+    </div>
+</div>
+
+<div class="section categorias-section">
+    <div class="section-title">Categorias</div>
+    <p class="section-sub">Encontre o que procura rapidamente</p>
+    <div class="cats-grid">
+        @foreach (var cat in Model.Categorias)
+        {
+            <div class="cat-card">
+                <div class="cat-icon">@cat.Icone</div>
+                <div class="cat-name">@cat.Nome</div>
+            </div>
+        }
+    </div>
+</div>
+
+<div id="destaques" class="section section-center" style="padding-top: 1rem;">
+    <div class="section-title">Destaques</div>
+    <p class="section-sub">Os mais vendidos da Loja</p>
+
+    <div class="products-grid">
+        @if (Model.Destaques.Any())
+        {
+            @foreach (var produto in Model.Destaques)
+            {
+                var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
+                var temEstoque = estoqueDisponivel > 0;
+                
+                string emoji = "👕";
+                var nomeLower = produto.TipoRoupa.ToLowerInvariant();
+                if (nomeLower.Contains("moletom") || nomeLower.Contains("hoodie")) emoji = "🧥";
+                else if (nomeLower.Contains("programação") || nomeLower.Contains("dev") || nomeLower.Contains("code")) emoji = "💻";
+                else if (nomeLower.Contains("linux")) emoji = "🐧";
+                else if (nomeLower.Contains("ia") || nomeLower.Contains("tech") || nomeLower.Contains("robot")) emoji = "🤖";
+                else if (nomeLower.Contains("game")) emoji = "🎮";
+
+                <div class="product-card">
+                    <div class="product-img">@emoji</div>
+                    <div class="product-info">
+                        <div class="product-name">@produto.TipoRoupa</div>
+                        <div class="product-desc">Tamanho: @produto.Tamanho - Estoque: @estoqueDisponivel un</div>
+                        <div class="product-footer">
+                            <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
+                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
+                                <input type="hidden" name="idProduto" value="@produto.IdProduto" />
+                                <input type="hidden" name="tamanho" value="@produto.Tamanho" />
+                                <button type="submit" class="add-btn" @(!temEstoque ? "disabled" : "")>
+                                    @(temEstoque ? "+ Adicionar" : "Fora de estoque")
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p style="grid-column: 1 / -1; color: var(--muted); text-align: center; padding: 2rem;">
+                Nenhum produto cadastrado no momento.
+            </p>
+        }
+    </div>
+</div>
+
+<div class="banner">
+    <div class="banner-text">
+        <h3>Frete grátis hoje!</h3>
+        <p>Em compras acima de R$ 99,00. Válido para todo o Brasil.</p>
+    </div>
+    <a asp-controller="Home" asp-action="Ofertas" class="btn-hero">Aproveitar agora</a>
+</div>

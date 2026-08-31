@@ -1,0 +1,198 @@
+/* =========================================
+   SHOPNOW — Estilos de Ofertas
+   ========================================= */
+
+.oferta-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 380px;
+  padding: 3rem 4rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #1a1200 0%, #2a1f00 40%, #1a1200 100%);
+  border: 1px solid #3a3000;
+  overflow: hidden;
+  gap: 2rem;
+}
+
+.oferta-banner-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.oferta-banner-particle {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,200,114,0.12) 0%, transparent 70%);
+  animation: pulsar 3s ease-in-out infinite;
+  animation-delay: var(--d);
+}
+
+@keyframes pulsar {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.4); opacity: 1; }
+}
+
+.oferta-banner-content {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+}
+
+.oferta-tag-anim {
+  display: inline-block;
+  background: rgba(232,200,114,0.15);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.8rem;
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.oferta-banner-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  line-height: 1.05;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+.oferta-banner-title span {
+  font-size: 0.5em;
+  color: var(--text);
+  display: block;
+}
+
+.oferta-banner-lista {
+  list-style: none;
+  margin-bottom: 2rem;
+}
+
+.oferta-banner-lista li {
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+.oferta-banner-btn {
+  background: var(--accent);
+  color: #111;
+  border: none;
+  border-radius: var(--radius);
+  padding: 1rem 2.5rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s, opacity 0.2s;
+  box-shadow: 0 0 20px rgba(232,200,114,0.3);
+}
+
+.oferta-banner-btn:hover {
+  transform: scale(1.04);
+  opacity: 0.9;
+}
+
+.oferta-banner-emoji-area {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.oferta-emoji-flutuante {
+  position: absolute;
+  font-size: 4rem;
+  animation: flutuar 3s ease-in-out infinite;
+}
+
+.oferta-emoji-flutuante:nth-child(1) { top: 0; left: 0; }
+.oferta-emoji-flutuante:nth-child(2) { top: 0; right: 0; animation-delay: 0.8s; }
+.oferta-emoji-flutuante:nth-child(3) { bottom: 0; left: 50%; animation-delay: 1.5s; }
+
+@keyframes flutuar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.oferta-badge-50 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  background: var(--accent);
+  color: #111;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.ofertas-section {
+  max-width: 1200px;
+  margin: 3rem auto 5rem;
+  padding: 0 1.5rem;
+}
+
+.ofertas-section-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.ofertas-section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.ofertas-section-header p {
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.ofertas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.8rem;
+}
+
+@media (max-width: 900px) {
+  .oferta-banner {
+    flex-direction: column;
+    padding: 2rem;
+    text-align: center;
+  }
+  .oferta-banner-emoji-area {
+    display: none;
+  }
+  .ofertas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .ofertas-grid {
+    grid-template-columns: 1fr;
+  }
+}

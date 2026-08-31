@@ -1,0 +1,187 @@
+/* =========================================
+   SHOPNOW — Estilos de Autenticacao (Login / Registro)
+   ========================================= */
+
+.auth-wrapper {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 80px);
+}
+
+.auth-visual {
+  background: linear-gradient(135deg, #1a1400 0%, #3a2c00 50%, #1a1400 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 60% 40%, rgba(232,200,114,0.15) 0%, transparent 60%);
+}
+
+.auth-visual-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: var(--accent);
+  line-height: 1.15;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.auth-visual p {
+  color: var(--muted);
+  font-size: 1rem;
+  max-width: 320px;
+  line-height: 1.6;
+  position: relative;
+}
+
+.auth-visual-emoji {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.auth-form-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.auth-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+}
+
+.auth-card .subtitle {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.8rem;
+}
+
+/* ── FORMULARIOS ── */
+label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.field {
+  margin-bottom: 1.2rem;
+}
+
+input[type=text],
+input[type=email],
+input[type=password],
+input[type=tel] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus {
+  border-color: var(--accent);
+}
+
+input::placeholder {
+  color: #555;
+}
+
+.text-danger {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+.validation-summary-errors ul {
+  list-style: none;
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid #e74c3c;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+  color: #e74c3c;
+  font-size: 0.85rem;
+}
+
+.auth-switch {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.auth-switch a {
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.4rem 0;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .auth-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .auth-visual {
+    display: none;
+  }
+  .auth-form-area {
+    padding: 1.5rem;
+  }
+}

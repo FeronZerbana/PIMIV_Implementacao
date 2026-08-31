@@ -1,0 +1,88 @@
+@using Microsoft.AspNetCore.Http
+@using PIM_WebApplication.Helpers
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    var session = HttpContextAccessor.HttpContext?.Session;
+    var cartItems = session?.GetObject<List<ItemCarrinhoViewModel>>("SHOPNOW_CART_ITEMS");
+    int cartCount = cartItems?.Sum(i => i.Quantidade) ?? 0;
+}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] — ShopNow</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+    <nav>
+        <a asp-controller="Home" asp-action="Index" class="logo">
+            <img src="~/img/logo.png" alt="ShopNow Logo" class="nav-logo" />
+            ShopNow
+        </a>
+
+        <div class="nav-links">
+            <a asp-controller="Home" asp-action="Index">Produtos</a>
+            <a asp-controller="Home" asp-action="Ofertas">Ofertas</a>
+            <a asp-controller="Home" asp-action="Sobre">Sobre</a>
+            <a asp-controller="Home" asp-action="Acessibilidade">Acessibilidade</a>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Admin" asp-action="Index" style="color: var(--accent); font-weight: 600;">Admin</a>
+            }
+
+            <a asp-controller="Carrinho" asp-action="Index" class="cart-icon" title="Ver Carrinho">
+                🛒 <span class="cart-badge" id="cart-count">@cartCount</span>
+            </a>
+
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Conta" asp-action="Logout" class="nav-btn">Sair</a>
+            }
+            else
+            {
+                <a asp-controller="Conta" asp-action="Login" class="nav-btn">Entrar</a>
+            }
+        </div>
+    </nav>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer>
+        <div class="footer-logo">
+            <img src="~/img/logo.png" alt="ShopNow" class="footer-logo-img" />
+            <span>ShopNow</span>
+        </div>
+
+        <div class="footer-links">
+            <a asp-controller="Home" asp-action="Index">Início</a>
+            <a asp-controller="Home" asp-action="Ofertas">Ofertas</a>
+            <a asp-controller="Home" asp-action="Sobre">Sobre</a>
+            <a asp-controller="Home" asp-action="Privacidade">Política de Privacidade</a>
+            <a asp-controller="Home" asp-action="Acessibilidade">Acessibilidade</a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Admin" asp-action="Index">Painel Admin</a>
+            }
+        </div>
+
+        <div>
+            Feito com dedicação · <span>ShopNow</span> © 2026 · Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <div id="toast" data-msg="@TempData["MensagemToast"]"></div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

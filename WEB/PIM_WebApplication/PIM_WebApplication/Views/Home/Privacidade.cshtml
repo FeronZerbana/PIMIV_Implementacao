@@ -1,0 +1,149 @@
+@{
+    ViewData["Title"] = "Política de Privacidade";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/privacidade.css" asp-append-version="true" />
+}
+
+<div class="priv-banner">
+    <div class="priv-banner-left">
+        <div class="priv-banner-icon">🔒</div>
+        <div>
+            <h1 class="priv-titulo">Política de Privacidade</h1>
+            <p class="priv-subtitulo"><strong>Sua privacidade é importante para nós.</strong></p>
+            <p class="priv-desc">Esta Política de Privacidade explica como coletamos, utilizamos, armazenamos e protegemos suas informações ao acessar nosso site e utilizar nossos serviços.</p>
+            <p class="priv-desc">Ao navegar em nossa plataforma, você concorda com os termos descritos nesta política em conformidade com a LGPD.</p>
+        </div>
+    </div>
+    <div class="priv-banner-right">🖥️</div>
+</div>
+
+<div class="priv-grid">
+    <div class="priv-card">
+        <div class="priv-card-header">
+            <span class="priv-card-num">1.</span>
+            <span class="priv-card-titulo">INFORMAÇÕES QUE COLETAMOS</span>
+        </div>
+        <div class="priv-card-body">
+            <div class="priv-card-icon">📋</div>
+            <div class="priv-duas-colunas">
+                <div>
+                    <strong>Dados pessoais</strong>
+                    <ul>
+                        <li>Nome completo</li>
+                        <li>E-mail</li>
+                        <li>Número de telefone</li>
+                        <li>Endereço para entrega</li>
+                        <li>CPF para emissão de nota fiscal</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong>Dados de navegação</strong>
+                    <ul>
+                        <li>Endereço IP</li>
+                        <li>Tipo de navegador</li>
+                        <li>Tempo de acesso</li>
+                        <li>Páginas visitadas</li>
+                        <li>Cookies de sessão</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="priv-card">
+        <div class="priv-card-header">
+            <span class="priv-card-num">2.</span>
+            <span class="priv-card-titulo">COMO UTILIZAMOS SUAS INFORMAÇÕES</span>
+        </div>
+        <div class="priv-card-body">
+            <div class="priv-card-icon">🛒</div>
+            <ul>
+                <li>Processar pedidos e compras com segurança</li>
+                <li>Gerenciar o estoque e logística de entrega</li>
+                <li>Melhorar a experiência de navegação</li>
+                <li>Garantir segurança e prevenção a fraudes</li>
+                <li>Oferecer suporte ao cliente via canais oficiais</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="priv-card">
+        <div class="priv-card-header">
+            <span class="priv-card-num">3.</span>
+            <span class="priv-card-titulo">USO DE COOKIES</span>
+        </div>
+        <div class="priv-card-body">
+            <div class="priv-card-icon">🍪</div>
+            <div>
+                <p>Utilizamos cookies estritamente necessários para:</p>
+                <ul>
+                    <li>Manter sua sessão de login autenticada</li>
+                    <li>Persistir itens no carrinho de compras</li>
+                    <li>Garantir proteção contra ataques CSRF</li>
+                </ul>
+                <p class="priv-obs">Você pode gerenciar as preferências de cookies nas configurações do navegador.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="priv-card">
+        <div class="priv-card-header">
+            <span class="priv-card-num">4.</span>
+            <span class="priv-card-titulo">SEGURANÇA DAS INFORMAÇÕES</span>
+        </div>
+        <div class="priv-card-body">
+            <div class="priv-card-icon">🛡️</div>
+            <div>
+                <p>Adotamos medidas de segurança técnicas e administrativas, incluindo:</p>
+                <ul>
+                    <li>Criptografia de senhas com algoritmo seguro BCrypt</li>
+                    <li>Comunicação segura via protocolo HTTPS/TLS</li>
+                    <li>Controle de acesso rigoroso a rotas administrativas</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="priv-card">
+        <div class="priv-card-header">
+            <span class="priv-card-num">5.</span>
+            <span class="priv-card-titulo">COMPARTILHAMENTO DE DADOS</span>
+        </div>
+        <div class="priv-card-body">
+            <div class="priv-card-icon">👥</div>
+            <div>
+                <p>A ShopNow não comercializa seus dados pessoais. Compartilhamento ocorre estritamente com:</p>
+                <ul>
+                    <li>Gateways de pagamento para processamento de transações</li>
+                    <li>Transportadoras para entrega física dos pedidos</li>
+                    <li>Autoridades competentes quando requerido por ordem judicial</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="priv-card">
+        <div class="priv-card-header">
+            <span class="priv-card-num">6.</span>
+            <span class="priv-card-titulo">DIREITOS DO TITULAR (LGPD)</span>
+        </div>
+        <div class="priv-card-body">
+            <div class="priv-card-icon">👤</div>
+            <div>
+                <p>Em conformidade com a LGPD, você pode solicitar a qualquer momento:</p>
+                <ul>
+                    <li>Confirmação da existência de tratamento e acesso aos dados</li>
+                    <li>Correção de dados incompletos ou inexatos</li>
+                    <li>Eliminação de dados pessoais tratados com consentimento</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="priv-footer-msg">
+    <span>🛡️</span>
+    <span>Agradecemos por confiar na ShopNow!</span>
+</div>

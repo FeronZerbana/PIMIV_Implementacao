@@ -18,3 +18,6 @@
 5. **Sincronização Contínua**: Toda alteração, refatoração ou commit deve ser documentada no Vault utilizando a skill `vault-sync`.
 6. **Diagnóstico Legado First**: Mapeie débitos e regras ocultas em `Vault/02-Legacy-Analysis/Debt-And-Bottlenecks.md` antes de reescrever módulos para ASP.NET Core MVC.
 7. **Guia Prático Git**: Para instruções detalhadas de criação de sub-branches (`feat/web/...`), prevenção de `detached HEAD` e regras de push, consulte `GIT-INSTRUCTIONS.md` na raiz do repositório agregador.
+8. **Tratamento de Funcionalidades Incompletas**: Ao identificar funcionalidades ou fluxos incompletos no código, não realize alterações arbitrárias; registre no Vault (`02-Legacy-Analysis/Debt-And-Bottlenecks.md` ou na respectiva spec) e notifique a equipe para planejamento formal.
+9. **Identidade Mandatória de Commits**: Todos os commits devem obrigatoriamente ser efetuados com o usuário configurado na máquina (`user.name` e `user.email` válidos). Caso não haja usuário configurado, solicite a configuração formal antes de commitar. É proibido commitar com usuários temporários ou de improviso.
+

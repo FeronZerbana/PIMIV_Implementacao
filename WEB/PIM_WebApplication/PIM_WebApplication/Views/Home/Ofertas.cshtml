@@ -1,0 +1,89 @@
+@model PIM_WebApplication.ViewModels.OfertasViewModel
+@{
+    ViewData["Title"] = "Ofertas Especiais";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/ofertas.css" asp-append-version="true" />
+}
+
+<div class="oferta-banner">
+    <div class="oferta-banner-bg">
+        <div class="oferta-banner-particle" style="--x:10%;--y:20%;--s:80px;--d:0s"></div>
+        <div class="oferta-banner-particle" style="--x:80%;--y:60%;--s:120px;--d:1s"></div>
+        <div class="oferta-banner-particle" style="--x:50%;--y:80%;--s:60px;--d:0.5s"></div>
+        <div class="oferta-banner-particle" style="--x:90%;--y:10%;--s:100px;--d:1.5s"></div>
+    </div>
+
+    <div class="oferta-banner-content">
+        <div class="oferta-tag-anim">OFERTA ESPECIAL</div>
+        <h1 class="oferta-banner-title">
+            50% OFF<br />
+            <span>na sua 1ª compra</span>
+        </h1>
+        <ul class="oferta-banner-lista">
+            <li>Desconto aplicado automaticamente com cupons selecionados</li>
+            <li>Válido para todos os produtos em estoque</li>
+            <li>Frete grátis para compras acima de R$ 99,00</li>
+        </ul>
+        <a asp-controller="Home" asp-action="Index" class="oferta-banner-btn">Aproveitar agora &rarr;</a>
+    </div>
+
+    <div class="oferta-banner-emoji-area">
+        <div class="oferta-emoji-flutuante">👕</div>
+        <div class="oferta-emoji-flutuante">🧥</div>
+        <div class="oferta-emoji-flutuante">💻</div>
+        <div class="oferta-badge-50">50%<br />OFF</div>
+    </div>
+</div>
+
+<div class="ofertas-section">
+    <div class="ofertas-section-header">
+        <h2>Produtos em Oferta</h2>
+        <p>50% de desconto potencial na primeira compra — confira nosso catálogo!</p>
+    </div>
+
+    <div class="products-grid">
+        @if (Model.Produtos.Any())
+        {
+            @foreach (var produto in Model.Produtos)
+            {
+                var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
+                var temEstoque = estoqueDisponivel > 0;
+                
+                string emoji = "👕";
+                var nomeLower = produto.TipoRoupa.ToLowerInvariant();
+                if (nomeLower.Contains("moletom") || nomeLower.Contains("hoodie")) emoji = "🧥";
+                else if (nomeLower.Contains("programação") || nomeLower.Contains("dev") || nomeLower.Contains("code")) emoji = "💻";
+                else if (nomeLower.Contains("linux")) emoji = "🐧";
+                else if (nomeLower.Contains("ia") || nomeLower.Contains("tech") || nomeLower.Contains("robot")) emoji = "🤖";
+                else if (nomeLower.Contains("game")) emoji = "🎮";
+
+                <div class="product-card">
+                    <div class="product-img">@emoji</div>
+                    <div class="product-info">
+                        <div class="product-name">@produto.TipoRoupa</div>
+                        <div class="product-desc">Tamanho: @produto.Tamanho - Estoque: @estoqueDisponivel un</div>
+                        <div class="product-footer">
+                            <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
+                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
+                                <input type="hidden" name="idProduto" value="@produto.IdProduto" />
+                                <input type="hidden" name="tamanho" value="@produto.Tamanho" />
+                                <button type="submit" class="add-btn" @(!temEstoque ? "disabled" : "")>
+                                    @(temEstoque ? "+ Adicionar" : "Fora de estoque")
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p style="grid-column: 1 / -1; color: var(--muted); text-align: center; padding: 2rem;">
+                Nenhum produto em oferta no momento.
+            </p>
+        }
+    </div>
+</div>

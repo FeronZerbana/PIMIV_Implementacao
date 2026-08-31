@@ -1,0 +1,54 @@
+@model PIM_WebApplication.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Entrar";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+}
+
+<div class="auth-wrapper">
+    <div class="auth-visual">
+        <div class="auth-visual-emoji">🛍️</div>
+        <div class="auth-visual-title">Bem-vindo de volta!</div>
+        <p>Acesse sua conta e continue explorando os melhores produtos para desenvolvedores com os melhores preços.</p>
+    </div>
+
+    <div class="auth-form-area">
+        <div class="auth-card">
+            <h2>Entrar</h2>
+            <p class="subtitle">Acesse sua conta ShopNow</p>
+
+            <form asp-controller="Conta" asp-action="Login" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="ReturnUrl" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="field">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" placeholder="seu@email.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Senha"></label>
+                    <input asp-for="Senha" placeholder="••••••••" />
+                    <span asp-validation-for="Senha" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-primary">Entrar na conta</button>
+            </form>
+
+            <div class="divider"><span>ou</span></div>
+
+            <p class="auth-switch">
+                Não tem conta? <a asp-controller="Conta" asp-action="Registrar">Criar conta grátis</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
