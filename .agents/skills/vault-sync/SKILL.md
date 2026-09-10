@@ -24,7 +24,7 @@ Esta skill estabelece o protocolo operacional para manter o **Vault** 100% sincr
 
 Esta skill deve ser acionada em qualquer um dos seguintes cenários:
 1. **Nova Demanda ou Feature**: Antes de escrever qualquer linha de código, verificar se há uma especificação ativa no Vault. Se não houver, redigir a especificação técnica seguindo `00-Meta/Templates/SPEC-TEMPLATE.md` e salvar em `04-Specs-Backlog/Draft/` -> `Active/`.
-2. **Alteração ou Refatoração de Código**: Sempre que arquivos forem alterados, refatorados ou adicionados em `WEB/`, `DESKTOP/` ou `MOBILE/`, registrar as mudanças técnicas no Vault.
+2. **Alteração ou Refatoração de Código**: Sempre que arquivos forem alterados, refatorados ou adicionados em `API/`, `WEB/`, `DESKTOP/` ou `MOBILE/`, registrar as mudanças técnicas no Vault.
 3. **Criação / Atualização de Contratos de API**: Atualizar os schemas em `01-Core-Domain/API-Contracts/`.
 4. **Decisões Arquiteturais e Pesquisas**: Criar um documento de pesquisa em `05-Architecture-Knowledge/Research/` ou um ADR em `05-Architecture-Knowledge/ADRs/`.
 5. **Conclusão de Tarefas (Commits / Merges)**: Atualizar o status da spec para `04-Specs-Backlog/Completed/` e registrar o changelog.
@@ -35,7 +35,7 @@ Esta skill deve ser acionada em qualquer um dos seguintes cenários:
 
 ### Passo 1: Validação Pré-Código (Proibido Código Sem Spec)
 1. Navegue até o Vault e verifique se existe uma especificação para a tarefa em:
-   - `04-Specs-Backlog/Active/` ou `03-Systems/<Web|Desktop|Mobile>/`
+   - `04-Specs-Backlog/Active/` ou `03-Systems/<Api|Web|Desktop|Mobile>/`
 2. Caso a especificação não exista:
    - **PARE** a geração de código.
    - Crie a especificação a partir do template `00-Meta/Templates/SPEC-TEMPLATE.md` (sem emojis).
@@ -43,10 +43,10 @@ Esta skill deve ser acionada em qualquer um dos seguintes cenários:
 
 ### Passo 2: Verificação de Regras de Domínio Unificadas
 1. Consulte `01-Core-Domain/Business-Rules.md` para garantir que o cálculo, validação ou fluxo que está sendo implementado segue as regras universais.
-2. Se houver regras específicas de plataforma (ex: views Razor no Web, push notifications no Mobile, portas seriais de impressora no Desktop), certifique-se de que estão documentadas em `03-Systems/<Sistema>/`.
+2. Se houver regras específicas de plataforma (ex: views Razor no Web, rotas REST no Api, push notifications no Mobile, portas seriais de impressora no Desktop), certifique-se de que estão documentadas em `03-Systems/<Sistema>/`.
 
 ### Passo 3: Implementação e Testes na Branch Correta
-1. Execute a implementação na branch correspondente (`feat/web`, `feat/desktop`, `feat/mobile`).
+1. Execute a implementação na branch correspondente (`feat/api`, `feat/web`, `feat/desktop`, `feat/mobile`).
 2. Garanta a criação e execução dos testes unitários e de integração pertinentes.
 
 ### Passo 4: Registro Pós-Implementação no Vault

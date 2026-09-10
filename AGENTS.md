@@ -6,9 +6,10 @@
 
 ## 1. Regras Mandatórias de Desenvolvimento
 
-1. **Proibido Código Sem Spec**: Antes de criar ou modificar qualquer código nos diretórios `WEB/`, `DESKTOP/` ou `MOBILE/`, consulte e valide a respectiva especificação no Vault (`04-Specs-Backlog/Active/` ou `03-Systems/`).
+1. **Proibido Código Sem Spec**: Antes de criar ou modificar qualquer código nos diretórios `API/`, `WEB/`, `DESKTOP/` ou `MOBILE/`, consulte e valide a respectiva especificação no Vault (`04-Specs-Backlog/Active/` ou `03-Systems/`).
 2. **Proibição Estrita de Emojis**: É terminantemente proibido o uso de emojis em arquivos de documentação, especificações, ADRs, mensagens de commit e comentários de código. Toda a comunicação técnica deve ser formal, sóbria e profissional.
 3. **Branching Model**:
+   - `feat/api`: Alterações e desenvolvimento do serviço central de API (ASP.NET Core Web API).
    - `feat/web`: Alterações e desenvolvimento do sistema Web.
    - `feat/desktop`: Alterações e desenvolvimento do sistema Desktop.
    - `feat/mobile`: Alterações e desenvolvimento do sistema Mobile.
