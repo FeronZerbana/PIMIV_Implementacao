@@ -34,9 +34,10 @@ Esta skill deve ser acionada em qualquer um dos seguintes cenários:
 ## 3. Procedimento Passo a Passo
 
 ### Passo 1: Validação Pré-Código (Proibido Código Sem Spec)
-1. Navegue até o Vault e verifique se existe uma especificação para a tarefa em:
+1. Navegue até o Vault e posicione-se na branch correspondente à sua frente de trabalho (`docs/api`, `docs/web`, `docs/desktop`, `docs/mobile`).
+2. Verifique se existe uma especificação para a tarefa em:
    - `04-Specs-Backlog/Active/` ou `03-Systems/<Web|Desktop|Mobile>/`
-2. Caso a especificação não exista:
+3. Caso a especificação não exista:
    - **PARE** a geração de código.
    - Crie a especificação a partir do template `00-Meta/Templates/SPEC-TEMPLATE.md` (sem emojis).
    - Salve em `04-Specs-Backlog/Draft/` e obtenha validação antes de mover para `Active/`.
@@ -46,11 +47,13 @@ Esta skill deve ser acionada em qualquer um dos seguintes cenários:
 2. Se houver regras específicas de plataforma (ex: views Razor no Web, push notifications no Mobile, portas seriais de impressora no Desktop), certifique-se de que estão documentadas em `03-Systems/<Sistema>/`.
 
 ### Passo 3: Implementação e Testes na Branch Correta
-1. Execute a implementação na branch correspondente (`feat/web`, `feat/desktop`, `feat/mobile`).
+1. Execute a implementação na branch correspondente (`feat/web`, `feat/desktop`, `feat/mobile`, `feat/api`).
 2. Garanta a criação e execução dos testes unitários e de integração pertinentes.
 
 ### Passo 4: Registro Pós-Implementação no Vault
-1. Se a feature foi concluída com sucesso:
+1. No repositório do Vault, certifique-se de estar posicionado na branch correspondente (`docs/api`, `docs/web`, `docs/desktop`, `docs/mobile`).
+2. Se a feature foi concluída com sucesso:
    - Mova o arquivo de especificação de `04-Specs-Backlog/Active/` para `04-Specs-Backlog/Completed/`.
-2. Registre as alterações realizadas usando o template `00-Meta/Templates/CHANGELOG-TEMPLATE.md`.
-3. Se foram identificados novos débitos ou regras implícitas no legado durante o processo, atualize imediatamente `02-Legacy-Analysis/Debt-And-Bottlenecks.md`.
+3. Registre as alterações realizadas usando o template `00-Meta/Templates/CHANGELOG-TEMPLATE.md`.
+4. Se foram identificados novos débitos ou regras implícitas no legado durante o processo, registre imediatamente referenciando o subsistema correspondente.
+5. Realize o commit e o push seguro exclusivamente para a respectiva branch `docs/*` no Vault. Abra Pull Request para integração na branch `master` ao homologar a entrega.

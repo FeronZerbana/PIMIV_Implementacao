@@ -21,6 +21,8 @@
 8. **Tratamento de Funcionalidades Incompletas**: Ao identificar funcionalidades ou fluxos incompletos no código, não realize alterações arbitrárias; registre no Vault (`02-Legacy-Analysis/Debt-And-Bottlenecks.md` ou na respectiva spec) e notifique a equipe para planejamento formal.
 9. **Identidade Mandatória e Redação de Commits**: Todos os commits devem obrigatoriamente ser efetuados com o usuário configurado na máquina (`user.name` e `user.email` válidos). Caso não haja usuário configurado, solicite a configuração formal antes de commitar. É proibido commitar com usuários temporários ou de improviso. Além disso, evite verbos no infinitivo no texto dos commits; priorize o uso de substantivos e formato nominal (ex: "inclusão de...", "implementação de...", "ajuste em...", "correção de...").
 10. **Verificação e Realização de Push Seguro**: Os pushs devem ser efetuados após os commits. Antes de realizar o push, verifique o estado do repositório remoto para assegurar que a operação é segura. Se for seguro, efetue o push; caso contrário, notifique o usuário com referência à especificação para tomada de decisão.
+11. **Isolamento de Branches no Vault**: Toda e qualquer documentação ou sincronização com o Vault deve ser realizada exclusivamente na branch correspondente ao fluxo de trabalho atual (`docs/api`, `docs/web`, `docs/desktop`, `docs/mobile`), sendo proibido registrar alterações de outras plataformas de forma cruzada. A branch `master` do Vault atua como SSOT consolidada e recebe atualizações exclusivamente via Pull Request homologado.
+
 
 
 
