@@ -21,6 +21,9 @@ namespace PIM_WebAPI
                 app.MapOpenApi();
             }
 
+            app.UseStaticFiles();
+            app.UseRouting();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
