@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,13 +14,13 @@ namespace PIM_WebAPI.Models
         public int ID { get; set; }
         [Required]
         [StringLength(200)]
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
         [Required]
         [StringLength(250)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         [Required]
         [StringLength(300)]
-        public string Password_Hash { get; set; }
+        public string Password_Hash { get; set; } = string.Empty;
         [Required]
         public DateTime Data_Criacao { get; set; }
         [Required]

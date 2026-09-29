@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace PIM_WebAPI.Models
 {
@@ -11,12 +12,15 @@ namespace PIM_WebAPI.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
+
         [Required]
         public int ProdutoID { get; set; }
+
         [Required]
         public int Quantidade { get; set; }
-        [ForeignKey(nameof(ProdutoID))]
-        public Produto Produto { get; set; }
 
+        [ForeignKey(nameof(ProdutoID))]
+        [JsonIgnore]
+        public Produto? Produto { get; set; }
     }
 }
