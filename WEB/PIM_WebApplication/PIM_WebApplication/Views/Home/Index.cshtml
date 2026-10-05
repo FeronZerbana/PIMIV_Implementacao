@@ -8,7 +8,7 @@
 }
 
 <div class="hero">
-    <img src="https://i.pinimg.com/736x/46/14/4b/46144bfcd98333ca3cf7f30369da6f60.jpg" alt="Fundo Hero" class="hero-bg" />
+    <img src="~/img/logo.png" alt="Fundo Hero" class="hero-bg" />
     <div class="hero-content">
         <h1>Toda melodia começa com a <span>escolha certa</span>.</h1>
         <p>Trabalhamos com instrumentos selecionados para transformar cada momento criativo em uma experiência única. Venha conhecer nosso espaço e descubra o som que combina com você..</p>
@@ -21,12 +21,12 @@
 
 <div class="section categorias-section">
     <div class="section-title">Produtos</div>
-    <p class="section-sub">Encontre o que procura aqui</p>
+    <p class="section-sub">Encontre o instrumento ideal para você</p>
     <div class="cats-grid">
         @foreach (var cat in Model.Categorias)
         {
             <div class="cat-card">
-                <div class="cat-icon">@cat.Icone</div>
+                <img class="cat-img" src="@cat.ImagemUrl" alt="@cat.Nome" />
                 <div class="cat-name">@cat.Nome</div>
             </div>
         }
@@ -45,24 +45,24 @@
                 var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
                 var temEstoque = estoqueDisponivel > 0;
                 
-                string emoji = "👕";
-                var nomeLower = produto.TipoRoupa.ToLowerInvariant();
-                if (nomeLower.Contains("moletom") || nomeLower.Contains("hoodie")) emoji = "🧥";
-                else if (nomeLower.Contains("programação") || nomeLower.Contains("dev") || nomeLower.Contains("code")) emoji = "💻";
-                else if (nomeLower.Contains("linux")) emoji = "🐧";
-                else if (nomeLower.Contains("ia") || nomeLower.Contains("tech") || nomeLower.Contains("robot")) emoji = "🤖";
-                else if (nomeLower.Contains("game")) emoji = "🎮";
+                if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
+                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Violão neon roxo.png";
+                else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
+                else if (nomeLower.Contains("bateria")) imagem = "/img/bateria.jpeg";
+
 
                 <div class="product-card">
-                    <div class="product-img">@emoji</div>
+                    <div class="product-img">
+                        <img src="@imagem" alt="@produto.TipoInstrumento" />
+                    </div>
                     <div class="product-info">
-                        <div class="product-name">@produto.TipoRoupa</div>
-                        <div class="product-desc">Tamanho: @produto.Tamanho - Estoque: @estoqueDisponivel un</div>
+                        <div class="product-name">@produto.TipoInstrumento</div>
+                        <div class="product-desc">Modelo: @produto.Modelo - Estoque: @estoqueDisponivel un</div>
                         <div class="product-footer">
                             <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
                             <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
                                 <input type="hidden" name="idProduto" value="@produto.IdProduto" />
-                                <input type="hidden" name="tamanho" value="@produto.Tamanho" />
+                                <input type="hidden" name="modelo" value="@produto.Modelo" />
                                 <button type="submit" class="add-btn" @(!temEstoque ? "disabled" : "")>
                                     @(temEstoque ? "+ Adicionar" : "Fora de estoque")
                                 </button>
