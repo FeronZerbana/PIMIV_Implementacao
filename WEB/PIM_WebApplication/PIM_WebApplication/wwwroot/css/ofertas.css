@@ -113,29 +113,15 @@
   height: 220px;
   flex-shrink: 0;
   z-index: 1;
-}
-
-.oferta-emoji-flutuante {
-  position: absolute;
-  font-size: 4rem;
-  animation: flutuar 3s ease-in-out infinite;
-}
-
-.oferta-emoji-flutuante:nth-child(1) { top: 0; left: 0; }
-.oferta-emoji-flutuante:nth-child(2) { top: 0; right: 0; animation-delay: 0.8s; }
-.oferta-emoji-flutuante:nth-child(3) { bottom: 0; left: 50%; animation-delay: 1.5s; }
-
-@keyframes flutuar {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .oferta-badge-50 {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 80px;
-  height: 80px;
+  position: relative;
+  width: 100px;
+  height: 100px;
   background: var(--accent);
   color: #111;
   border-radius: 50%;
@@ -143,10 +129,17 @@
   align-items: center;
   justify-content: center;
   font-family: 'Playfair Display', serif;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   text-align: center;
   line-height: 1.2;
+  box-shadow: 0 0 25px rgba(232, 200, 114, 0.4);
+}
+
+.product-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .ofertas-section {

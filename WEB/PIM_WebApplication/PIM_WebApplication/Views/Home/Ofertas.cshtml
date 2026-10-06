@@ -24,24 +24,21 @@
         </h1>
         <ul class="oferta-banner-lista">
             <li>Desconto aplicado automaticamente com cupons selecionados</li>
-            <li>Válido para todos os produtos em estoque</li>
+            <li>Válido para todos os instrumentos em estoque</li>
             <li>Frete grátis para compras acima de R$ 99,00</li>
         </ul>
         <a asp-controller="Home" asp-action="Index" class="oferta-banner-btn">Aproveitar agora &rarr;</a>
     </div>
 
     <div class="oferta-banner-emoji-area">
-        <div class="oferta-emoji-flutuante">👕</div>
-        <div class="oferta-emoji-flutuante">🧥</div>
-        <div class="oferta-emoji-flutuante">💻</div>
         <div class="oferta-badge-50">50%<br />OFF</div>
     </div>
 </div>
 
 <div class="ofertas-section">
     <div class="ofertas-section-header">
-        <h2>Produtos em Oferta</h2>
-        <p>50% de desconto potencial na primeira compra — confira nosso catálogo!</p>
+        <h2>Instrumentos em Oferta</h2>
+        <p>50% de desconto potencial na primeira compra — confira nosso catálogo de instrumentos!</p>
     </div>
 
     <div class="products-grid">
@@ -52,19 +49,20 @@
                 var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
                 var temEstoque = estoqueDisponivel > 0;
                 
-                string emoji = "👕";
+                string imagem = "/img/logo.png";
                 var nomeLower = produto.TipoRoupa.ToLowerInvariant();
-                if (nomeLower.Contains("moletom") || nomeLower.Contains("hoodie")) emoji = "🧥";
-                else if (nomeLower.Contains("programação") || nomeLower.Contains("dev") || nomeLower.Contains("code")) emoji = "💻";
-                else if (nomeLower.Contains("linux")) emoji = "🐧";
-                else if (nomeLower.Contains("ia") || nomeLower.Contains("tech") || nomeLower.Contains("robot")) emoji = "🤖";
-                else if (nomeLower.Contains("game")) emoji = "🎮";
+                if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
+                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Violão neon roxo.png";
+                else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
+                else if (nomeLower.Contains("bateria")) imagem = "/img/bateria.jpeg";
 
                 <div class="product-card">
-                    <div class="product-img">@emoji</div>
+                    <div class="product-img">
+                        <img src="@imagem" alt="@produto.TipoRoupa" />
+                    </div>
                     <div class="product-info">
                         <div class="product-name">@produto.TipoRoupa</div>
-                        <div class="product-desc">Tamanho: @produto.Tamanho - Estoque: @estoqueDisponivel un</div>
+                        <div class="product-desc">Modelo: @produto.Tamanho - Estoque: @estoqueDisponivel un</div>
                         <div class="product-footer">
                             <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
                             <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
@@ -82,7 +80,7 @@
         else
         {
             <p style="grid-column: 1 / -1; color: var(--muted); text-align: center; padding: 2rem;">
-                Nenhum produto em oferta no momento.
+                Nenhum instrumento em oferta no momento.
             </p>
         }
     </div>
