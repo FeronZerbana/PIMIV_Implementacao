@@ -22,11 +22,6 @@
   flex: 1;
 }
 
-.priv-banner-icon {
-  font-size: 3.5rem;
-  flex-shrink: 0;
-}
-
 .priv-titulo {
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.8rem, 4vw, 2.8rem);
@@ -45,12 +40,6 @@
   color: var(--muted);
   line-height: 1.7;
   margin-bottom: 0.5rem;
-}
-
-.priv-banner-right {
-  font-size: 4rem;
-  flex-shrink: 0;
-  opacity: 0.6;
 }
 
 .priv-grid {
