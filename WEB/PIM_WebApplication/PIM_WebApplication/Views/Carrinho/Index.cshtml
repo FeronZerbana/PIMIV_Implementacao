@@ -10,7 +10,6 @@
 <div class="cart-page-wrapper">
     <div class="cart-left">
         <div class="cart-header">
-            <span class="cart-header-icon">🛒</span>
             <div>
                 <h2 class="cart-title">Seu carrinho</h2>
                 <p class="cart-subtitle">Revise seus itens selecionados e conclua o pedido.</p>
@@ -20,7 +19,6 @@
         @if (!Model.Itens.Any())
         {
             <div class="cart-empty">
-                <div class="cart-empty-emoji">🛒</div>
                 <p>Seu carrinho está vazio.</p>
                 <a asp-controller="Home" asp-action="Index" class="btn-hero">Explorar produtos</a>
             </div>
@@ -39,13 +37,12 @@
                 {
                     <div class="cart-item">
                         <div class="cart-item-produto">
-                            <div class="cart-item-thumb">@item.Emoji</div>
                             <div class="cart-item-info">
                                 <div class="cart-item-nome">@item.Nome</div>
                                 <div class="cart-item-desc">Tamanho: @item.Tamanho - Saldo: @item.EstoqueDisponivel un</div>
                                 <form asp-controller="Carrinho" asp-action="Remover" method="post" style="display:inline;">
                                     <input type="hidden" name="idProduto" value="@item.IdProduto" />
-                                    <button type="submit" class="cart-item-remover">🗑️ Remover</button>
+                                    <button type="submit" class="cart-item-remover">Remover</button>
                                 </form>
                             </div>
                         </div>
@@ -78,7 +75,6 @@
             </div>
 
             <div class="cart-coupon">
-                <div class="coupon-icon">🏷️</div>
                 <form asp-controller="Carrinho" asp-action="AplicarCupom" method="post" style="display:flex; flex:1; gap:0.8rem;">
                     <input type="text" name="codigoCupom" value="@Model.CupomAplicado" placeholder="Cupom (ex: FRETE22, DEV10, SHOPNOW15)" />
                     <button type="submit" class="btn-coupon">Aplicar</button>
@@ -92,7 +88,7 @@
     <div class="cart-right">
         <div class="cart-summary">
             <div class="summary-title">
-                <span>📦</span> Resumo da compra
+                Resumo da compra
             </div>
 
             <div class="summary-row">
@@ -127,35 +123,32 @@
             @if (Model.Itens.Any())
             {
                 <form asp-controller="Carrinho" asp-action="Finalizar" method="post">
-                    <button type="submit" class="btn-finalizar">🔒 Finalizar compra</button>
+                    <button type="submit" class="btn-finalizar">Finalizar compra</button>
                 </form>
             }
             else
             {
-                <button class="btn-finalizar" disabled style="opacity: 0.5; cursor: not-allowed;">🔒 Carrinho Vazio</button>
+                <button class="btn-finalizar" disabled style="opacity: 0.5; cursor: not-allowed;">Carrinho Vazio</button>
             }
 
-            <div class="summary-seguro">🛡️ Ambiente 100% seguro</div>
+            <div class="summary-seguro">Ambiente 100% seguro</div>
         </div>
 
         <div class="cart-benefits">
             <div class="cart-benefits-title">Por que comprar na ShopNow?</div>
             <div class="benefit-item">
-                <span class="benefit-icon">🚚</span>
                 <div>
                     <strong>Frete grátis</strong>
                     <p>Em compras acima de R$ 99,00</p>
                 </div>
             </div>
             <div class="benefit-item">
-                <span class="benefit-icon">⚡</span>
                 <div>
                     <strong>Entrega rápida</strong>
                     <p>Para todo o Brasil</p>
                 </div>
             </div>
             <div class="benefit-item">
-                <span class="benefit-icon">↩️</span>
                 <div>
                     <strong>Devolução grátis</strong>
                     <p>Até 7 dias após o recebimento</p>
@@ -167,15 +160,15 @@
 
 <div class="cart-trust-bar">
     <div class="trust-item">
-        🛡️ <div><strong>Compra segura</strong><span>Seus dados protegidos</span></div>
+        <div><strong>Compra segura</strong><span>Seus dados protegidos</span></div>
     </div>
     <div class="trust-item">
-        🎧 <div><strong>Atendimento 24h</strong><span>Suporte para desenvolvedores</span></div>
+        <div><strong>Atendimento 24h</strong><span>Suporte para desenvolvedores</span></div>
     </div>
     <div class="trust-item">
-        💳 <div><strong>Parcele em até 4x</strong><span>Sem juros no cartão</span></div>
+        <div><strong>Parcele em até 4x</strong><span>Sem juros no cartão</span></div>
     </div>
     <div class="trust-item">
-        🏆 <div><strong>Satisfação garantida</strong><span>Qualidade assegurada</span></div>
+        <div><strong>Satisfação garantida</strong><span>Qualidade assegurada</span></div>
     </div>
 </div>
