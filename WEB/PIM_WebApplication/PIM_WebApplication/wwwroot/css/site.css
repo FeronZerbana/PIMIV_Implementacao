@@ -10,14 +10,14 @@
 }
 
 :root {
-  --bg: #0d0d0d;
-  --surface: #181818;
-  --surface2: #222;
-  --accent: #e8c872;
-  --text: #f5f0e8;
-  --muted: #888;
-  --border: #333;
-  --radius: 10px;
+    --bg: #0d0d0d;
+    --surface: #181818;
+    --surface2: #222;
+    --accent: #240046;
+    --text: #f5f0e8;
+    --muted: #888;
+    --border: #333;
+    --radius: 10px
 }
 
 body {
@@ -49,7 +49,7 @@ nav {
 .logo {
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
-  color: var(--accent);
+  color: var(--text);
   letter-spacing: 1px;
   cursor: pointer;
   display: flex;
@@ -59,7 +59,7 @@ nav {
 }
 
 .nav-logo {
-  width: 140px;
+  width: 168px;
   height: auto;
   object-fit: contain;
 }
@@ -77,13 +77,17 @@ nav {
   transition: color 0.2s;
 }
 
-.nav-links a:hover,
+.nav-links a:hover {
+        color: var(--text);
+
+}
+
 .nav-links a.active {
   color: var(--accent);
 }
 
 .nav-btn {
-  background: var(--accent);
+  background: var(--text);
   color: #111;
   border: none;
   border-radius: var(--radius);
@@ -115,8 +119,8 @@ nav {
 .cart-badge {
   position: absolute;
   top: -6px;
-  right: -10px;
-  background: var(--accent);
+  right: -8px;
+  background: var(--text);
   color: #111;
   border-radius: 50%;
   width: 18px;
@@ -156,7 +160,7 @@ nav {
 
 .btn-hero {
   padding: 0.85rem 2rem;
-  background: var(--accent);
+  background: var(--text);
   color: #111;
   border: none;
   border-radius: var(--radius);
@@ -174,8 +178,8 @@ nav {
 
 .btn-outline {
   padding: 0.85rem 2rem;
-  border: 1px solid var(--accent);
-  color: var(--accent);
+  border: 1px solid var(--text);
+  color: var(--text);
   background: transparent;
   border-radius: var(--radius);
   font-family: 'DM Sans', sans-serif;
@@ -198,7 +202,7 @@ nav {
   background: var(--surface);
   border: 1px solid var(--accent);
   border-radius: var(--radius);
-  padding: 0.8rem 1.4rem;
+  padding: 0.8rem 1.2rem;
   font-size: 0.9rem;
   color: var(--text);
   opacity: 0;
@@ -230,19 +234,19 @@ footer {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .footer-logo-img {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
 }
 
 .footer-logo span {
   font-family: 'Playfair Display', serif;
   font-size: 1.2rem;
-  color: var(--accent);
+  color: var(--text);
 }
 
 .footer-links {
