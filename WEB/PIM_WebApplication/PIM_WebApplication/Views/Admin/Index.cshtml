@@ -56,19 +56,17 @@
                 </div>
 
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.Tamanho" class="admin-label">Modelo</label>
-                    <select asp-for="NovoProduto.Tamanho" class="admin-select" id="modeloSelect">
+                    <label asp-for="NovoProduto.Modelo" class="admin-label">Modelo</label>
+                    <select asp-for="NovoProduto.Modelo" class="admin-select" id="modeloSelect">
                         <option value="" disabled selected>Selecione um modelo</option>
                         <!-- Guitarra -->
                         <option class="guitarra" value="Stratocaster">Stratocaster</option>
                         <option class="guitarra" value="Telecaster">Telecaster</option>
                         <option class="guitarra" value="Les Paul">Les Paul</option>
-                        <option class="guitarra" value="SG">SG</option>
                         <!-- Violão -->
                         <option class="violao" value="Clássico">Clássico</option>
                         <option class="violao" value="Folk">Folk</option>
                         <option class="violao" value="Jumbo">Jumbo</option>
-                        <option class="violao" value="Auditorium">Auditorium</option>
                         <!-- Teclado -->
                         <option class="teclado" value="Arranjadores">Arranjadores</option>
                         <option class="teclado" value="Pianos Digitais">Pianos Digitais</option>
@@ -78,7 +76,7 @@
                         <option class="bateria" value="Eletrônica">Eletrônica</option>
                         <option class="bateria" value="Compacta">Compacta</option>
                     </select>
-                    <span asp-validation-for="NovoProduto.Tamanho" class="text-danger"></span>
+                    <span asp-validation-for="NovoProduto.Mdodelo" class="text-danger"></span>
                 </div>
             </div>
 
@@ -114,7 +112,7 @@
                         @foreach (var p in Model.ProdutosCadastrados)
                         {
                             <option value="@p.IdProduto">
-                                @p.TipoRoupa (Tam: @p.Tamanho) — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un]
+                                @p.TipoModelo (Modelo: @p.Tamanho) — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un]
                             </option>
                         }
                     </select>
@@ -160,8 +158,8 @@
                         {
                             <tr>
                                 <td>@item.IdProduto</td>
-                                <td><strong>@item.TipoRoupa</strong></td>
-                                <td>@item.Tamanho</td>
+                                <td><strong>@item.TipoInstrumento</strong></td>
+                                <td>@item.Modelo</td>
                                 <td>R$ @item.Preco.ToString("N2")</td>
                                 <td>@(item.Estoque?.QuantidadeDisponivel ?? 0) un</td>
                                 <td>

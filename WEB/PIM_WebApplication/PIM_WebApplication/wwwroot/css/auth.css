@@ -40,7 +40,7 @@
 .auth-visual p {
   color: var(--muted);
   font-size: 1rem;
-  max-width: 320px;
+  max-width: 280px;
   line-height: 1.6;
   position: relative;
 }
@@ -55,12 +55,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2.5rem;
+  padding: 2rem;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 400px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -77,13 +77,13 @@
 .auth-card .subtitle {
   color: var(--muted);
   font-size: 0.9rem;
-  margin-bottom: 1.8rem;
+  margin-bottom: 2rem;
 }
 
 /* ── FORMULARIOS ── */
 label {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--muted);
   margin-bottom: 0.4rem;
   letter-spacing: 0.5px;
