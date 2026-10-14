@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ShopNow — Loja Online</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=3">
+</head>
+
+<body>
+
+    <!-- ░░░ PÁGINA: LOGIN ░░░ -->
+    <div id="page-login" class="page">
+        <div class="auth-wrapper">
+            <div class="auth-visual">
+                <div class="auth-visual-emoji">🛍️</div>
+                <div class="auth-visual-title">Bem-vindo de volta!</div>
+                <p>Acesse sua conta e continue explorando os melhores produtos com os melhores preços.</p>
+            </div>
+            <div class="auth-form-area">
+                <div class="auth-card">
+                    <h2>Entrar</h2>
+                    <p class="subtitle">Acesse sua conta ShopNow</p>
+                    <div class="field">
+                        <label>E-MAIL</label>
+                        <input type="email" id="login-email" placeholder="seu@email.com">
+                    </div>
+                    <div class="field">
+                        <label>SENHA</label>
+                        <input type="password" id="login-pass" placeholder="••••••••">
+                    </div>
+                    <button class="btn-primary" onclick="fazerLogin()">Entrar na conta</button>
+                    <div class="divider"><span>ou</span></div>
+                    <p class="auth-switch">
+                        Não tem conta? <a onclick="goTo('page-register')">Criar conta grátis</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ░░░ PÁGINA: CADASTRO ░░░ -->
+    <div id="page-register" class="page">
+        <div class="auth-wrapper">
+            <div class="auth-visual">
+                <div class="auth-visual-emoji">✨</div>
+                <div class="auth-visual-title">Crie sua conta</div>
+                <p>Junte-se a milhares de compradores e aproveite ofertas exclusivas todos os dias.</p>
+            </div>
+            <div class="auth-form-area">
+                <div class="auth-card">
+                    <h2>Cadastrar</h2>
+                    <p class="subtitle">Crie sua conta gratuitamente</p>
+                    <div class="field">
+                        <label>NOME COMPLETO</label>
+                        <input type="text" id="reg-nome" placeholder="João da Silva">
+                    </div>
+                    <div class="field">
+                        <label>E-MAIL</label>
+                        <input type="email" id="reg-email" placeholder="seu@email.com">
+                    </div>
+                    <div class="field">
+                        <label>SENHA</label>
+                        <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <div class="field">
+                        <label>CONFIRMAR SENHA</label>
+                        <input type="password" id="reg-pass2" placeholder="Repita a senha">
+                    </div>
+                    <button class="btn-primary" onclick="fazerCadastro()">Criar conta</button>
+                    <p class="auth-switch" style="margin-top:1rem;">
+                        Já tem conta? <a onclick="goTo('page-login')">Fazer login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ░░░ PÁGINA: HOME ░░░ -->
+    <div id="page-home" class="page active">
+        <nav>
+            <div class="logo" onclick="goTo('page-home')">
+                <img src="logo.png.png" alt="logo" class="nav-logo">
+                ShopNow
+            </div>
+            <div class="nav-links">
+                <a href="#">Produtos</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <a href="#" onclick="goTo('page-libras')">Acessibilidade</a>
+                <div class="cart-icon" onclick="irParaCarrinho()">
+                    🛒 <span class="cart-badge" id="cart-count">0</span>
+                </div>
+                <button class="nav-btn" onclick="sair()">Sair</button>
+            </div>
+        </nav>
+
+        <div class="hero">
+            <img src="hero.jpg" alt="fundo" class="hero-bg">
+            <div class="hero-content">
+                <h1>Compre o que há de <span>melhor</span> de TI Aqui.</h1>
+                <p>Produtos selecionados, entrega rápida e os melhores preços do mercado. Sua loja de TI favorita, 24h
+                    por dia.</p>
+                <div class="hero-btns">
+                    <button class="btn-hero">Ver produtos</button>
+                    <button class="btn-outline" onclick="goTo('page-ofertas')">Nossas ofertas</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section categorias-section">
+            <div class="section-title">Categorias</div>
+            <p class="section-sub">Encontre o que procura rapidamente</p>
+            <div class="cats-grid">
+                <div class="cat-card">
+                    <div class="cat-icon">👕</div>
+                    <div class="cat-name">Camisetas</div>
+                </div>
+                <div class="cat-card">
+                    <div class="cat-icon">🧥</div>
+                    <div class="cat-name">Moletons</div>
+                </div>
+                <div class="cat-card">
+                    <div class="cat-icon">🖥️</div>
+                    <div class="cat-name">Programação</div>
+                </div>
+                <div class="cat-card">
+                    <div class="cat-icon">🐧</div>
+                    <div class="cat-name">Linux</div>
+                </div>
+                <div class="cat-card">
+                    <div class="cat-icon">🤖</div>
+                    <div class="cat-name">IA & Tech</div>
+                </div>
+                <div class="cat-card">
+                    <div class="cat-icon">🎮</div>
+                    <div class="cat-name">Games</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section section-center" style="padding-top:0">
+            <div class="section-title">Destaques</div>
+            <p class="section-sub">Os mais vendidos da Loja</p>
+            <div class="products-grid" id="produtos-destaques"></div>
+        </div>
+
+        <div class="banner">
+            <div class="banner-text">
+                <h3>🔥 Frete grátis hoje!</h3>
+                <p>Em compras acima de R$ 99. Válido para todo o Brasil.</p>
+            </div>
+            <button class="btn-hero" onclick="showToast('✅ Cupom FRETE22 aplicado!')">Aproveitar agora</button>
+        </div>
+
+        <footer>
+            <div class="footer-logo">
+                <img src="logo.png.png" alt="ShopNow" class="footer-logo-img">
+                <span> ShopNow</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" onclick="goTo('page-home')">Início</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <a href="#" onclick="goTo('page-privacidade')">Política de Privacidade</a>
+                <a href="#" onclick="irParaAdmin()" style="display:none">Admin</a>
+                <a href="#" onclick="goTo('page-libras')">Acessibilidade</a>
+            </div>
+            Feito com ❤️ · <span>ShopNow</span> © 2026 · Todos os direitos reservados.
+        </footer>
+    </div>
+
+    <!-- ░░░ PÁGINA: CARRINHO ░░░ -->
+    <div id="page-checkout" class="page">
+        <nav>
+            <div class="logo" onclick="goTo('page-home')">
+                <img src="logo.png.png" alt="logo" class="nav-logo">
+                ShopNow
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="goTo('page-home')">Produtos</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <div class="cart-icon" onclick="irParaCarrinho()">
+                    🛒 <span class="cart-badge" id="cart-count-checkout">0</span>
+                </div>
+                <button class="nav-btn" onclick="sair()">Sair</button>
+            </div>
+        </nav>
+
+        <div class="cart-page-wrapper">
+            <div class="cart-left">
+                <div class="cart-header">
+                    <span class="cart-header-icon">🛒</span>
+                    <div>
+                        <h2 class="cart-title">Seu carrinho</h2>
+                        <p class="cart-subtitle">Revise os produtos e finalize sua compra.</p>
+                    </div>
+                </div>
+                <div class="cart-table-head">
+                    <span>Produto</span>
+                    <span>Preço</span>
+                    <span>Quantidade</span>
+                    <span>Subtotal</span>
+                </div>
+                <div id="cart-items-list"></div>
+                <div id="cart-empty" class="cart-empty" style="display:none;">
+                    <div class="cart-empty-emoji">🛒</div>
+                    <p>Seu carrinho está vazio.</p>
+                    <button class="btn-hero" onclick="goTo('page-home')">Explorar produtos</button>
+                </div>
+                <div class="cart-coupon" id="cart-coupon-area">
+                    <div class="coupon-icon">🏷️</div>
+                    <input type="text" id="coupon-input" placeholder="Cupom de desconto">
+                    <button class="btn-coupon" onclick="aplicarCupom()">Aplicar</button>
+                </div>
+                <button class="btn-back" onclick="goTo('page-home')">← Continuar comprando</button>
+            </div>
+
+            <div class="cart-right">
+                <div class="cart-summary">
+                    <div class="summary-title"><span>📦</span> Resumo da compra</div>
+                    <div class="summary-row">
+                        <span id="summary-qtd-label">Subtotal (0 produtos)</span>
+                        <span id="summary-subtotal">R$ 0,00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Descontos</span>
+                        <span id="summary-desconto" class="summary-desconto">– R$ 0,00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Frete <span class="frete-info" title="Grátis acima de R$ 99">ⓘ</span></span>
+                        <span id="summary-frete" class="summary-frete">Grátis</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-total-row">
+                        <span>Total</span>
+                        <span id="summary-total" class="summary-total-value">R$ 0,00</span>
+                    </div>
+                    <div class="summary-parcelamento" id="summary-parcelamento"></div>
+                    <button class="btn-finalizar" onclick="finalizarCompra()">🔒 Finalizar compra</button>
+                    <div class="summary-seguro">🛡️ Ambiente 100% seguro</div>
+                </div>
+                <div class="cart-benefits">
+                    <div class="cart-benefits-title">Por que comprar na ShopNow?</div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">🚚</span>
+                        <div><strong>Frete grátis</strong>
+                            <p>Em compras acima de R$ 99</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">⚡</span>
+                        <div><strong>Entrega rápida</strong>
+                            <p>Para todo o Brasil</p>
+                        </div>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="benefit-icon">↩️</span>
+                        <div><strong>Devolução grátis</strong>
+                            <p>Até 7 dias após o recebimento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cart-trust-bar">
+            <div class="trust-item">🛡️ <div><strong>Compra segura</strong><span>Seus dados protegidos</span></div>
+            </div>
+            <div class="trust-item">🎧 <div><strong>Atendimento</strong><span>Seg a Sex das 8h às 18h</span></div>
+            </div>
+            <div class="trust-item">💳 <div><strong>Parcele em até 4x</strong><span>Sem juros no cartão</span></div>
+            </div>
+            <div class="trust-item">🏆 <div><strong>Satisfação garantida</strong><span>Ou seu dinheiro de volta</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-logo">
+                <img src="logo.png.png" alt="ShopNow" class="footer-logo-img">
+                <span> ShopNow</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" onclick="goTo('page-home')">Início</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <a href="#" onclick="goTo('page-privacidade')">Política de Privacidade</a>
+                <a href="#" onclick="irParaAdmin()" style="display:none">Admin</a>
+                <a href="#" onclick="goTo('page-libras')">Acessibilidade</a>
+            </div>
+            Feito com ❤️ · <span>ShopNow</span> © 2026 · Todos os direitos reservados.
+        </footer>
+    </div>
+
+    <!-- ░░░ PÁGINA: SOBRE ░░░ -->
+    <div id="page-sobre" class="page">
+        <nav>
+            <div class="logo" onclick="goTo('page-home')">
+                <img src="logo.png.png" alt="logo" class="nav-logo">
+                ShopNow
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="goTo('page-home')">Produtos</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')" style="color:var(--accent)">Sobre</a>
+                <a href="#" onclick="goTo('page-libras')">Acessibilidade</a>
+                <div class="cart-icon" onclick="irParaCarrinho()">
+                    🛒 <span class="cart-badge" id="cart-count-sobre">0</span>
+                </div>
+                <button class="nav-btn" onclick="sair()">Sair</button>
+            </div>
+        </nav>
+
+        <div class="sobre-hero">
+            <div class="sobre-hero-content">
+                <div class="sobre-tag">Sobre nós</div>
+                <h1>Feito por devs,<br /><span>para devs.</span></h1>
+                <p>A ShopNow nasceu da vontade de unir tecnologia e moda. Somos uma loja criada por estudantes de ADS
+                    apaixonados por código e estilo.</p>
+            </div>
+            <div class="sobre-hero-emoji">👨‍💻</div>
+        </div>
+
+        <div class="sobre-section">
+            <div class="sobre-cards-row">
+                <div class="sobre-card">
+                    <div class="sobre-card-icon">🎯</div>
+                    <h3>Nossa Missão</h3>
+                    <p>Oferecer roupas exclusivas para programadores e entusiastas de tecnologia, combinando moda
+                        moderna com identidade do universo dev.</p>
+                </div>
+                <div class="sobre-card">
+                    <div class="sobre-card-icon">⚡</div>
+                    <h3>Nosso Diferencial</h3>
+                    <p>Peças com temas tecnológicos, design moderno e atendimento 24h via suporte. Porque programador
+                        não dorme — e a gente também não.</p>
+                </div>
+                <div class="sobre-card">
+                    <div class="sobre-card-icon">👥</div>
+                    <h3>Nosso Público</h3>
+                    <p>Desenvolvedores, estudantes de TI e qualquer pessoa que ama tecnologia e quer expressar isso com
+                        estilo no dia a dia.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sobre-section">
+            <div class="sobre-section-title">
+                <h2>Nossa Equipe</h2>
+                <p>O time por trás da ShopNow</p>
+            </div>
+            <div class="equipe-grid">
+                <div class="equipe-card">
+                    <div class="equipe-avatar">👩‍🎨</div>
+                    <div class="equipe-nome">Kelly</div>
+                    <div class="equipe-cargo">UI & UX Design</div>
+                </div>
+                <div class="equipe-card">
+                    <div class="equipe-avatar">👩‍💻</div>
+                    <div class="equipe-nome">Helena Neves</div>
+                    <div class="equipe-cargo">Desenvolvimento Web</div>
+                </div>
+                <div class="equipe-card">
+                    <div class="equipe-avatar">🗄️</div>
+                    <div class="equipe-nome">Rondineli</div>
+                    <div class="equipe-cargo">Banco de Dados</div>
+                </div>
+                <div class="equipe-card">
+                    <div class="equipe-avatar">⚙️</div>
+                    <div class="equipe-nome">Laura</div>
+                    <div class="equipe-cargo">Engenharia de Software</div>
+                </div>
+                <div class="equipe-card">
+                    <div class="equipe-avatar">🧩</div>
+                    <div class="equipe-nome">Vinícius Duarte</div>
+                    <div class="equipe-cargo">Programação Orientada a Objetos com C#</div>
+                </div>
+                <div class="equipe-card">
+                    <div class="equipe-avatar">💬</div>
+                    <div class="equipe-nome">Nicolas Ribeiro</div>
+                    <div class="equipe-cargo">Libras (AVA)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sobre-section">
+            <div class="sobre-contato">
+                <div class="sobre-contato-icon">✉️</div>
+                <h3>Fale com a gente</h3>
+                <p>Dúvidas, sugestões ou parcerias? Nosso suporte está disponível <strong>24 horas</strong>!</p>
+                <a href="mailto:shopnow2026@gmail.com" class="btn-contato">shopnow2026@gmail.com</a>
+            </div>
+        </div>
+
+        <div class="sobre-pim">
+            <div class="sobre-pim-inner">
+                <span class="pim-badge">🎓 Projeto Acadêmico</span>
+                <p>A ShopNow é um projeto de PIM desenvolvido pelo curso de <strong>Análise e Desenvolvimento de
+                        Sistemas</strong>. Um estudo prático de desenvolvimento web completo.</p>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-logo">
+                <img src="logo.png.png" alt="ShopNow" class="footer-logo-img">
+                <span> ShopNow</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" onclick="goTo('page-home')">Início</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <a href="#" onclick="goTo('page-privacidade')">Política de Privacidade</a>
+                <a href="#" onclick="irParaAdmin()" style="display:none">Admin</a>
+            </div>
+            Feito com ❤️ · <span>ShopNow</span> © 2026 · Todos os direitos reservados.
+        </footer>
+    </div>
+
+    <!-- ░░░ PÁGINA: OFERTAS ░░░ -->
+    <div id="page-ofertas" class="page">
+        <nav>
+            <div class="logo" onclick="goTo('page-home')">
+                <img src="logo.png.png" alt="logo" class="nav-logo">
+                ShopNow
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="goTo('page-home')">Produtos</a>
+                <a href="#" onclick="goTo('page-ofertas')" style="color:var(--accent)">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <a href="#" onclick="goTo('page-libras')">Acessibilidade</a>
+                <div class="cart-icon" onclick="irParaCarrinho()">
+                    🛒 <span class="cart-badge" id="cart-count-ofertas">0</span>
+                </div>
+                <button class="nav-btn" onclick="sair()">Sair</button>
+            </div>
+        </nav>
+
+        <div class="oferta-banner">
+            <div class="oferta-banner-bg">
+                <div class="oferta-banner-particle" style="--x:10%;--y:20%;--s:80px;--d:0s"></div>
+                <div class="oferta-banner-particle" style="--x:80%;--y:60%;--s:120px;--d:1s"></div>
+                <div class="oferta-banner-particle" style="--x:50%;--y:80%;--s:60px;--d:0.5s"></div>
+                <div class="oferta-banner-particle" style="--x:90%;--y:10%;--s:100px;--d:1.5s"></div>
+            </div>
+            <div class="oferta-banner-content">
+                <div class="oferta-tag-anim">🔥 OFERTA ESPECIAL</div>
+                <h1 class="oferta-banner-title">
+                    50% OFF<br />
+                    <span>na sua 1ª compra</span>
+                </h1>
+                <ul class="oferta-banner-lista">
+                    <li>✅ Desconto aplicado automaticamente</li>
+                    <li>✅ Válido para todos os produtos</li>
+                    <li>✅ Frete grátis acima de R$ 99</li>
+                </ul>
+                <button class="oferta-banner-btn" onclick="goTo('page-home')">Aproveitar agora →</button>
+            </div>
+            <div class="oferta-banner-emoji-area">
+                <div class="oferta-emoji-flutuante">👕</div>
+                <div class="oferta-emoji-flutuante">🧥</div>
+                <div class="oferta-emoji-flutuante">💻</div>
+                <div class="oferta-badge-50">50%<br />OFF</div>
+            </div>
+        </div>
+
+        <div class="ofertas-section">
+            <div class="ofertas-section-header">
+                <h2>Produtos em Oferta</h2>
+                <p>50% de desconto na primeira compra — só hoje!</p>
+            </div>
+            <div class="ofertas-grid" id="produtos-ofertas"></div>
+        </div>
+
+        <footer>
+            <div class="footer-logo">
+                <img src="logo.png.png" alt="ShopNow" class="footer-logo-img">
+                <span> ShopNow</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" onclick="goTo('page-home')">Início</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <a href="#" onclick="goTo('page-privacidade')">Política de Privacidade</a>
+                <a href="#" onclick="irParaAdmin()" style="display:none">Admin</a>
+                <a href="#" onclick="goTo('page-libras')">Acessibilidade</a>
+            </div>
+            Feito com ❤️ · <span>ShopNow</span> © 2026 · Todos os direitos reservados.
+        </footer>
+    </div>
+
+    <!-- ░░░ PÁGINA: POLÍTICA DE PRIVACIDADE ░░░ -->
+    <div id="page-privacidade" class="page">
+        <nav>
+            <div class="logo" onclick="goTo('page-home')">
+                <img src="logo.png.png" alt="logo" class="nav-logo">
+                ShopNow
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="goTo('page-home')">Produtos</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <div class="cart-icon" onclick="irParaCarrinho()">
+                    🛒 <span class="cart-badge" id="cart-count-privacidade">0</span>
+                </div>
+                <button class="nav-btn" onclick="sair()">Sair</button>
+            </div>
+        </nav>
+
+        <div class="priv-banner">
+            <div class="priv-banner-left">
+                <div class="priv-banner-icon">🔒</div>
+                <div>
+                    <h1 class="priv-titulo">Política de Privacidade</h1>
+                    <p class="priv-subtitulo"><strong>Sua privacidade é importante para nós.</strong></p>
+                    <p class="priv-desc">Esta Política de Privacidade explica como coletamos, utilizamos, armazenamos e
+                        protegemos suas informações ao acessar nosso site e utilizar nossos serviços.</p>
+                    <p class="priv-desc">Ao navegar em nossa plataforma, você concorda com os termos descritos nesta
+                        política.</p>
+                </div>
+            </div>
+            <div class="priv-banner-right">🖥️🔐</div>
+        </div>
+
+        <div class="priv-grid">
+
+            <div class="priv-card">
+                <div class="priv-card-header">
+                    <span class="priv-card-num">1.</span>
+                    <span class="priv-card-titulo">INFORMAÇÕES QUE COLETAMOS</span>
+                </div>
+                <div class="priv-card-body">
+                    <div class="priv-card-icon">📋</div>
+                    <div class="priv-duas-colunas">
+                        <div>
+                            <strong>Dados pessoais</strong>
+                            <ul>
+                                <li>Nome completo</li>
+                                <li>E-mail</li>
+                                <li>Número de telefone</li>
+                                <li>Endereço para entrega</li>
+                                <li>CPF para emissão de nota fiscal</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>Dados de navegação</strong>
+                            <ul>
+                                <li>Endereço IP</li>
+                                <li>Tipo de navegador</li>
+                                <li>Tempo de acesso</li>
+                                <li>Páginas visitadas</li>
+                                <li>Cookies e tecnologias semelhantes</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="priv-card">
+                <div class="priv-card-header">
+                    <span class="priv-card-num">2.</span>
+                    <span class="priv-card-titulo">COMO UTILIZAMOS SUAS INFORMAÇÕES</span>
+                </div>
+                <div class="priv-card-body">
+                    <div class="priv-card-icon">🛒</div>
+                    <ul>
+                        <li>Processar pedidos e pagamentos</li>
+                        <li>Realizar entregas</li>
+                        <li>Melhorar sua experiência no site</li>
+                        <li>Enviar promoções e novidades</li>
+                        <li>Garantir segurança contra fraudes</li>
+                        <li>Oferecer suporte ao cliente</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="priv-card">
+                <div class="priv-card-header">
+                    <span class="priv-card-num">3.</span>
+                    <span class="priv-card-titulo">USO DE COOKIES</span>
+                </div>
+                <div class="priv-card-body">
+                    <div class="priv-card-icon">🍪</div>
+                    <div>
+                        <p>Utilizamos cookies para:</p>
+                        <ul>
+                            <li>Manter sua sessão ativa</li>
+                            <li>Salvar preferências</li>
+                            <li>Melhorar desempenho do site</li>
+                            <li>Personalizar conteúdos e anúncios</li>
+                        </ul>
+                        <p class="priv-obs">Você pode desativar os cookies nas configurações do seu navegador.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="priv-card">
+                <div class="priv-card-header">
+                    <span class="priv-card-num">4.</span>
+                    <span class="priv-card-titulo">SEGURANÇA DAS INFORMAÇÕES</span>
+                </div>
+                <div class="priv-card-body">
+                    <div class="priv-card-icon">🛡️</div>
+                    <div>
+                        <p>Adotamos medidas de segurança para proteger seus dados contra:</p>
+                        <ul>
+                            <li>Acessos não autorizados</li>
+                            <li>Alterações indevidas</li>
+                            <li>Vazamentos</li>
+                            <li>Destruição ou perda de informações</li>
+                        </ul>
+                        <p class="priv-obs">Seus dados são armazenados em ambientes seguros e monitorados.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="priv-card">
+                <div class="priv-card-header">
+                    <span class="priv-card-num">5.</span>
+                    <span class="priv-card-titulo">COMPARTILHAMENTO DE DADOS</span>
+                </div>
+                <div class="priv-card-body">
+                    <div class="priv-card-icon">👥</div>
+                    <div>
+                        <p>A ShopNow não vende seus dados pessoais. As informações poderão ser compartilhadas apenas
+                            com:</p>
+                        <ul>
+                            <li>Empresas de pagamento</li>
+                            <li>Transportadoras</li>
+                            <li>Parceiros logísticos</li>
+                            <li>Autoridades legais quando exigido por lei</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="priv-card">
+                <div class="priv-card-header">
+                    <span class="priv-card-num">6.</span>
+                    <span class="priv-card-titulo">DIREITOS DO USUÁRIO</span>
+                </div>
+                <div class="priv-card-body">
+                    <div class="priv-card-icon">👤</div>
+                    <div>
+                        <p>Você pode solicitar a qualquer momento:</p>
+                        <ul>
+                            <li>Acesso aos seus dados</li>
+                            <li>Correção de informações</li>
+                            <li>Exclusão da conta</li>
+                            <li>Cancelamento de comunicações promocionais</li>
+                        </ul>
+                        <p class="priv-obs">Para isso, entre em contato com nossa equipe.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="priv-card">
+                <div class="priv-card-header">
+                    <span class="priv-card-num">7.</span>
+                    <span class="priv-card-titulo">CONTATO</span>
+                </div>
+                <div class="priv-card-body">
+                    <div class="priv-card-icon">✉️</div>
+                    <div>
+                        <p>Em caso de dúvidas sobre esta Política de Privacidade:</p>
+                        <div class="priv-contato-item">
+                            <span>✉️</span>
+                            <a href="mailto:shopnow2026@gmail.com">shopnow2026@gmail.com</a>
+                        </div>
+                        <div class="priv-contato-item">
+                            <span>📞</span>
+                            <a href="tel:+5562981618755">(62) 98161-8755</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="priv-card">
+                <div class="priv-card-header">
+                    <span class="priv-card-num">8.</span>
+                    <span class="priv-card-titulo">ATUALIZAÇÕES DESTA POLÍTICA</span>
+                </div>
+                <div class="priv-card-body">
+                    <div class="priv-card-icon">🔄</div>
+                    <div>
+                        <p>Esta política poderá ser alterada periodicamente para melhorias e adequações legais.</p>
+                        <p class="priv-obs">Última atualização: Maio de 2026.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="priv-footer-msg">
+            <span>🛡️</span>
+            <span>Agradecemos por confiar na ShopNow!</span>
+            <span>🤍</span>
+        </div>
+
+        <footer>
+            <div class="footer-logo">
+                <img src="logo.png.png" alt="ShopNow" class="footer-logo-img">
+                <span> ShopNow</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" onclick="goTo('page-home')">Início</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <a href="#" onclick="goTo('page-privacidade')">Política de Privacidade</a>
+                <a href="#" onclick="irParaAdmin()" style="display:none">Admin</a>
+            </div>
+            Feito com ❤️ · <span>ShopNow</span> © 2026 · Todos os direitos reservados.
+        </footer>
+    </div>
+
+    <!-- ░░░ PÁGINA: ADMINISTRADOR ░░░ -->
+    <div id="page-admin" class="page">
+        <nav>
+            <div class="logo" onclick="goTo('page-home')">
+                <img src="logo.png.png" alt="logo" class="nav-logo">
+                ShopNow
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="goTo('page-home')">Produtos</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <a href="#" onclick="goTo('page-libras')">Acessibilidade</a>
+
+                <div class="cart-icon" onclick="irParaCarrinho()">
+                    🛒 <span class="cart-badge" id="cart-count-admin">0</span>
+                </div>
+
+                <button class="nav-btn" onclick="sair()">Sair</button>
+            </div>
+        </nav>
+
+        <div class="admin-topo">
+            <button class="admin-btn-voltar" onclick="goTo('page-home')">
+                ← Voltar para Home
+            </button>
+        </div>
+
+        <div class="admin-header">
+            <h1 class="admin-titulo">🔧 Painel de Administrador</h1>
+            <p class="admin-subtitulo">
+                Gerencie produtos e estoque da loja
+            </p>
+        </div>
+
+        <div class="admin-wrapper">
+
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <span class="admin-card-icon">➕</span>
+
+                    <div>
+                        <h2 class="admin-card-titulo">
+                            Cadastrar Novo Produto
+                        </h2>
+
+                        <p class="admin-card-sub">
+                            Adicione um novo produto ao catálogo da loja
+                        </p>
+                    </div>
+                </div>
+
+                <div class="admin-form">
+
+                    <div class="admin-form-row">
+
+                        <div class="admin-field">
+                            <label class="admin-label">
+                                NOME DO PRODUTO
+                            </label>
+
+                            <input type="text" id="admin-nome-produto" class="admin-input" placeholder="Ex: Camiseta Básica Preta">
+                        </div>
+
+                        <div class="admin-field">
+                            <label class="admin-label">
+                                PREÇO (R$)
+                            </label>
+
+                            <input type="text" id="admin-preco-produto" class="admin-input" placeholder="Ex: 59,90">
+                        </div>
+
+                    </div>
+
+                    <div class="admin-field">
+                        <label class="admin-label">TAMANHO</label>
+
+                        <select id="admin-tamanho-produto" class="admin-select">
+                            <option value="" disabled selected>
+                                Selecione um tamanho
+                            </option>
+
+                            <option value="PP">PP</option>
+                            <option value="P">P</option>
+                            <option value="M">M</option>
+                            <option value="G">G</option>
+                            <option value="GG">GG</option>
+                            <option value="XGG">XGG</option>
+                        </select>
+                    </div>
+
+                    <button class="admin-btn" onclick="cadastrarProduto()">
+
+                        Cadastrar Produto
+                    </button>
+                </div>
+            </div>
+
+            <div class="admin-card">
+
+                <div class="admin-card-header">
+                    <span class="admin-card-icon">📦</span>
+
+                    <div>
+                        <h2 class="admin-card-titulo">
+                            Adicionar Estoque
+                        </h2>
+
+                        <p class="admin-card-sub">
+                            Aumente a quantidade disponível de um produto
+                        </p>
+                    </div>
+                </div>
+
+                <div class="admin-form">
+
+                    <div class="admin-field">
+
+                        <label class="admin-label">
+                            SELECIONE UM PRODUTO
+                        </label>
+
+                        <select id="admin-select-produto" class="admin-select">
+                            <option value="" disabled selected>
+                                Selecione um produto
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="admin-field">
+
+                        <label class="admin-label">
+                            QUANTIDADE A ADICIONAR
+                        </label>
+
+                        <input type="number" id="admin-quantidade-estoque" class="admin-input" placeholder="Ex: 10">
+                    </div>
+
+                    <button class="admin-btn" onclick="adicionarEstoque()">
+
+                        Adicionar Estoque
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--PAGINA SOBRE LIBRAS-->
+
+    <div id="page-libras" class="page">
+        <nav>
+            <div class="logo" onclick="goTo('page-home')">
+                <img src="logo.png.png" alt="logo" class="nav-logo">
+                ShopNow
+            </div>
+            <div class="nav-links">
+                <a href="#" onclick="goTo('page-home')">Produtos</a>
+                <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+                <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+                <div class="cart-icon" onclick="irParaCarrinho()">
+                    🛒 <span class="cart-badge" id="cart-count-libras">0</span>
+                </div>
+                <button class="nav-btn" onclick="sair()">Sair</button>
+            </div>
+        </nav>
+
+        <!--BOTÃO DE VOLTAR-->
+        <div class="acessib-topo">
+            <button class="assecib-btn-voltar" onclick="goTo('page-home')">← Voltar para Home</button>
+        </div>
+
+        <!-- HERO -->
+        <div class="acessib-hero">
+            <div class="acessib-hero-content">
+                <h1 class="acessi-titulo">♿ Acessibilidade</h1>
+                <p class="acessib-subtitulo">Confira as dicas de acessibilidades</p>
+            </div>
+        </div>
+
+        <!-- INTRO -->
+        <div class="acessib-intro">
+            <p> O site da ShopNow foi desenvolvido com o objetivo de ser acessível para todos. Por isso tem recursos
+                de acessibilidade implementados de acordo com as recomendações do WCAG (Web Content Accessibility
+                Guidelines) e das diretrizes de acessibilidade para conteúdo web nível AA+, do W3C (World Wide Web
+                Consortium), principal instituição de padronização da internet.</p>
+            <p>Dessa forma, pessoas com deficiência auditiva, visual, limitações cognitivas, mobilidade reduzida,
+                dificuldade de aprendizagem, fotossensibilidade e com combinações destas características podem
+                navegar no site usando esses diversos recursos, como o alto contraste, teclas de atalho, navegação
+                por teclado, dentre outros.</p>
+            <p>A acessibilidade do site é melhor nas versões mais atualizadas dos navegadores web, por isso utilize
+                sempre a versão mais recente do seu software.</p>
+        </div>
+
+        <!-- COMPROMISSO -->
+        <div class="acessib-section">
+            <div class="acessib-section-header">Nosso Compromisso</div>
+            <span class="acessib-section-icon">🌐</span>
+            <h2>Compromisso com a Inclusão e Acessibilidade Digital</h2>
+        </div>
+        <p>A democratização do acesso digital é um dos pilares que sustenta o desenvolvimento deste projeto.Entendemos
+            que a internet deve ser um espaço plural, onde barreiras sensoriais ou motoras não devem impedir a
+            experiência de consumo e informação. Por isso, nossa plataforma foi planejada seguindo
+            diretrizes de acessibilidade que facilitam a interação de todos os perfis de usuários.</p>
+
+        <div class="acessib-cards-row">
+            <div class="acessib-card">
+                <span class="acessib-section-icon">🤟</span>
+                <h3>Suporte a Deficiência Auditiva(LIBRAS).</h3>
+                <p>Para promover a inclusão da comunidade surda, recomendamos o uso de ferramentas especializadas
+                    que realizam a tradução automatica de conteudos para a Língua Brasileira de Sinais. Esta
+                    abordagem visa torna a comuunidade digital mais compreensível e acessível.</p>
+            </div>
+            <div class="acessib-card">
+                <span class="acessib-section-icon">👀</span>
+                <h3>Suporte a Deficiência Visual.</h3>
+                <p>O sistema é compatível com os principais leitores de tela disponiveis, permitindo que usuários
+                    cegos ou com baixa visão utilizem software especializados para auxiliar na navegação.</p>
+            </div>
+            <div class="acessib-card">
+                <div class="acessib-section-icon">🖥️</div>
+                <h3>Padrões Internacionais</h3>
+                <p>Nosso desenvolvimento busca alinhar-se às recomendações do W3C e às diretrizes do WCAG, focando
+                    em garantir contraste adequado, legibilidade e uma estrutura de dados intuitiva para o usuário.
+                </p>
+            </div>
+        </div>
+
+        <!-- SOFTWARES COM LIBRAS -->
+        <div class="acessib-section">
+        <div class="acessib-section-header">
+            <span class="acessib-section-icon">🤟</span>
+            <h2>Apoio a Deficiência Auditiva e LIBRAS</h2>
+        </div>
+        <p class="acessib-section-description">Ferramentas que auxiliam usuarios surdos ou com deficiência auditiva na
+            comunicação, acessibilidade e na navegar com mais autonomia.</p>
+
+        <div class="acessib-tools-grid">
+
+            <div class="acessib-tool-card">
+                <div class="acessib-tool-icon">🤖</div>
+                <div class="acessib-tool-info">
+                    <h3>Hand Talk</h3>
+                    <p>Ferramenta que utiliza inteligência artificial para traduzir texto e áudio para a Língua
+                        Brasileira de Sinais através de intérpretes virtuais.</p>
+                    <a href="https://www.handtalk.me/br/" target="_blank" class="acessib-link">
+                        🔗 Acesse o site oficial da Hand Talk
+                    </a>
+                </div>
+            </div>
+
+            <div class="acessib-tool-card">
+                <div class="acessib-tool-icon">🇧🇷</div>
+                <div class="acessib-tool-info">
+                    <h3>VLibras</h3>
+                    <p>Um conjunto de ferramentas de código aberto, fruto de uma parceria entre o Governo Federal e
+                        universidades, que traduz conteúdos digitais (texto, áudio e vídeo) para LIBRAS.</p>
+                    <a href="https://WWW.gov.br/pt-br/apps/vlibras" target="_blank" class="acessib-link">
+                        🔗 Acesse o site oficial do VLibras
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEPARADOR -->
+    <div class="acessib-separador">
+        <div class="acessib-separador-linha"></div>
+        <span>👁️ Leitores de Tela</span>
+        <div class="acessib-separador-linha"></div>
+    </div>
+
+    <!-- SOFTWARES VISUAL -->
+    <div class="acessib-section">
+        <div class="acessib-section-header">
+            <span class="acessib-section-icon">👁️</span>
+            <h2>Leitores de Tela e Deficiência Visual</h2>
+        </div>
+        <p class="acessib-section-desc">Softwares que auxiliam usuários cegos ou com baixa visão a navegar com
+            autonomia.</p>
+
+        <div class="acessib-tool-card">
+
+            <div class="acessib-tool-card">
+                <div class="acessib-tool-icon">💻</div>
+                <div class="acessib-tool-info">
+                    <h3>NVDA (Windows)</h3>
+                    <p>Leitor de tela gratuito e de código aberto para Windows, que oferece suporte a diversos
+                        idiomas
+                        e é compatível com uma ampla gama de aplicativos.</p>
+                    <a href="https://www.nvaccess.org/" target="_blank" class="acessib-link">
+                        🔗 Baixar NVDA
+                    </a>
+                </div>
+            </div>
+
+            <div class="acessib-tool-card">
+                <div class="acessib-tool-icon">🔊</div>
+                <div class="acessib-tool-info">
+                    <h3>JAWS for Windows</h3>
+                    <p>Um dos leitores de tela mais utilizados no mundo, oferecendo recursos avançados de fala e
+                        suporte a braille para usuários cegos ou com baixa visão.</p>
+                    <a href="https://support.freedomscientific.com/downloads" target="_blank" class="acessib-link">
+                        🔗 Acesse a página de downloads da Freedom Scientific
+                    </a>
+                </div>
+            </div>
+
+            <div class="acessib-tool-card">
+                <div class="acessib-tool-icon">🎙️</div>
+                <div class="acessib-tool-info">
+                    <h3>DOSVOX</h3>
+                    <p>Sistema desenvolvido pelo NCE/UFRJ que permite que pessoas cegas utilizem computadores por
+                        meio de uma interface baseada em síntese de voz.</p>
+                    <a href="http://intervox.nce.ufrj.br/dosvox/" target="_blank" class="acessib-link">
+                        🔗 Acesse o projeto DOSVOX na UFRJ
+                    </a>
+                </div>
+            </div>
+
+            <div class="acessib-tool-card">
+                <div class="acessib-tool-icon">🖥️</div>
+                <div class="acessib-tool-info">
+                    <h3>Virtual Vision</h3>
+                    <p>Leitor de tela brasileiro desenvolvido para oferecer autonomia no uso do Windows, Office e
+                        navegação na internet.</p>
+                    <a href="https://software.com.br/produto/virtual-vision/" target="_blank" class="acessib-link">
+                        🔗 Conheça o Virtual Vision
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo">
+            <img src="logo.png.png" alt="ShopNow" class="footer-logo-img">
+            <span> ShopNow</span>
+        </div>
+        <div class="footer-links">
+            <a href="#" onclick="goTo('page-home')">Início</a>
+            <a href="#" onclick="goTo('page-ofertas')">Ofertas</a>
+            <a href="#" onclick="goTo('page-sobre')">Sobre</a>
+            <a href="#" onclick="goTo('page-privacidade')">Política de Privacidade</a>
+            <a href="#" onclick="goTo('page-libras')">Acessibilidade</a>
+            <a href="#" onclick="irParaAdmin()" style="display:none">Admin</a>
+        </div>
+        Feito com ❤️ · <span>ShopNow</span> © 2026 · Todos os direitos reservados.
+    </footer>
+    </div>
+
+    <div id="toast"></div>
+    <script src="script.js"></script>
+</body>
+
+</html>
