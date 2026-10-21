@@ -52,7 +52,7 @@
                 string imagem = "/img/logo.png";
                 var nomeLower = produto.TipoRoupa.ToLowerInvariant();
                 if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
-                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Violão neon roxo.png";
+                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Viola~o neon roxo.png";
                 else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
                 else if (nomeLower.Contains("bateria")) imagem = "/img/bateria.jpeg";
 
@@ -67,6 +67,7 @@
                             <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
                             <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
                                 <input type="hidden" name="idProduto" value="@produto.IdProduto" />
+                                <input type="hidden" name="modelo" value="@produto.Modelo" />
                                 <input type="hidden" name="tamanho" value="@produto.Tamanho" />
                                 <button type="submit" class="add-btn" @(!temEstoque ? "disabled" : "")>
                                     @(temEstoque ? "+ Adicionar" : "Fora de estoque")

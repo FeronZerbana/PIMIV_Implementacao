@@ -12,6 +12,8 @@ namespace PIM_WebApplication.ViewModels
     {
         public string Nome { get; set; } = string.Empty;
         public string Icone { get; set; } = string.Empty;
+        public string ImagemUrl { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
     }
 
     public class OfertasViewModel

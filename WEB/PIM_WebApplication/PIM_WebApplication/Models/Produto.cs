@@ -15,13 +15,30 @@ namespace PIM_WebApplication.Models
         [StringLength(150)]
         public string TipoRoupa { get; set; } = string.Empty;
 
+        [NotMapped]
+        public string TipoInstrumento
+        {
+            get => TipoRoupa;
+            set => TipoRoupa = value;
+        }
+
         [Required]
         [Column("Preco", TypeName = "decimal(8,2)")]
         public decimal Preco { get; set; }
 
         [Column("Tamanho")]
-        [StringLength(10)]
+        [StringLength(100)]
         public string Tamanho { get; set; } = string.Empty;
+
+        [NotMapped]
+        public string Modelo
+        {
+            get => Tamanho;
+            set => Tamanho = value;
+        }
+
+        [NotMapped]
+        public string TipoModelo => TipoInstrumento;
 
         public Estoque? Estoque { get; set; }
     }

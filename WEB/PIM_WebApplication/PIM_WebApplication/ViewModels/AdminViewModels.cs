@@ -21,9 +21,11 @@ namespace PIM_WebApplication.ViewModels
         [Display(Name = "PRECO (R$)")]
         public decimal Preco { get; set; }
 
-        [Required(ErrorMessage = "Selecione um tamanho.")]
         [Display(Name = "TAMANHO")]
-        public string Tamanho { get; set; } = string.Empty;
+        public string? Tamanho { get; set; }
+
+        [Display(Name = "MODELO")]
+        public string Modelo { get; set; } = string.Empty;
 
         [Display(Name = "ESTOQUE INICIAL")]
         [Range(0, 10000, ErrorMessage = "A quantidade deve ser positiva.")]

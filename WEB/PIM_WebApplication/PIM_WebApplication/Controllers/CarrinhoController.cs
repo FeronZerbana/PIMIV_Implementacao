@@ -55,7 +55,7 @@ namespace PIM_WebApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Adicionar(int idProduto, string tamanho = "M", int quantidade = 1)
+        public async Task<IActionResult> Adicionar(int idProduto, string tamanho = "", string modelo = "", int quantidade = 1)
         {
             var produto = await _produtoService.ObterPorIdAsync(idProduto);
             if (produto == null)
@@ -85,21 +85,15 @@ namespace PIM_WebApplication.Controllers
             }
             else
             {
-                string emoji = "👕";
-                var nomeLower = produto.TipoRoupa.ToLowerInvariant();
-                if (nomeLower.Contains("moletom") || nomeLower.Contains("hoodie")) emoji = "🧥";
-                else if (nomeLower.Contains("programação") || nomeLower.Contains("dev") || nomeLower.Contains("code")) emoji = "💻";
-                else if (nomeLower.Contains("linux")) emoji = "🐧";
-                else if (nomeLower.Contains("ia") || nomeLower.Contains("tech") || nomeLower.Contains("robot")) emoji = "🤖";
-                else if (nomeLower.Contains("game")) emoji = "🎮";
+                string variacao = !string.IsNullOrWhiteSpace(modelo) ? modelo : (!string.IsNullOrWhiteSpace(tamanho) ? tamanho : produto.Tamanho);
 
                 itens.Add(new ItemCarrinhoViewModel
                 {
                     IdProduto = produto.IdProduto,
                     Nome = produto.TipoRoupa,
                     Preco = produto.Preco,
-                    Tamanho = string.IsNullOrEmpty(tamanho) ? produto.Tamanho : tamanho,
-                    Emoji = emoji,
+                    Tamanho = variacao,
+                    Emoji = string.Empty,
                     Quantidade = Math.Min(quantidade, estoqueDisponivel),
                     EstoqueDisponivel = estoqueDisponivel
                 });

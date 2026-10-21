@@ -44,12 +44,13 @@
             {
                 var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
                 var temEstoque = estoqueDisponivel > 0;
+                var nomeLower = (produto.TipoInstrumento ?? "").ToLowerInvariant();
+                string imagem = "/img/logo.png";
                 
                 if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
-                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Violão neon roxo.png";
+                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Viola~o neon roxo.png";
                 else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
                 else if (nomeLower.Contains("bateria")) imagem = "/img/bateria.jpeg";
-
 
                 <div class="product-card">
                     <div class="product-img">

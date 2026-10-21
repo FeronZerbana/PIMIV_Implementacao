@@ -19,8 +19,9 @@ namespace PIM_WebApplication.ViewModels
         public int IdProduto { get; set; }
         public string Nome { get; set; } = string.Empty;
         public decimal Preco { get; set; }
-        public string Tamanho { get; set; } = "M";
-        public string Emoji { get; set; } = "👕";
+        public string Tamanho { get; set; } = string.Empty;
+        public string Modelo { get => Tamanho; set => Tamanho = value; }
+        public string Emoji { get; set; } = string.Empty;
         public int Quantidade { get; set; } = 1;
         public int EstoqueDisponivel { get; set; } = 0;
         public decimal Subtotal => Preco * Quantidade;

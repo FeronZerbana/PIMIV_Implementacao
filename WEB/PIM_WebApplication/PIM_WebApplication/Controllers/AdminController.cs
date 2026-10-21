@@ -52,7 +52,7 @@ namespace PIM_WebApplication.Controllers
             {
                 TipoRoupa = model.Nome.Trim(),
                 Preco = model.Preco,
-                Tamanho = model.Tamanho
+                Tamanho = !string.IsNullOrWhiteSpace(model.Modelo) ? model.Modelo : (model.Tamanho ?? string.Empty)
             };
 
             await _produtoService.CriarProdutoAsync(produto, model.EstoqueInicial);
