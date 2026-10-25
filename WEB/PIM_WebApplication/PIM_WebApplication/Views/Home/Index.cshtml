@@ -8,10 +8,10 @@
 }
 
 <div class="hero">
-    <img src="~/img/logo.png" alt="Fundo Hero" class="hero-bg" />
+    <img src="~/img/fundohero.jpg" alt="Fundo Hero" class="hero-bg" />
     <div class="hero-content">
         <h1>Toda melodia começa com a <span>escolha certa</span>.</h1>
-        <p>Trabalhamos com instrumentos selecionados para transformar cada momento criativo em uma experiência única. Venha conhecer nosso espaço e descubra o som que combina com você..</p>
+        <p>Trabalhamos com instrumentos selecionados para transformar cada momento criativo em uma experiência única. Venha conhecer nosso espaço e descubra o som que combina com você.</p>
         <div class="hero-btns">
             <a href="#destaques" class="btn-hero">Ver produtos</a>
             <a asp-controller="Home" asp-action="Ofertas" class="btn-outline">Nossas ofertas</a>
@@ -20,22 +20,34 @@
 </div>
 
 <div class="section categorias-section">
-    <div class="section-title">Produtos</div>
-    <p class="section-sub">Encontre o instrumento ideal para você</p>
-    <div class="cats-grid">
-        @foreach (var cat in Model.Categorias)
+    <div class="section-center">
+        <h2 class="section-title">Categorias de Instrumentos</h2>
+        <p class="section-sub">Encontre o instrumento ideal para o seu som</p>
+    </div>
+    @{
+        var instrumentos = new[]
         {
-            <div class="cat-card">
-                <img class="cat-img" src="@cat.ImagemUrl" alt="@cat.Nome" />
-                <div class="cat-name">@cat.Nome</div>
-            </div>
+            new { Label = "Guitarras",  Controller = "Produtos", Action = "Guitarras", Img = "/img/guitarra.jpeg" },
+            new { Label = "Violões",    Controller = "Produtos", Action = "Violoes",   Img = "/img/Violão neon roxo.png" },
+            new { Label = "Teclados",   Controller = "Produtos", Action = "Teclados",  Img = "/img/teclado.png" },
+            new { Label = "Baterias",   Controller = "Produtos", Action = "Baterias",  Img = "/img/bateria.jpeg" },
+        };
+    }
+    <div class="cats-grid">
+        @for (int i = 0; i < instrumentos.Length; i++)
+        {
+            var inst = instrumentos[i];
+            <a asp-controller="@inst.Controller" asp-action="@inst.Action" class="cat-card" style="text-decoration:none;">
+                <img class="cat-img" src="@inst.Img" alt="@inst.Label" />
+                <div class="cat-name">@inst.Label</div>
+            </a>
         }
     </div>
 </div>
 
 <div id="destaques" class="section section-center" style="padding-top: 1rem;">
-    <div class="section-title">Destaques</div>
-    <p class="section-sub">Os mais vendidos da Loja</p>
+    <h2 class="section-title">Destaques</h2>
+    <p class="section-sub">Os instrumentos mais procurados da loja</p>
 
     <div class="products-grid">
         @if (Model.Destaques.Any())
@@ -45,24 +57,25 @@
                 var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
                 var temEstoque = estoqueDisponivel > 0;
                 
+                string imagem = "/img/logo.png";
+                var nomeLower = (produto.TipoRoupa ?? "").ToLowerInvariant();
                 if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
                 else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Violão neon roxo.png";
                 else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
                 else if (nomeLower.Contains("bateria")) imagem = "/img/bateria.jpeg";
 
-
                 <div class="product-card">
                     <div class="product-img">
-                        <img src="@imagem" alt="@produto.TipoInstrumento" />
+                        <img src="@imagem" alt="@produto.TipoRoupa" />
                     </div>
                     <div class="product-info">
-                        <div class="product-name">@produto.TipoInstrumento</div>
-                        <div class="product-desc">Modelo: @produto.Modelo - Estoque: @estoqueDisponivel un</div>
+                        <div class="product-name">@produto.TipoRoupa</div>
+                        <div class="product-desc">Modelo: @produto.Tamanho &middot; Estoque: @estoqueDisponivel un</div>
                         <div class="product-footer">
                             <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
                             <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
                                 <input type="hidden" name="idProduto" value="@produto.IdProduto" />
-                                <input type="hidden" name="modelo" value="@produto.Modelo" />
+                                <input type="hidden" name="tamanho" value="@produto.Tamanho" />
                                 <button type="submit" class="add-btn" @(!temEstoque ? "disabled" : "")>
                                     @(temEstoque ? "+ Adicionar" : "Fora de estoque")
                                 </button>

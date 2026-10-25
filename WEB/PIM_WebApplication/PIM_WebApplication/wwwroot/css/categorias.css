@@ -3,28 +3,13 @@
    Arquivo: wwwroot/css/categorias.css
    ======================================================== */
 
-:root {
-    --cat-bg: #0b0914;
-    --cat-surface: #13101e;
-    --cat-surface-card: #151224;
-    --cat-border: #281f3d;
-    --cat-border-light: #3b2c58;
-    --cat-purple: #7c3aed;
-    --cat-purple-hover: #9333ea;
-    --cat-purple-light: #c084fc;
-    --cat-purple-glow: rgba(124, 58, 237, 0.4);
-    --cat-text: #f5f0e8;
-    --cat-text-muted: #9f96b0;
-    --cat-text-dim: #6e6480;
-}
-
 /* ── CONTAINER PRINCIPAL DA PÁGINA ── */
 .categoria-page {
-    background: radial-gradient(circle at top right, rgba(124, 58, 237, 0.12) 0%, transparent 60%),
-                radial-gradient(circle at bottom left, rgba(88, 28, 135, 0.08) 0%, transparent 50%),
-                var(--cat-bg);
+    background: radial-gradient(circle at top right, var(--accent-badge) 0%, transparent 60%),
+                radial-gradient(circle at bottom left, rgba(36, 16, 57, 0.4) 0%, transparent 50%),
+                var(--bg);
     min-height: calc(100vh - 80px);
-    padding: 1.5rem 2rem 4rem;
+    padding: 2rem 2.5rem 5rem;
     max-width: 1440px;
     margin: 0 auto;
     box-sizing: border-box;
@@ -32,24 +17,24 @@
 
 /* ── CABEÇALHO DA CATEGORIA ── */
 .categoria-header {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .categoria-voltar {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--cat-purple-light);
-    font-size: 0.9rem;
+    color: var(--accent-light);
+    font-size: 0.92rem;
     font-weight: 500;
     text-decoration: none;
-    margin-bottom: 0.75rem;
-    transition: color 0.2s, transform 0.15s;
+    margin-bottom: 1rem;
+    transition: var(--transition);
 }
 
 .categoria-voltar:hover {
-    color: #e9d5ff;
-    transform: translateX(-3px);
+    color: #FFFFFF;
+    transform: translateX(-4px);
 }
 
 .categoria-header-main {
@@ -64,22 +49,23 @@
 }
 
 .categoria-titulo {
-    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
     font-weight: 700;
-    color: #ffffff;
+    color: var(--text-heading);
     letter-spacing: -0.5px;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.4rem;
     line-height: 1.15;
 }
 
 .categoria-descricao {
-    color: var(--cat-text-muted);
-    font-size: 1rem;
-    line-height: 1.5;
-    max-width: 600px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 650px;
 }
 
-/* ── ILUSTRAÇÃO NEON NO CABEÇALHO ── */
+/* ── ILUSTRAÇÃO NO CABEÇALHO ── */
 .categoria-neon-art {
     flex-shrink: 0;
     width: 220px;
@@ -92,14 +78,14 @@
 .categoria-neon-art svg {
     width: 100%;
     height: 100%;
-    filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.75));
+    filter: drop-shadow(0 0 12px var(--accent-glow));
 }
 
 /* Linha divisória luminosa */
 .categoria-divider {
     height: 1px;
-    background: linear-gradient(90deg, var(--cat-purple) 0%, rgba(124, 58, 237, 0.4) 35%, rgba(40, 31, 61, 0.2) 100%);
-    margin: 1.5rem 0 2rem;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-glow) 35%, var(--border) 100%);
+    margin: 1.8rem 0 2.2rem;
 }
 
 /* ── BARRA DE FERRAMENTAS / ORDENAÇÃO ── */
@@ -107,13 +93,13 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    margin-bottom: 1.5rem;
-    gap: 0.75rem;
+    margin-bottom: 1.8rem;
+    gap: 0.8rem;
 }
 
 .toolbar-label {
-    font-size: 0.88rem;
-    color: var(--cat-text-muted);
+    font-size: 0.9rem;
+    color: var(--muted);
     font-weight: 500;
 }
 
@@ -126,34 +112,34 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background: var(--cat-surface-card);
-    border: 1px solid var(--cat-border);
-    color: #ffffff;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
     font-family: inherit;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    padding: 0.5rem 2.2rem 0.5rem 1rem;
-    border-radius: 8px;
+    padding: 0.55rem 2.4rem 0.55rem 1rem;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: var(--transition);
     outline: none;
 }
 
 .select-ordenar:hover,
 .select-ordenar:focus {
-    border-color: var(--cat-purple);
-    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .select-ordenar-wrapper::after {
     content: "";
     position: absolute;
-    right: 0.9rem;
+    right: 1rem;
     top: 50%;
     transform: translateY(-50%);
     width: 8px;
     height: 5px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%23c084fc' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1L5 5L9 1'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%23C4B5FD' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1L5 5L9 1'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-size: contain;
     pointer-events: none;
@@ -162,40 +148,40 @@
 /* ── LAYOUT PRINCIPAL (FILTROS + GRADE DE PRODUTOS) ── */
 .categoria-layout {
     display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 2rem;
+    grid-template-columns: 260px 1fr;
+    gap: 2.2rem;
     align-items: start;
 }
 
 /* ── PAINEL LATERAL DE FILTROS ── */
 .categoria-sidebar {
-    background: var(--cat-surface);
-    border: 1px solid var(--cat-border);
-    border-radius: 12px;
-    padding: 1.25rem 1rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 1.25rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
 .filtro-titulo-principal {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--text-heading);
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--cat-border);
-    margin-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.3rem;
 }
 
 .filtro-titulo-principal svg {
-    color: var(--cat-purple-light);
+    color: var(--accent-light);
 }
 
 .filtro-secao {
-    margin-bottom: 1.4rem;
-    padding-bottom: 1.2rem;
-    border-bottom: 1px solid rgba(40, 31, 61, 0.6);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.3rem;
+    border-bottom: 1px solid rgba(53, 42, 64, 0.6);
 }
 
 .filtro-secao:last-child {
@@ -208,45 +194,45 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 0.85rem;
+    color: var(--text-heading);
+    margin-bottom: 0.9rem;
     cursor: default;
 }
 
 .filtro-secao-header svg {
-    color: var(--cat-text-dim);
+    color: var(--dim);
 }
 
 .filtro-lista {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: 0.6rem;
 }
 
 .filtro-item {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    font-size: 0.86rem;
-    color: var(--cat-text-muted);
+    gap: 0.65rem;
+    font-size: 0.88rem;
+    color: var(--muted);
     cursor: pointer;
     user-select: none;
     transition: color 0.15s;
 }
 
 .filtro-item:hover {
-    color: #ffffff;
+    color: var(--text-heading);
 }
 
 .filtro-checkbox {
     appearance: none;
     -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    border: 1.5px solid var(--cat-border-light);
+    width: 17px;
+    height: 17px;
+    border: 1.5px solid var(--border-light);
     border-radius: 4px;
     background: transparent;
     cursor: pointer;
@@ -257,12 +243,12 @@
 }
 
 .filtro-checkbox:hover {
-    border-color: var(--cat-purple-light);
+    border-color: var(--accent-light);
 }
 
 .filtro-checkbox:checked {
-    background-color: var(--cat-purple);
-    border-color: var(--cat-purple);
+    background-color: var(--accent);
+    border-color: var(--accent);
 }
 
 .filtro-checkbox:checked::before {
@@ -276,7 +262,7 @@
 
 /* ── FILTRO DE FAIXA DE PREÇO ── */
 .filtro-preco-box {
-    padding-top: 0.3rem;
+    padding-top: 0.4rem;
 }
 
 .preco-slider-range {
@@ -285,10 +271,10 @@
     width: 100%;
     height: 6px;
     border-radius: 4px;
-    background: linear-gradient(to right, var(--cat-purple) 0%, var(--cat-purple) 65%, var(--cat-border) 65%, var(--cat-border) 100%);
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent) 65%, var(--border) 65%, var(--border) 100%);
     outline: none;
     cursor: pointer;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.9rem;
 }
 
 .preco-slider-range::-webkit-slider-thumb {
@@ -297,117 +283,120 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: #ffffff;
-    border: 3px solid var(--cat-purple);
-    box-shadow: 0 0 6px rgba(124, 58, 237, 0.6);
+    background: #FFFFFF;
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.1s;
 }
 
 .preco-slider-range::-webkit-slider-thumb:hover {
     transform: scale(1.15);
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.9);
+    box-shadow: 0 0 12px var(--accent-light);
 }
 
 .preco-slider-range::-moz-range-thumb {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: #ffffff;
-    border: 3px solid var(--cat-purple);
-    box-shadow: 0 0 6px rgba(124, 58, 237, 0.6);
+    background: #FFFFFF;
+    border: 3px solid var(--accent);
+    box-shadow: 0 0 8px var(--accent-glow);
     cursor: pointer;
 }
 
 .preco-valores {
     display: flex;
     justify-content: space-between;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 500;
-    color: var(--cat-text-muted);
+    color: var(--muted);
 }
 
 /* ── GRADE DE CARDS DE PRODUTOS ── */
 .categoria-produtos-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
 }
 
 /* ── CARD DO PRODUTO ── */
 .instrumento-card {
-    background: var(--cat-surface-card);
-    border: 1px solid var(--cat-border);
-    border-radius: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
-    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.2s ease,
-                box-shadow 0.2s ease;
+    transition: var(--transition);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
 }
 
 .instrumento-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--cat-purple-hover);
-    box-shadow: 0 10px 28px rgba(124, 58, 237, 0.22);
+    transform: translateY(-5px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 20px var(--accent-glow);
 }
 
 /* Selo "Mais vendido" */
 .instrumento-badge {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
-    color: #ffffff;
-    font-size: 0.68rem;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    border: 1px solid var(--accent-light);
+    color: #FFFFFF;
+    font-size: 0.72rem;
     font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 20px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
     z-index: 2;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.45);
-    letter-spacing: 0.3px;
+    box-shadow: 0 2px 10px var(--accent-glow);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 /* Área da imagem */
 .instrumento-img-area {
     width: 100%;
-    height: 160px;
-    background: radial-gradient(ellipse at center, rgba(124, 58, 237, 0.08) 0%, rgba(17, 14, 28, 0.8) 100%);
+    height: 180px;
+    background: radial-gradient(circle at center, var(--surface2) 0%, var(--surface) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: 1.2rem;
     box-sizing: border-box;
+    border-bottom: 1px solid var(--border);
 }
 
 .instrumento-img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    transition: transform 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .instrumento-card:hover .instrumento-img {
-    transform: scale(1.04);
+    transform: scale(1.06);
 }
 
 /* Informações do instrumento */
 .instrumento-info {
-    padding: 1rem;
+    padding: 1.3rem;
     display: flex;
     flex-direction: column;
     flex: 1;
 }
 
 .instrumento-nome {
-    font-size: 0.92rem;
-    font-weight: 600;
-    color: #ffffff;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-heading);
     line-height: 1.35;
-    margin-bottom: 0.3rem;
-    min-height: 2.5em;
+    margin-bottom: 0.35rem;
+    min-height: 2.7em;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -415,40 +404,42 @@
 }
 
 .instrumento-marca {
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    color: var(--cat-text-dim);
-    letter-spacing: 0.8px;
+    color: var(--dim);
+    letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.8rem;
 }
 
 .instrumento-preco {
-    font-size: 1.15rem;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.3rem;
     font-weight: 700;
-    color: var(--cat-purple-light);
-    margin-bottom: 0.95rem;
-    letter-spacing: -0.2px;
+    color: var(--accent-light);
+    margin-bottom: 1.1rem;
+    letter-spacing: -0.3px;
 }
 
 /* Botão "Adicionar ao carrinho" */
 .btn-carrinho {
     width: 100%;
-    background: var(--cat-purple);
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 0.6rem 0.8rem;
-    font-family: inherit;
-    font-size: 0.82rem;
+    background: var(--accent);
+    color: #FFFFFF;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
     font-weight: 600;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    transition: var(--transition);
     margin-top: auto;
+    box-shadow: 0 2px 10px var(--accent-glow);
 }
 
 .btn-carrinho svg {
@@ -456,9 +447,9 @@
 }
 
 .btn-carrinho:hover {
-    background: var(--cat-purple-hover);
-    box-shadow: 0 4px 14px var(--cat-purple-glow);
-    transform: translateY(-1px);
+    background: var(--accent-hover);
+    box-shadow: 0 4px 16px var(--accent-glow);
+    transform: translateY(-2px);
 }
 
 .btn-carrinho:active {
@@ -468,18 +459,14 @@
 /* ── RESPONSIVIDADE ── */
 @media (max-width: 1280px) {
     .categoria-produtos-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 992px) {
     .categoria-layout {
-        grid-template-columns: 220px 1fr;
-        gap: 1.5rem;
-    }
-
-    .categoria-produtos-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 240px 1fr;
+        gap: 1.8rem;
     }
     
     .categoria-neon-art {
@@ -490,7 +477,7 @@
 
 @media (max-width: 768px) {
     .categoria-page {
-        padding: 1.25rem 1rem 3rem;
+        padding: 1.5rem 1.2rem 4rem;
     }
 
     .categoria-header-main {
@@ -510,16 +497,16 @@
     }
 
     .categoria-sidebar {
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .categoria-produtos-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
+        gap: 1.2rem;
     }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 540px) {
     .categoria-produtos-grid {
         grid-template-columns: 1fr;
     }
