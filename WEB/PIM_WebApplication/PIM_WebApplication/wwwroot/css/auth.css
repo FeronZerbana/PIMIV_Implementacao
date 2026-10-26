@@ -1,5 +1,5 @@
 /* =========================================
-   SHOPNOW — Estilos de Autenticacao (Login / Registro)
+   SHOPNOW — Estilos de Autenticação (Login / Registro)
    ========================================= */
 
 .auth-wrapper {
@@ -10,37 +10,53 @@
 }
 
 .auth-visual {
-  background: linear-gradient(135deg, #1a1400 0%, #3a2c00 50%, #1a1400 100%);
+  background: radial-gradient(circle at 60% 40%, rgba(124, 58, 237, 0.3) 0%, rgba(36, 16, 57, 0.6) 50%, var(--bg) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
+  padding: 3.5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
+  border-right: 1px solid var(--border);
 }
 
 .auth-visual::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 60% 40%, rgba(232,200,114,0.15) 0%, transparent 60%);
+  background: radial-gradient(circle at 50% 30%, var(--accent-glow) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.auth-visual-register,
+.auth-visual-login {
+  background: linear-gradient(rgba(11, 9, 14, 0.65), rgba(11, 9, 14, 0.65)), url('../img/fundohero.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.auth-visual-register::before,
+.auth-visual-login::before {
+  display: none;
 }
 
 .auth-visual-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 2.8rem;
-  color: var(--accent);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  font-weight: 700;
+  color: var(--text-heading);
   line-height: 1.15;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
   position: relative;
 }
 
 .auth-visual p {
   color: var(--muted);
-  font-size: 1rem;
-  max-width: 280px;
+  font-size: 1.05rem;
+  max-width: 320px;
   line-height: 1.6;
   position: relative;
 }
@@ -49,49 +65,53 @@
   font-size: 4rem;
   margin-bottom: 1.5rem;
   position: relative;
+  filter: drop-shadow(0 0 20px var(--accent-glow));
 }
 
 .auth-form-area {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 2.5rem;
 }
 
 .auth-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border-radius: var(--radius);
+  padding: 2.8rem 2.2rem;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px var(--accent-glow);
 }
 
 .auth-card h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-heading);
   margin-bottom: 0.4rem;
 }
 
 .auth-card .subtitle {
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   margin-bottom: 2rem;
 }
 
-/* ── FORMULARIOS ── */
+/* ── FORMULÁRIOS ── */
 label {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--muted);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.45rem;
   letter-spacing: 0.5px;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .field {
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.3rem;
 }
 
 input[type=text],
@@ -99,58 +119,63 @@ input[type=email],
 input[type=password],
 input[type=tel] {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1.1rem;
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: var(--transition);
 }
 
 input:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 input::placeholder {
-  color: #555;
+  color: var(--dim);
 }
 
 .text-danger {
-  color: #e74c3c;
-  font-size: 0.8rem;
-  margin-top: 0.3rem;
+  color: var(--danger);
+  font-size: 0.82rem;
+  margin-top: 0.35rem;
   display: block;
+  font-weight: 500;
 }
 
 .validation-summary-errors ul {
   list-style: none;
-  background: rgba(231, 76, 60, 0.1);
-  border: 1px solid #e74c3c;
-  border-radius: 8px;
-  padding: 0.8rem 1rem;
-  margin-bottom: 1.2rem;
-  color: #e74c3c;
-  font-size: 0.85rem;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 1.4rem;
+  color: var(--danger);
+  font-size: 0.88rem;
+  font-weight: 500;
 }
 
 .auth-switch {
-  margin-top: 1.5rem;
+  margin-top: 1.8rem;
   text-align: center;
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
 .auth-switch a {
-  color: var(--accent);
+  color: var(--accent-light);
   cursor: pointer;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  transition: color 0.2s;
 }
 
 .auth-switch a:hover {
+  color: #FFFFFF;
   text-decoration: underline;
 }
 
@@ -158,7 +183,7 @@ input::placeholder {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin: 1.4rem 0;
+  margin: 1.6rem 0;
 }
 
 .divider::before,
@@ -170,8 +195,10 @@ input::placeholder {
 }
 
 .divider span {
-  color: var(--muted);
-  font-size: 0.75rem;
+  color: var(--dim);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 @media (max-width: 900px) {
@@ -182,6 +209,6 @@ input::placeholder {
     display: none;
   }
   .auth-form-area {
-    padding: 1.5rem;
+    padding: 2rem 1.2rem;
   }
 }

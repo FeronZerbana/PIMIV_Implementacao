@@ -17,7 +17,7 @@
     </div>
 
     <div class="oferta-banner-content">
-        <div class="oferta-tag-anim">OFERTA ESPECIAL</div>
+        <div class="oferta-tag-anim">Oferta Exclusiva</div>
         <h1 class="oferta-banner-title">
             50% OFF<br />
             <span>na sua 1ª compra</span>
@@ -38,7 +38,7 @@
 <div class="ofertas-section">
     <div class="ofertas-section-header">
         <h2>Instrumentos em Oferta</h2>
-        <p>50% de desconto potencial na primeira compra — confira nosso catálogo de instrumentos!</p>
+        <p>Aproveite até 50% de desconto potencial na primeira compra — confira as oportunidades selecionadas!</p>
     </div>
 
     <div class="products-grid">
@@ -50,7 +50,7 @@
                 var temEstoque = estoqueDisponivel > 0;
                 
                 string imagem = "/img/logo.png";
-                var nomeLower = produto.TipoRoupa.ToLowerInvariant();
+                var nomeLower = (produto.TipoRoupa ?? "").ToLowerInvariant();
                 if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
                 else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Viola~o neon roxo.png";
                 else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
@@ -58,11 +58,11 @@
 
                 <div class="product-card">
                     <div class="product-img">
-                        <img src="@imagem" alt="@produto.TipoInstrumento" />
+                        <img src="@imagem" alt="@produto.TipoRoupa" />
                     </div>
                     <div class="product-info">
-                        <div class="product-name">@produto.TipoInstrumento</div>
-                        <div class="product-desc">Modelo: @produto.Modelo - Estoque: @estoqueDisponivel un</div>
+                        <div class="product-name">@produto.TipoRoupa</div>
+                        <div class="product-desc">Modelo: @produto.Tamanho &middot; Estoque: @estoqueDisponivel un</div>
                         <div class="product-footer">
                             <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
                             <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">

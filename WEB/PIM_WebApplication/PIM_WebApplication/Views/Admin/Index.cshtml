@@ -22,7 +22,7 @@
         <div class="admin-card-header">
             <div>
                 <h2 class="admin-card-titulo">Cadastrar Novo Produto</h2>
-                <p class="admin-card-sub">Adicione um novo produto e seu estoque inicial ao catálogo</p>
+                <p class="admin-card-sub">Adicione um novo instrumento e seu estoque inicial ao catálogo</p>
             </div>
         </div>
 
@@ -31,13 +31,13 @@
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.Nome" class="admin-label">Nome</label>
+                    <label asp-for="NovoProduto.Nome" class="admin-label">Nome do Instrumento</label>
                     <input asp-for="NovoProduto.Nome" class="admin-input" placeholder="Ex: Guitarra Stratocaster" />
                     <span asp-validation-for="NovoProduto.Nome" class="text-danger"></span>
                 </div>
 
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.Preco" class="admin-label">Preço</label>
+                    <label asp-for="NovoProduto.Preco" class="admin-label">Preço (R$)</label>
                     <input asp-for="NovoProduto.Preco" type="number" step="0.01" class="admin-input" placeholder="Ex: 2499.90" />
                     <span asp-validation-for="NovoProduto.Preco" class="text-danger"></span>
                 </div>
@@ -56,8 +56,8 @@
                 </div>
 
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.Modelo" class="admin-label">Modelo</label>
-                    <select asp-for="NovoProduto.Modelo" class="admin-select" id="modeloSelect">
+                    <label asp-for="NovoProduto.Tamanho" class="admin-label">Modelo / Categoria</label>
+                    <select asp-for="NovoProduto.Tamanho" class="admin-select" id="modeloSelect">
                         <option value="" disabled selected>Selecione um modelo</option>
                         <!-- Guitarra -->
                         <option class="guitarra" value="Stratocaster">Stratocaster</option>
@@ -76,7 +76,7 @@
                         <option class="bateria" value="Eletrônica">Eletrônica</option>
                         <option class="bateria" value="Compacta">Compacta</option>
                     </select>
-                    <span asp-validation-for="NovoProduto.Modelo" class="text-danger"></span>
+                    <span asp-validation-for="NovoProduto.Tamanho" class="text-danger"></span>
                 </div>
             </div>
 
@@ -112,7 +112,7 @@
                         @foreach (var p in Model.ProdutosCadastrados)
                         {
                             <option value="@p.IdProduto">
-                                @p.TipoModelo (Modelo: @p.Tamanho) — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un]
+                                @p.TipoRoupa (Modelo: @p.Tamanho) — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un]
                             </option>
                         }
                     </select>
@@ -158,14 +158,14 @@
                         {
                             <tr>
                                 <td>@item.IdProduto</td>
-                                <td><strong>@item.TipoInstrumento</strong></td>
-                                <td>@item.Modelo</td>
+                                <td><strong>@item.TipoRoupa</strong></td>
+                                <td>@item.Tamanho</td>
                                 <td>R$ @item.Preco.ToString("N2")</td>
                                 <td>@(item.Estoque?.QuantidadeDisponivel ?? 0) un</td>
                                 <td>
                                     <form asp-controller="Admin" asp-action="ExcluirProduto" method="post" onsubmit="return confirm('Deseja realmente excluir este produto?');" style="display:inline;">
                                         <input type="hidden" name="id" value="@item.IdProduto" />
-                                        <button type="submit" style="background:none; border:none; color:#e74c3c; cursor:pointer; font-size:0.85rem;">Excluir</button>
+                                        <button type="submit" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; font-weight:600; text-decoration:underline;">Excluir</button>
                                     </form>
                                 </td>
                             </tr>

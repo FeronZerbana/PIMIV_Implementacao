@@ -1,59 +1,63 @@
 /* =========================================
-   SHOPNOW — Estilos do Painel de Administracao
+   SHOPNOW — Estilos do Painel de Administração (Identidade Roxo Editorial)
    ========================================= */
 
 .admin-topo {
   display: flex;
   justify-content: flex-start;
-  padding: 2rem 2rem 0;
-  max-width: 900px;
+  padding: 2.5rem 2rem 0;
+  max-width: 960px;
   margin: 0 auto;
 }
 
 .admin-btn-voltar {
-  background: none;
+  background: var(--surface);
   border: 1px solid var(--border);
-  color: var(--accent);
-  padding: 0.6rem 1.5rem;
-  border-radius: 20px;
+  color: var(--accent-light);
+  padding: 0.6rem 1.6rem;
+  border-radius: var(--radius-pill);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  transition: border-color 0.2s, color 0.2s;
+  gap: 0.5rem;
+  transition: var(--transition);
 }
 
 .admin-btn-voltar:hover {
   border-color: var(--accent);
-  color: var(--accent);
+  color: #FFFFFF;
+  background: var(--surface2);
+  transform: translateX(-3px);
 }
 
 .admin-header {
   text-align: center;
-  padding: 2rem 2rem 1.5rem;
+  padding: 2rem 2rem 2rem;
 }
 
 .admin-titulo {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  color: var(--text);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--text-heading);
   margin-bottom: 0.5rem;
 }
 
 .admin-subtitulo {
   color: var(--muted);
-  font-size: 1rem;
+  font-size: 1.05rem;
 }
 
 .admin-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  max-width: 900px;
-  margin: 0 auto 5rem;
+  gap: 2.5rem;
+  max-width: 960px;
+  margin: 0 auto 6rem;
   padding: 0 1.5rem;
 }
 
@@ -61,45 +65,44 @@
 .admin-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 2.2rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
 .admin-card-header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.8rem;
-  padding-bottom: 1.2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.4rem;
   border-bottom: 1px solid var(--border);
 }
 
-
-
 .admin-card-titulo {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.4rem;
-  color: var(--text);
-  margin-bottom: 0.2rem;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 0.3rem;
 }
 
 .admin-card-sub {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
-/* ── FORMULARIOS ADMIN ── */
+/* ── FORMULÁRIOS ADMIN ── */
 .admin-form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 1.4rem;
 }
 
 .admin-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.2rem;
+  gap: 1.4rem;
 }
 
 .admin-field {
@@ -109,105 +112,119 @@
 }
 
 .admin-label {
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--muted);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .admin-input {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.85rem 1.1rem;
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s;
+  transition: var(--transition);
 }
 
 .admin-input:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .admin-input::placeholder {
-  color: #555;
+  color: var(--dim);
 }
 
 .admin-select {
   width: 100%;
-  padding: 0.85rem 1rem;
+  padding: 0.85rem 2.2rem 0.85rem 1.1rem;
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 0.95rem;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.2s;
+  transition: var(--transition);
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23C4B5FD' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 1rem center;
+  background-position: right 1.2rem center;
 }
 
 .admin-select:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .admin-btn {
   width: fit-content;
-  padding: 0.85rem 2rem;
+  padding: 0.9rem 2.4rem;
   background: var(--accent);
-  color: #111;
-  border: none;
-  border-radius: var(--radius);
-  font-family: 'Playfair Display', serif;
-  font-size: 1rem;
-  font-weight: 700;
+  color: #FFFFFF;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-  margin-top: 0.5rem;
+  transition: var(--transition);
+  margin-top: 0.8rem;
+  box-shadow: 0 4px 16px var(--accent-glow);
 }
 
 .admin-btn:hover {
-  opacity: 0.88;
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-glow);
 }
 
 .admin-btn:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
 }
 
 .admin-table th,
 .admin-table td {
-  padding: 0.8rem 1rem;
+  padding: 0.9rem 1.2rem;
   border-bottom: 1px solid var(--border);
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 
 .admin-table th {
-  color: var(--muted);
+  color: var(--dim);
   text-transform: uppercase;
-  font-size: 0.75rem;
-  letter-spacing: 0.5px;
+  font-size: 0.78rem;
+  letter-spacing: 0.6px;
+  font-weight: 600;
+  background: var(--surface2);
 }
 
-@media (max-width: 600px) {
+.admin-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+@media (max-width: 650px) {
   .admin-form-row {
     grid-template-columns: 1fr;
   }
   .admin-wrapper {
     padding: 0 1rem;
+  }
+  .admin-card {
+    padding: 1.8rem 1.2rem;
   }
 }
