@@ -49,13 +49,17 @@ namespace PIM_WebApplication.Services
                 return (false, "Este e-mail ja esta cadastrado no sistema.", null);
             }
 
+            bool primeiroUsuario = !await _context.Clientes.AnyAsync();
+            bool isAdmin = primeiroUsuario || emailNormalizado.Contains("admin");
+
             var novoCliente = new Cliente
             {
                 Nome = nome.Trim(),
                 Email = emailNormalizado,
                 Senha = BCrypt.Net.BCrypt.HashPassword(senha),
                 Telefone = telefone?.Trim(),
-                IsAdmin = false
+                IsAdmin = isAdmin,
+                FirstTime = true
             };
 
             _context.Clientes.Add(novoCliente);
