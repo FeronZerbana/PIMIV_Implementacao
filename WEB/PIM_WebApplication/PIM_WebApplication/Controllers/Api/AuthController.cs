@@ -16,25 +16,39 @@ namespace PIM_WebApplication.Controllers.Api
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<ActionResult<LoginResponseDto>> Login([FromBody] LoginRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var cliente = await _usuarioService.AutenticarAsync(request.Email, request.Senha);
             if (cliente == null)
             {
-                return Unauthorized(new { mensagem = "Email ou senha inválidos!" });
+                return Unauthorized(new { mensagem = "E-mail ou senha invalidos." });
             }
 
-            return Ok(new
+            return Ok(new LoginResponseDto
             {
-                id = cliente.IdCliente,
-                nome = cliente.Nome,
-                isAdmin = cliente.IsAdmin
+                Id = cliente.IdCliente,
+                Nome = cliente.Nome,
+                Email = cliente.Email,
+                IsAdmin = cliente.IsAdmin,
+                Mensagem = "Autenticacao realizada com sucesso."
             });
         }
 
         [HttpPost("registrar")]
         public async Task<IActionResult> Registrar([FromBody] Cliente novoCliente)
         {
+            if (string.IsNullOrWhiteSpace(novoCliente.Nome) || 
+                string.IsNullOrWhiteSpace(novoCliente.Email) || 
+                string.IsNullOrWhiteSpace(novoCliente.Senha))
+            {
+                return BadRequest(new { mensagem = "Nome, e-mail e senha sao campos obrigatorios." });
+            }
+
             var (sucesso, mensagem, clienteCriado) = await _usuarioService.RegistrarAsync(
                 novoCliente.Nome,
                 novoCliente.Email,
@@ -46,7 +60,11 @@ namespace PIM_WebApplication.Controllers.Api
                 return BadRequest(new { mensagem });
             }
 
-            return Ok(new { mensagem = "Usuário criado com sucesso!" });
+            return Ok(new
+            {
+                mensagem = "Usuario cadastrado com sucesso.",
+                id = clienteCriado?.IdCliente
+            });
         }
     }
 }

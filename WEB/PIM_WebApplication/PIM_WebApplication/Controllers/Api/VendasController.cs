@@ -34,5 +34,12 @@ namespace PIM_WebApplication.Controllers.Api
                 vendaID = vendaId
             });
         }
+
+        [HttpGet("cliente/{codCliente}")]
+        public async Task<ActionResult<IEnumerable<VendaHistoricoDto>>> ObterHistoricoPorCliente(int codCliente)
+        {
+            var historico = await _vendaService.ObterHistoricoPorClienteAsync(codCliente);
+            return Ok(historico);
+        }
     }
 }

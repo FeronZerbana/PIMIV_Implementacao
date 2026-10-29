@@ -11,34 +11,54 @@ namespace PIM_WebApplication.Models
         public int IdProduto { get; set; }
 
         [Required]
-        [Column("Tipo_Roupa")]
+        [Column("Tipo_Instrumento")]
         [StringLength(150)]
-        public string TipoRoupa { get; set; } = string.Empty;
+        public string TipoInstrumento { get; set; } = string.Empty;
+
+        // Alias para compatibilidade legada
+        [NotMapped]
+        public string TipoRoupa
+        {
+            get => TipoInstrumento;
+            set => TipoInstrumento = value;
+        }
 
         [NotMapped]
-        public string TipoInstrumento
+        public string Nome
         {
-            get => TipoRoupa;
-            set => TipoRoupa = value;
+            get => TipoInstrumento;
+            set => TipoInstrumento = value;
         }
 
         [Required]
         [Column("Preco", TypeName = "decimal(8,2)")]
         public decimal Preco { get; set; }
 
-        [Column("Tamanho")]
+        [Column("Modelo")]
         [StringLength(100)]
-        public string Tamanho { get; set; } = string.Empty;
+        public string Modelo { get; set; } = string.Empty;
 
+        // Alias para compatibilidade legada
         [NotMapped]
-        public string Modelo
+        public string Tamanho
         {
-            get => Tamanho;
-            set => Tamanho = value;
+            get => Modelo;
+            set => Modelo = value;
         }
 
         [NotMapped]
         public string TipoModelo => TipoInstrumento;
+
+        [Column("Imagem_Url")]
+        [StringLength(255)]
+        public string? ImagemUrl { get; set; }
+
+        [NotMapped]
+        public string? ImgURL
+        {
+            get => ImagemUrl;
+            set => ImagemUrl = value;
+        }
 
         public Estoque? Estoque { get; set; }
     }

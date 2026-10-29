@@ -50,13 +50,14 @@ namespace PIM_WebApplication.Controllers
 
             var produto = new Produto
             {
-                TipoRoupa = model.Nome.Trim(),
+                TipoInstrumento = model.Nome.Trim(),
                 Preco = model.Preco,
-                Tamanho = !string.IsNullOrWhiteSpace(model.Modelo) ? model.Modelo : (model.Tamanho ?? string.Empty)
+                Modelo = !string.IsNullOrWhiteSpace(model.Modelo) ? model.Modelo : (model.Tamanho ?? string.Empty),
+                ImagemUrl = !string.IsNullOrWhiteSpace(model.ImagemUrl) ? model.ImagemUrl.Trim() : null
             };
 
             await _produtoService.CriarProdutoAsync(produto, model.EstoqueInicial);
-            TempData["MensagemToast"] = $"Produto '{produto.TipoRoupa}' cadastrado com sucesso!";
+            TempData["MensagemToast"] = $"Instrumento '{produto.TipoInstrumento}' cadastrado com sucesso!";
 
             return RedirectToAction(nameof(Index));
         }

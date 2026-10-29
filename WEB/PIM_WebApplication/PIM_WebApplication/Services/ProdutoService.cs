@@ -28,6 +28,66 @@ namespace PIM_WebApplication.Services
                 .FirstOrDefaultAsync(p => p.IdProduto == id);
         }
 
+        public async Task<List<Produto>> ObterPorCategoriaAsync(string categoria)
+        {
+            if (string.IsNullOrWhiteSpace(categoria))
+            {
+                return await ObterTodosAsync();
+            }
+
+            var cat = categoria.Trim().ToLowerInvariant();
+            var query = _context.Produtos
+                .Include(p => p.Estoque)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (cat.Contains("guitar"))
+            {
+                query = query.Where(p => p.TipoInstrumento.ToLower().Contains("guitar"));
+            }
+            else if (cat.Contains("viol") || cat.Contains("violoes"))
+            {
+                query = query.Where(p => p.TipoInstrumento.ToLower().Contains("viol"));
+            }
+            else if (cat.Contains("tecl") || cat.Contains("pian") || cat.Contains("sintet"))
+            {
+                query = query.Where(p => p.TipoInstrumento.ToLower().Contains("tecl") 
+                                      || p.TipoInstrumento.ToLower().Contains("pian") 
+                                      || p.TipoInstrumento.ToLower().Contains("sintet")
+                                      || p.TipoInstrumento.ToLower().Contains("midi"));
+            }
+            else if (cat.Contains("bater") || cat.Contains("percuss") || cat.Contains("cajon"))
+            {
+                query = query.Where(p => p.TipoInstrumento.ToLower().Contains("bater") 
+                                      || p.TipoInstrumento.ToLower().Contains("percuss")
+                                      || p.TipoInstrumento.ToLower().Contains("cajon"));
+            }
+            else if (cat.Contains("acessor") || cat.Contains("cabo") || cat.Contains("palhet") || cat.Contains("afinad") || cat.Contains("correia") || cat.Contains("suporte") || cat.Contains("corda") || cat.Contains("bag") || cat.Contains("case"))
+            {
+                query = query.Where(p => p.TipoInstrumento.ToLower().Contains("acessor") 
+                                      || p.TipoInstrumento.ToLower().Contains("cabo") 
+                                      || p.TipoInstrumento.ToLower().Contains("palhet") 
+                                      || p.TipoInstrumento.ToLower().Contains("afinad") 
+                                      || p.TipoInstrumento.ToLower().Contains("correia") 
+                                      || p.TipoInstrumento.ToLower().Contains("suporte") 
+                                      || p.TipoInstrumento.ToLower().Contains("corda") 
+                                      || p.TipoInstrumento.ToLower().Contains("bag") 
+                                      || p.TipoInstrumento.ToLower().Contains("case"));
+            }
+            else // Outros instrumentos (sopros, orquestrais, etc.)
+            {
+                query = query.Where(p => !p.TipoInstrumento.ToLower().Contains("guitar") 
+                                      && !p.TipoInstrumento.ToLower().Contains("viol")
+                                      && !p.TipoInstrumento.ToLower().Contains("tecl")
+                                      && !p.TipoInstrumento.ToLower().Contains("pian")
+                                      && !p.TipoInstrumento.ToLower().Contains("bater")
+                                      && !p.TipoInstrumento.ToLower().Contains("cabo")
+                                      && !p.TipoInstrumento.ToLower().Contains("palhet"));
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task<Produto> CriarProdutoAsync(Produto produto, int estoqueInicial = 0)
         {
             _context.Produtos.Add(produto);
@@ -46,6 +106,43 @@ namespace PIM_WebApplication.Services
             return produto;
         }
 
+        public async Task<Produto?> AtualizarProdutoAsync(int id, Produto produtoAtualizado)
+        {
+            var produtoExistente = await _context.Produtos
+                .Include(p => p.Estoque)
+                .FirstOrDefaultAsync(p => p.IdProduto == id);
+
+            if (produtoExistente == null)
+            {
+                return null;
+            }
+
+            produtoExistente.TipoInstrumento = produtoAtualizado.TipoInstrumento;
+            produtoExistente.Preco = produtoAtualizado.Preco;
+            produtoExistente.Modelo = produtoAtualizado.Modelo;
+
+            if (!string.IsNullOrWhiteSpace(produtoAtualizado.ImagemUrl))
+            {
+                produtoExistente.ImagemUrl = produtoAtualizado.ImagemUrl;
+            }
+
+            await _context.SaveChangesAsync();
+            return produtoExistente;
+        }
+
+        public async Task<bool> AtualizarImagemAsync(int id, string imagemUrl)
+        {
+            var produto = await _context.Produtos.FindAsync(id);
+            if (produto == null)
+            {
+                return false;
+            }
+
+            produto.ImagemUrl = imagemUrl;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> ExcluirProdutoAsync(int id)
         {
             var produto = await _context.Produtos
@@ -62,6 +159,25 @@ namespace PIM_WebApplication.Services
             if (possuiVendas)
             {
                 throw new InvalidOperationException("Nao e possivel excluir um produto que possui historico de vendas.");
+            }
+
+            // Remocao de imagem física em disco se for upload
+            if (!string.IsNullOrWhiteSpace(produto.ImagemUrl) && produto.ImagemUrl.StartsWith("/uploads/"))
+            {
+                try
+                {
+                    var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var cleanPath = produto.ImagemUrl.TrimStart('/', '\\').Replace('/', Path.DirectorySeparatorChar);
+                    var fullPath = Path.Combine(basePath, cleanPath);
+                    if (File.Exists(fullPath))
+                    {
+                        File.Delete(fullPath);
+                    }
+                }
+                catch
+                {
+                    // Nao impede a remocao do registro caso haja lock no arquivo
+                }
             }
 
             _context.Produtos.Remove(produto);

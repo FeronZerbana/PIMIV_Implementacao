@@ -8,6 +8,7 @@ namespace PIM_WebApplication.Services
     {
         Task<(bool Sucesso, string Mensagem, int VendaId)> FinalizarVendaAsync(int codCliente, List<ItemCarrinhoDto> itens, string? codigoCupom = null);
         Task<decimal> CalcularDescontoCupomAsync(string codigoCupom, decimal subtotal);
+        Task<List<VendaHistoricoDto>> ObterHistoricoPorClienteAsync(int codCliente);
     }
 
     public class VendaService : IVendaService
@@ -79,9 +80,9 @@ namespace PIM_WebApplication.Services
                     {
                         produto = new Produto
                         {
-                            TipoRoupa = !string.IsNullOrWhiteSpace(item.Nome) ? item.Nome : $"Instrumento #{item.CodProduto}",
+                            TipoInstrumento = !string.IsNullOrWhiteSpace(item.Nome) ? item.Nome : $"Instrumento #{item.CodProduto}",
                             Preco = item.PrecoUnitario > 0 ? item.PrecoUnitario : 999.00m,
-                            Tamanho = "Padrao"
+                            Modelo = "Padrao"
                         };
                         _context.Produtos.Add(produto);
                         await _context.SaveChangesAsync();
@@ -102,7 +103,7 @@ namespace PIM_WebApplication.Services
 
                     if (estoque.QuantidadeDisponivel < item.Quantidade)
                     {
-                        throw new InvalidOperationException($"Estoque insuficiente para o produto '{produto.TipoRoupa}'. Disponivel: {estoque.QuantidadeDisponivel}.");
+                        throw new InvalidOperationException($"Estoque insuficiente para o instrumento '{produto.TipoInstrumento}'. Disponivel: {estoque.QuantidadeDisponivel}.");
                     }
 
                     var itemVenda = new ItemVenda
@@ -128,6 +129,33 @@ namespace PIM_WebApplication.Services
                 await transaction.RollbackAsync();
                 return (false, ex.Message, 0);
             }
+        }
+
+        public async Task<List<VendaHistoricoDto>> ObterHistoricoPorClienteAsync(int codCliente)
+        {
+            var vendas = await _context.Vendas
+                .Include(v => v.Itens)
+                    .ThenInclude(i => i.Produto)
+                .Where(v => v.CodCliente == codCliente)
+                .OrderByDescending(v => v.DataVenda)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return vendas.Select(v => new VendaHistoricoDto
+            {
+                IdVenda = v.IdVenda,
+                DataVenda = v.DataVenda,
+                TotalVenda = v.Itens.Sum(i => i.ValorTotal),
+                Itens = v.Itens.Select(i => new ItemVendaDetalheDto
+                {
+                    IdItemVenda = i.IdItemVenda,
+                    CodProduto = i.CodProduto,
+                    NomeProduto = i.Produto?.TipoInstrumento ?? $"Instrumento #{i.CodProduto}",
+                    Quantidade = i.Quantidade,
+                    ValorUnitario = i.ValorUnitario,
+                    ValorTotal = i.ValorTotal
+                }).ToList()
+            }).ToList();
         }
     }
 }

@@ -81,9 +81,13 @@ namespace PIM_WebApplication.Controllers
             if (produto != null)
             {
                 finalId = produto.IdProduto;
-                finalNome = produto.TipoRoupa;
+                finalNome = produto.TipoInstrumento;
                 finalPreco = produto.Preco;
-                finalVariacao = !string.IsNullOrWhiteSpace(modelo) ? modelo : (!string.IsNullOrWhiteSpace(tamanho) ? tamanho : produto.Tamanho);
+                finalVariacao = !string.IsNullOrWhiteSpace(modelo) ? modelo : (!string.IsNullOrWhiteSpace(tamanho) ? tamanho : produto.Modelo);
+                if (string.IsNullOrWhiteSpace(imagemUrl) && !string.IsNullOrWhiteSpace(produto.ImagemUrl))
+                {
+                    imagemUrl = produto.ImagemUrl;
+                }
                 estoqueDisponivel = (produto.Estoque != null && produto.Estoque.QuantidadeDisponivel > 0)
                     ? produto.Estoque.QuantidadeDisponivel
                     : 20;

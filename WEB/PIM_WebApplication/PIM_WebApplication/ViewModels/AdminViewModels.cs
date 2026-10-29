@@ -12,8 +12,8 @@ namespace PIM_WebApplication.ViewModels
 
     public class NovoProdutoViewModel
     {
-        [Required(ErrorMessage = "O nome do produto e obrigatorio.")]
-        [Display(Name = "NOME DO PRODUTO")]
+        [Required(ErrorMessage = "O nome ou tipo do instrumento e obrigatorio.")]
+        [Display(Name = "NOME DO INSTRUMENTO")]
         public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "O preco e obrigatorio.")]
@@ -27,6 +27,9 @@ namespace PIM_WebApplication.ViewModels
         [Display(Name = "MODELO")]
         public string Modelo { get; set; } = string.Empty;
 
+        [Display(Name = "URL DA IMAGEM")]
+        public string? ImagemUrl { get; set; }
+
         [Display(Name = "ESTOQUE INICIAL")]
         [Range(0, 10000, ErrorMessage = "A quantidade deve ser positiva.")]
         public int EstoqueInicial { get; set; } = 0;
@@ -35,7 +38,7 @@ namespace PIM_WebApplication.ViewModels
     public class AdicionarEstoqueViewModel
     {
         [Required(ErrorMessage = "Selecione um produto.")]
-        [Display(Name = "SELECIONE UM PRODUTO")]
+        [Display(Name = "SELECIONE UM INSTRUMENTO")]
         public int IdProduto { get; set; }
 
         [Required(ErrorMessage = "Informe a quantidade.")]

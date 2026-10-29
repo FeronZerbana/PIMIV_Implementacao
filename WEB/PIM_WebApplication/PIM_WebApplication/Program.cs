@@ -66,7 +66,7 @@ namespace PIM_WebApplication
 
             var app = builder.Build();
 
-            // 8. Inicializacao e Criacao Automatica do Banco de Dados ShopNowDB no OMEGA
+            // 8. Inicializacao, Criacao e Harmonizacao Estrutural do Banco ShopNowDB
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -77,12 +77,14 @@ namespace PIM_WebApplication
             }
 
             // 9. Pipeline de Requisicoes HTTP
-            if (app.Environment.IsDevelopment())
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-            else
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "PIM IV - API v1");
+                c.RoutePrefix = "swagger";
+            });
+
+            if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();

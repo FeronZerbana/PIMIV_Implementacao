@@ -36,9 +36,10 @@ namespace PIM_WebApplication.Data
                 entity.ToTable("PRODUTOS");
                 entity.HasKey(e => e.IdProduto);
                 entity.Property(e => e.IdProduto).HasColumnName("id_Produto");
-                entity.Property(e => e.TipoRoupa).HasColumnName("Tipo_Roupa").HasMaxLength(150).IsRequired();
+                entity.Property(e => e.TipoInstrumento).HasColumnName("Tipo_Instrumento").HasMaxLength(150).IsRequired();
                 entity.Property(e => e.Preco).HasColumnName("Preco").HasColumnType("decimal(8,2)").IsRequired();
-                entity.Property(e => e.Tamanho).HasColumnName("Tamanho").HasMaxLength(10);
+                entity.Property(e => e.Modelo).HasColumnName("Modelo").HasMaxLength(100);
+                entity.Property(e => e.ImagemUrl).HasColumnName("Imagem_Url").HasMaxLength(255);
 
                 entity.HasOne(p => p.Estoque)
                       .WithOne(e => e.Produto)
