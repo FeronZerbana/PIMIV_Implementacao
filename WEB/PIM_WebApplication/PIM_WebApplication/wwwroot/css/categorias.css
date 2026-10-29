@@ -198,13 +198,42 @@
     font-weight: 600;
     color: var(--text-heading);
     margin-bottom: 0.9rem;
-    cursor: default;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.15s ease, margin-bottom 0.2s ease;
+}
+
+.filtro-secao-header:hover {
+    color: var(--accent-light);
+}
+
+.filtro-secao-header:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 3px;
+    border-radius: 4px;
 }
 
 .filtro-secao-header svg {
     color: var(--dim);
+    transition: transform 0.25s ease, color 0.15s ease;
 }
 
+.filtro-secao-header:hover svg {
+    color: var(--accent-light);
+}
+
+.filtro-secao.colapsado .filtro-secao-header {
+    margin-bottom: 0;
+}
+
+.filtro-secao.colapsado .filtro-secao-header svg {
+    transform: rotate(-90deg);
+}
+
+.filtro-secao.colapsado .filtro-lista,
+.filtro-secao.colapsado .filtro-preco-box {
+    display: none;
+}
 .filtro-lista {
     list-style: none;
     display: flex;

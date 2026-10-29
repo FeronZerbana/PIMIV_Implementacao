@@ -18,4 +18,29 @@ document.addEventListener('DOMContentLoaded', function () {
     if (toastEl && toastEl.getAttribute('data-msg')) {
         showToast(toastEl.getAttribute('data-msg'));
     }
+
+    // Gerenciamento de Filtros Colapsaveis nas Telas de Catalogo
+    const headersFiltro = document.querySelectorAll('.filtro-secao-header');
+    headersFiltro.forEach(header => {
+        header.setAttribute('role', 'button');
+        header.setAttribute('tabindex', '0');
+        header.setAttribute('aria-expanded', 'true');
+
+        function alternarColapso() {
+            const secao = header.closest('.filtro-secao');
+            if (secao) {
+                const foiColapsado = secao.classList.toggle('colapsado');
+                header.setAttribute('aria-expanded', (!foiColapsado).toString());
+            }
+        }
+
+        header.addEventListener('click', alternarColapso);
+
+        header.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                alternarColapso();
+            }
+        });
+    });
 });

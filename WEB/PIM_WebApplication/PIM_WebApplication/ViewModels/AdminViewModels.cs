@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using PIM_WebApplication.Models;
 
 namespace PIM_WebApplication.ViewModels
@@ -29,6 +30,9 @@ namespace PIM_WebApplication.ViewModels
 
         [Display(Name = "TAMANHO")]
         public string? Tamanho { get; set; }
+
+        [Display(Name = "FOTO DO INSTRUMENTO (ARQUIVO)")]
+        public IFormFile? ImagemArquivo { get; set; }
 
         [Display(Name = "URL DA IMAGEM")]
         public string? ImagemUrl { get; set; }

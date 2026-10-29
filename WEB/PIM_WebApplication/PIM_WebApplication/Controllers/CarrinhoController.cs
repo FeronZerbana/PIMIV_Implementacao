@@ -9,8 +9,8 @@ namespace PIM_WebApplication.Controllers
 {
     public class CarrinhoController : Controller
     {
-        private const string SessionCartKey = "SessionCart";
-        private const string SessionCouponKey = "SessionCoupon";
+        public const string SessionCartKey = "SessionCart";
+        public const string SessionCouponKey = "SessionCoupon";
 
         private readonly IProdutoService _produtoService;
         private readonly IVendaService _vendaService;

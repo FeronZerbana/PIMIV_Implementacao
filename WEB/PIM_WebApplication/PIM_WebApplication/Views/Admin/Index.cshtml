@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <form asp-controller="Admin" asp-action="CadastrarProduto" method="post" class="admin-form">
+        <form asp-controller="Admin" asp-action="CadastrarProduto" method="post" enctype="multipart/form-data" class="admin-form">
             @Html.AntiForgeryToken()
 
             <div class="admin-form-row">
@@ -64,10 +64,22 @@
             </div>
 
             <div class="admin-form-row">
-                <div class="admin-field" style="grid-column: 1 / -1;">
-                    <label asp-for="NovoProduto.ImagemUrl" class="admin-label">URL da Imagem (Opcional - usa a imagem da categoria se vazio)</label>
-                    <input asp-for="NovoProduto.ImagemUrl" class="admin-input" placeholder="Ex: /uploads/produtos/foto.png ou /img/guitarra.jpeg" />
+                <div class="admin-field">
+                    <label asp-for="NovoProduto.ImagemArquivo" class="admin-label">Upload de Imagem (do seu computador)</label>
+                    <input asp-for="NovoProduto.ImagemArquivo" type="file" accept="image/png, image/jpeg, image/webp" class="admin-input" style="padding: 0.45rem 0.75rem;" />
+                    <span asp-validation-for="NovoProduto.ImagemArquivo" class="text-danger"></span>
+                    <small style="color: var(--muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
+                        A imagem selecionada será gravada automaticamente em <code>wwwroot/img/uploads</code>.
+                    </small>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="NovoProduto.ImagemUrl" class="admin-label">Ou URL Externa / Imagem Manual (Opcional)</label>
+                    <input asp-for="NovoProduto.ImagemUrl" class="admin-input" placeholder="Ex: /img/guitarra.jpeg ou URL externa" />
                     <span asp-validation-for="NovoProduto.ImagemUrl" class="text-danger"></span>
+                    <small style="color: var(--muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
+                        Se vazio e sem arquivo, será utilizada a imagem padrão da categoria selecionada.
+                    </small>
                 </div>
             </div>
 

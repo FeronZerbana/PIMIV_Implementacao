@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using PIM_WebApplication.Models;
 using PIM_WebApplication.Services;
@@ -12,15 +13,18 @@ namespace PIM_WebApplication.Controllers
         private readonly IProdutoService _produtoService;
         private readonly IEstoqueService _estoqueService;
         private readonly ICupomService _cupomService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public AdminController(
             IProdutoService produtoService, 
             IEstoqueService estoqueService,
-            ICupomService cupomService)
+            ICupomService cupomService,
+            IWebHostEnvironment webHostEnvironment)
         {
             _produtoService = produtoService;
             _estoqueService = estoqueService;
             _cupomService = cupomService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
@@ -60,12 +64,48 @@ namespace PIM_WebApplication.Controllers
                 return View("Index", vm);
             }
 
+            string? finalImagemUrl = !string.IsNullOrWhiteSpace(model.ImagemUrl) ? model.ImagemUrl.Trim() : null;
+
+            if (model.ImagemArquivo != null && model.ImagemArquivo.Length > 0)
+            {
+                var extensoesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
+                var extensao = Path.GetExtension(model.ImagemArquivo.FileName).ToLowerInvariant();
+
+                if (!extensoesPermitidas.Contains(extensao))
+                {
+                    TempData["MensagemToast"] = "Formato de imagem invalido. Sao permitidos apenas arquivos .jpg, .jpeg, .png, .webp e .gif.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (model.ImagemArquivo.Length > 5 * 1024 * 1024)
+                {
+                    TempData["MensagemToast"] = "A imagem excede o tamanho maximo de 5MB.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img", "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var nomeArquivoUnico = $"{Guid.NewGuid():N}{extensao}";
+                var caminhoCompleto = Path.Combine(uploadsFolder, nomeArquivoUnico);
+
+                using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                {
+                    await model.ImagemArquivo.CopyToAsync(stream);
+                }
+
+                finalImagemUrl = $"/img/uploads/{nomeArquivoUnico}";
+            }
+
             var produto = new Produto
             {
                 TipoInstrumento = model.Nome.Trim(),
                 Preco = model.Preco,
                 Modelo = !string.IsNullOrWhiteSpace(model.Modelo) ? model.Modelo.Trim() : (model.Tamanho ?? string.Empty),
-                ImagemUrl = !string.IsNullOrWhiteSpace(model.ImagemUrl) ? model.ImagemUrl.Trim() : null
+                ImagemUrl = finalImagemUrl
             };
 
             await _produtoService.CriarProdutoAsync(produto, model.EstoqueInicial);

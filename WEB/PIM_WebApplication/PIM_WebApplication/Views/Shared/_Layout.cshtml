@@ -1,9 +1,12 @@
 @using Microsoft.AspNetCore.Http
 @using PIM_WebApplication.Helpers
+@using PIM_WebApplication.ViewModels
+@using PIM_WebApplication.Controllers
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var session = HttpContextAccessor.HttpContext?.Session;
-    var cartItems = session?.GetObject<List<ItemCarrinhoViewModel>>("SHOPNOW_CART_ITEMS");
+    var cartItems = session?.GetObject<List<ItemCarrinhoViewModel>>(CarrinhoController.SessionCartKey)
+                 ?? session?.GetObject<List<ItemCarrinhoViewModel>>("SHOPNOW_CART_ITEMS");
     int cartCount = cartItems?.Sum(i => i.Quantidade) ?? 0;
 }
 <!DOCTYPE html>
@@ -16,7 +19,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
