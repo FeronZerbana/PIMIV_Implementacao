@@ -50,13 +50,14 @@
                 var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
                 var temEstoque = estoqueDisponivel > 0;
                 
-                string fallback = "/img/guitarra.jpeg";
+                string fallback = "/img/outros.png";
                 var catLower = (produto.TipoInstrumento ?? "").ToLowerInvariant();
-                if (catLower.Contains("violão") || catLower.Contains("violao")) fallback = "/img/violao.png";
-                else if (catLower.Contains("teclado")) fallback = "/img/teclado.png";
-                else if (catLower.Contains("bateria")) fallback = "/img/bateria.jpeg";
-                else if (catLower.Contains("acessório") || catLower.Contains("acessorio")) fallback = "/img/acessorios.png";
-                else if (catLower.Contains("outros")) fallback = "/img/outros.png";
+                if (catLower.Contains("guitar")) fallback = "/img/guitarra.jpeg";
+                else if (catLower.Contains("viol")) fallback = "/img/violao.png";
+                else if (catLower.Contains("teclad") || catLower.Contains("piano") || catLower.Contains("sintetiz")) fallback = "/img/teclado.png";
+                else if (catLower.Contains("bater")) fallback = "/img/bateria.jpeg";
+                else if (catLower.Contains("acess") || catLower.Contains("palhet") || catLower.Contains("cabo") || catLower.Contains("afinador") || catLower.Contains("correia")) fallback = "/img/acessorios.png";
+                else fallback = "/img/outros.png";
 
                 var imagemFinal = !string.IsNullOrWhiteSpace(produto.ImagemUrl) ? produto.ImagemUrl : fallback;
 

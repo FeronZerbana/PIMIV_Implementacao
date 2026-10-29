@@ -27,8 +27,8 @@
     <div class="admin-card">
         <div class="admin-card-header">
             <div>
-                <h2 class="admin-card-titulo">Cadastrar Novo Instrumento</h2>
-                <p class="admin-card-sub">Adicione um novo instrumento ou acessório ao catálogo oficial da loja</p>
+                <h2 class="admin-card-titulo">Cadastrar Novo Produto</h2>
+                <p class="admin-card-sub">Adicione um novo produto ao catálogo da loja</p>
             </div>
         </div>
 
@@ -73,7 +73,7 @@
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.ImagemArquivo" class="admin-label">Upload de Imagem (do seu computador)</label>
+                    <label asp-for="NovoProduto.ImagemArquivo" class="admin-label">Upload de Imagem</label>
                     <input asp-for="NovoProduto.ImagemArquivo" type="file" accept="image/png, image/jpeg, image/webp" class="admin-input" style="padding: 0.45rem 0.75rem;" />
                     <span asp-validation-for="NovoProduto.ImagemArquivo" class="text-danger"></span>
                     <small style="color: var(--muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
@@ -147,7 +147,7 @@
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label asp-for="NovoCupom.Valor" class="admin-label">Código do Cupom (String)</label>
+                    <label asp-for="NovoCupom.Valor" class="admin-label">Código do Cupom</label>
                     <input asp-for="NovoCupom.Valor" class="admin-input" placeholder="Ex: ROCK15, DEV10, PROMO25" style="text-transform: uppercase;" required />
                     <span asp-validation-for="NovoCupom.Valor" class="text-danger"></span>
                 </div>

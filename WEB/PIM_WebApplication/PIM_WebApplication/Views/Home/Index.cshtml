@@ -58,32 +58,35 @@
             {
                 var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
                 var temEstoque = estoqueDisponivel > 0;
-                string imagem = "/img/logo.png";
-                var nomeLower = (produto.TipoRoupa ?? "").ToLowerInvariant();
-                if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
-                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/violao.png";
-                else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
-                else if (nomeLower.Contains("bateria")) imagem = "/img/bateria.jpeg";
-                else if (nomeLower.Contains("acessório") || nomeLower.Contains("acessorio") || nomeLower.Contains("palheta") || nomeLower.Contains("cabo") || nomeLower.Contains("afinador") || nomeLower.Contains("correia")) imagem = "/img/acessorios.png";
-                else imagem = "/img/outros.png";
+
+                string fallbackCategoria = "/img/outros.png";
+                var catLower = (produto.TipoInstrumento ?? produto.TipoRoupa ?? "").ToLowerInvariant();
+                if (catLower.Contains("guitar")) fallbackCategoria = "/img/guitarra.jpeg";
+                else if (catLower.Contains("viol")) fallbackCategoria = "/img/violao.png";
+                else if (catLower.Contains("teclad") || catLower.Contains("piano") || catLower.Contains("sintetiz")) fallbackCategoria = "/img/teclado.png";
+                else if (catLower.Contains("bater")) fallbackCategoria = "/img/bateria.jpeg";
+                else if (catLower.Contains("acess") || catLower.Contains("palhet") || catLower.Contains("cabo") || catLower.Contains("afinador") || catLower.Contains("correia")) fallbackCategoria = "/img/acessorios.png";
+                else fallbackCategoria = "/img/outros.png";
+
+                var imagemFinal = !string.IsNullOrWhiteSpace(produto.ImagemUrl) ? produto.ImagemUrl : fallbackCategoria;
 
                 <div class="product-card">
                     <div class="product-img">
-                        <img src="@imagem" alt="@produto.TipoRoupa" />
+                        <img src="@imagemFinal" alt="@produto.Modelo" onerror="this.onerror=null;this.src='@fallbackCategoria';" />
                     </div>
                     <div class="product-info">
-                        <div class="product-name">@produto.TipoRoupa</div>
-                        <div class="product-desc">Modelo: @produto.Tamanho &middot; Estoque: @estoqueDisponivel un</div>
+                        <div class="product-name">@produto.Modelo</div>
+                        <div class="product-desc">Categoria: @produto.TipoInstrumento &middot; Estoque: @estoqueDisponivel un</div>
                         <div class="product-footer">
-                            <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
+                            <span class="product-price">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</span>
                             <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
                                 <input type="hidden" name="idProduto" value="@produto.IdProduto" />
-                                <input type="hidden" name="nome" value="@produto.TipoRoupa" />
+                                <input type="hidden" name="nome" value="@produto.TipoInstrumento" />
                                 <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                                 <input type="hidden" name="modelo" value="@produto.Modelo" />
-                                <input type="hidden" name="tamanho" value="@produto.Tamanho" />
-                                <input type="hidden" name="imagemUrl" value="@imagem" />
-                                <button type="submit" class="add-btn" @(!temEstoque ? "disabled" : "")>
+                                <input type="hidden" name="tamanho" value="@produto.Modelo" />
+                                <input type="hidden" name="imagemUrl" value="@imagemFinal" />
+                                <button type="submit" class="add-btn" @(!temEstoque ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "")>
                                     @(temEstoque ? "+ Adicionar" : "Fora de estoque")
                                 </button>
                             </form>
