@@ -25,9 +25,11 @@ namespace PIM_WebApplication.Controllers
             var categorias = new List<CategoriaItemViewModel>
             {
                 new() { Nome = "Guitarras", Icone = "GTR", ImagemUrl = "/img/guitarra.jpeg", Url = "/Produtos/Guitarras" },
-                new() { Nome = "Violões", Icone = "VLO", ImagemUrl = "/img/Viola~o neon roxo.png", Url = "/Produtos/Violoes" },
+                new() { Nome = "Violões", Icone = "VLO", ImagemUrl = "/img/violao.png", Url = "/Produtos/Violoes" },
                 new() { Nome = "Teclados", Icone = "TCL", ImagemUrl = "/img/teclado.png", Url = "/Produtos/Teclados" },
-                new() { Nome = "Baterias", Icone = "BAT", ImagemUrl = "/img/bateria.jpeg", Url = "/Produtos/Baterias" }
+                new() { Nome = "Baterias", Icone = "BAT", ImagemUrl = "/img/bateria.jpeg", Url = "/Produtos/Baterias" },
+                new() { Nome = "Outros", Icone = "OUT", ImagemUrl = "/img/outros.png", Url = "/Produtos/Outros" },
+                new() { Nome = "Acessórios", Icone = "ACS", ImagemUrl = "/img/acessorios.png", Url = "/Produtos/Acessorios" }
             };
 
             var viewModel = new HomeViewModel

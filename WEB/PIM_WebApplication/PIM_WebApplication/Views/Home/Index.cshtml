@@ -27,10 +27,12 @@
     @{
         var instrumentos = new[]
         {
-            new { Label = "Guitarras",  Controller = "Produtos", Action = "Guitarras", Img = "/img/guitarra.jpeg" },
-            new { Label = "Violões",    Controller = "Produtos", Action = "Violoes",   Img = "/img/Violão neon roxo.png" },
-            new { Label = "Teclados",   Controller = "Produtos", Action = "Teclados",  Img = "/img/teclado.png" },
-            new { Label = "Baterias",   Controller = "Produtos", Action = "Baterias",  Img = "/img/bateria.jpeg" },
+            new { Label = "Guitarras",  Controller = "Produtos", Action = "Guitarras",  Img = "/img/guitarra.jpeg" },
+            new { Label = "Violões",    Controller = "Produtos", Action = "Violoes",    Img = "/img/violao.png" },
+            new { Label = "Teclados",   Controller = "Produtos", Action = "Teclados",   Img = "/img/teclado.png" },
+            new { Label = "Baterias",   Controller = "Produtos", Action = "Baterias",   Img = "/img/bateria.jpeg" },
+            new { Label = "Outros",     Controller = "Produtos", Action = "Outros",     Img = "/img/outros.png" },
+            new { Label = "Acessórios", Controller = "Produtos", Action = "Acessorios", Img = "/img/acessorios.png" }
         };
     }
     <div class="cats-grid">
@@ -59,9 +61,11 @@
                 string imagem = "/img/logo.png";
                 var nomeLower = (produto.TipoRoupa ?? "").ToLowerInvariant();
                 if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
-                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Viola~o neon roxo.png";
+                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/violao.png";
                 else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
                 else if (nomeLower.Contains("bateria")) imagem = "/img/bateria.jpeg";
+                else if (nomeLower.Contains("acessório") || nomeLower.Contains("acessorio") || nomeLower.Contains("palheta") || nomeLower.Contains("cabo") || nomeLower.Contains("afinador") || nomeLower.Contains("correia")) imagem = "/img/acessorios.png";
+                else imagem = "/img/outros.png";
 
                 <div class="product-card">
                     <div class="product-img">
@@ -74,7 +78,11 @@
                             <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
                             <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
                                 <input type="hidden" name="idProduto" value="@produto.IdProduto" />
+                                <input type="hidden" name="nome" value="@produto.TipoRoupa" />
+                                <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                <input type="hidden" name="modelo" value="@produto.Modelo" />
                                 <input type="hidden" name="tamanho" value="@produto.Tamanho" />
+                                <input type="hidden" name="imagemUrl" value="@imagem" />
                                 <button type="submit" class="add-btn" @(!temEstoque ? "disabled" : "")>
                                     @(temEstoque ? "+ Adicionar" : "Fora de estoque")
                                 </button>

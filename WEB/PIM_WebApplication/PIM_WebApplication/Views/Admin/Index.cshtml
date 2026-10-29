@@ -22,7 +22,7 @@
         <div class="admin-card-header">
             <div>
                 <h2 class="admin-card-titulo">Cadastrar Novo Produto</h2>
-                <p class="admin-card-sub">Adicione um novo instrumento e seu estoque inicial ao catálogo</p>
+                <p class="admin-card-sub">Adicione um novo instrumento ou acessório e seu estoque inicial ao catálogo</p>
             </div>
         </div>
 
@@ -31,8 +31,8 @@
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.Nome" class="admin-label">Nome do Instrumento</label>
-                    <input asp-for="NovoProduto.Nome" class="admin-input" placeholder="Ex: Guitarra Stratocaster" />
+                    <label asp-for="NovoProduto.Nome" class="admin-label">Nome do Produto</label>
+                    <input asp-for="NovoProduto.Nome" class="admin-input" placeholder="Ex: Saxofone Alto Michael ou Cabo P10 Ninja" />
                     <span asp-validation-for="NovoProduto.Nome" class="text-danger"></span>
                 </div>
 
@@ -45,24 +45,27 @@
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label class="admin-label">Tipo de Instrumento</label>
+                    <label class="admin-label">Categoria / Tipo</label>
                     <select id="instrumentType" class="admin-select">
-                        <option value="" disabled selected>Selecione um tipo</option>
+                        <option value="" disabled selected>Selecione uma categoria</option>
                         <option value="Guitarra">Guitarra</option>
                         <option value="Violão">Violão</option>
                         <option value="Teclado">Teclado</option>
                         <option value="Bateria">Bateria</option>
+                        <option value="Outros">Outros</option>
+                        <option value="Acessórios">Acessórios</option>
                     </select>
                 </div>
 
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.Tamanho" class="admin-label">Modelo / Categoria</label>
+                    <label asp-for="NovoProduto.Tamanho" class="admin-label">Modelo / Subtipo</label>
                     <select asp-for="NovoProduto.Tamanho" class="admin-select" id="modeloSelect">
                         <option value="" disabled selected>Selecione um modelo</option>
                         <!-- Guitarra -->
                         <option class="guitarra" value="Stratocaster">Stratocaster</option>
                         <option class="guitarra" value="Telecaster">Telecaster</option>
                         <option class="guitarra" value="Les Paul">Les Paul</option>
+                        <option class="guitarra" value="Superstrato">Superstrato</option>
                         <!-- Violão -->
                         <option class="violao" value="Clássico">Clássico</option>
                         <option class="violao" value="Folk">Folk</option>
@@ -75,6 +78,23 @@
                         <option class="bateria" value="Acústica">Acústica</option>
                         <option class="bateria" value="Eletrônica">Eletrônica</option>
                         <option class="bateria" value="Compacta">Compacta</option>
+                        <!-- Outros -->
+                        <option class="outros" value="Saxofone">Saxofone</option>
+                        <option class="outros" value="Violino">Violino</option>
+                        <option class="outros" value="Flauta">Flauta</option>
+                        <option class="outros" value="Trompete">Trompete</option>
+                        <option class="outros" value="Acordeon">Acordeon</option>
+                        <option class="outros" value="Gaita">Gaita</option>
+                        <option class="outros" value="Ukulele">Ukulele</option>
+                        <!-- Acessórios -->
+                        <option class="acessorios" value="Cabos">Cabos</option>
+                        <option class="acessorios" value="Afinadores">Afinadores</option>
+                        <option class="acessorios" value="Palhetas">Palhetas</option>
+                        <option class="acessorios" value="Correias">Correias</option>
+                        <option class="acessorios" value="Suportes">Suportes</option>
+                        <option class="acessorios" value="Cordas">Cordas</option>
+                        <option class="acessorios" value="Capotrastes">Capotrastes</option>
+                        <option class="acessorios" value="Bags e Cases">Bags e Cases</option>
                     </select>
                     <span asp-validation-for="NovoProduto.Tamanho" class="text-danger"></span>
                 </div>
@@ -144,8 +164,8 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Instrumento</th>
-                        <th>Modelo</th>
+                        <th>Produto / Instrumento</th>
+                        <th>Modelo / Tipo</th>
                         <th>Preço</th>
                         <th>Estoque</th>
                         <th>Ações</th>
@@ -188,20 +208,19 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        // Filtra modelos de acordo com o tipo de instrumento selecionado
+        // Filtra modelos de acordo com o tipo de instrumento ou acessorio selecionado
         document.getElementById('instrumentType')?.addEventListener('change', function () {
-            var selected = this.value.toLowerCase();
+            var selected = (this.value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
             var modeloSelect = document.getElementById('modeloSelect');
             for (var i = 0; i < modeloSelect.options.length; i++) {
                 var opt = modeloSelect.options[i];
-                var cls = opt.className.toLowerCase();
+                var cls = (opt.className || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
                 if (!opt.value) { // placeholder option
                     opt.hidden = false;
                     continue;
                 }
                 opt.hidden = (cls !== selected);
             }
-            // Reset selection
             modeloSelect.value = "";
         });
     </script>

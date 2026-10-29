@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Baterias - Loja de Música";
 
     /* ==============================================================================
@@ -264,14 +264,22 @@
                         <span class="instrumento-marca">@produto.Marca</span>
                         <div class="instrumento-preco">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</div>
 
-                        <button type="button" class="btn-carrinho" title="Adicionar ao carrinho">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="9" cy="21" r="1"></circle>
-                                <circle cx="20" cy="21" r="1"></circle>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                            </svg>
-                            <span>Adicionar ao carrinho</span>
-                        </button>
+                        <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
+                            <input type="hidden" name="idProduto" value="@(Math.Abs((produto.Nome + produto.Modelo).GetHashCode()))" />
+                            <input type="hidden" name="nome" value="@produto.Nome" />
+                            <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                            <input type="hidden" name="modelo" value="@produto.Modelo" />
+                            <input type="hidden" name="tamanho" value="@produto.Modelo" />
+                            <input type="hidden" name="imagemUrl" value="@produto.ImagemUrl" />
+                            <button type="submit" class="btn-carrinho" title="Adicionar ao carrinho">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                                <span>Adicionar ao carrinho</span>
+                            </button>
+                        </form>
                     </div>
                 </article>
             }

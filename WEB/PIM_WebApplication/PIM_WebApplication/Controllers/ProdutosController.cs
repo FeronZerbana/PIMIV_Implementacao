@@ -33,5 +33,17 @@ namespace PIM_WebApplication.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult Outros()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Acessorios()
+        {
+            return View();
+        }
     }
 }

@@ -17,7 +17,7 @@
     </div>
 
     <div class="oferta-banner-content">
-        <div class="oferta-tag-anim">Oferta Exclusiva</div>
+        <div class="oferta-tag-anim">OFERTA ESPECIAL</div>
         <h1 class="oferta-banner-title">
             50% OFF<br />
             <span>na sua 1ª compra</span>
@@ -38,7 +38,7 @@
 <div class="ofertas-section">
     <div class="ofertas-section-header">
         <h2>Instrumentos em Oferta</h2>
-        <p>Aproveite até 50% de desconto potencial na primeira compra — confira as oportunidades selecionadas!</p>
+        <p>50% de desconto potencial na primeira compra — confira nosso catálogo de instrumentos!</p>
     </div>
 
     <div class="products-grid">
@@ -52,9 +52,11 @@
                 string imagem = "/img/logo.png";
                 var nomeLower = (produto.TipoRoupa ?? "").ToLowerInvariant();
                 if (nomeLower.Contains("guitarra")) imagem = "/img/guitarra.jpeg";
-                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/Viola~o neon roxo.png";
+                else if (nomeLower.Contains("violão") || nomeLower.Contains("violao")) imagem = "/img/violao.png";
                 else if (nomeLower.Contains("teclado")) imagem = "/img/teclado.png";
                 else if (nomeLower.Contains("bateria")) imagem = "/img/bateria.jpeg";
+                else if (nomeLower.Contains("acessório") || nomeLower.Contains("acessorio") || nomeLower.Contains("palheta") || nomeLower.Contains("cabo") || nomeLower.Contains("afinador") || nomeLower.Contains("correia")) imagem = "/img/acessorios.png";
+                else imagem = "/img/outros.png";
 
                 <div class="product-card">
                     <div class="product-img">
@@ -67,8 +69,11 @@
                             <span class="product-price">R$ @produto.Preco.ToString("N2")</span>
                             <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
                                 <input type="hidden" name="idProduto" value="@produto.IdProduto" />
+                                <input type="hidden" name="nome" value="@produto.TipoRoupa" />
+                                <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                                 <input type="hidden" name="modelo" value="@produto.Modelo" />
                                 <input type="hidden" name="tamanho" value="@produto.Tamanho" />
+                                <input type="hidden" name="imagemUrl" value="@imagem" />
                                 <button type="submit" class="add-btn" @(!temEstoque ? "disabled" : "")>
                                     @(temEstoque ? "+ Adicionar" : "Fora de estoque")
                                 </button>

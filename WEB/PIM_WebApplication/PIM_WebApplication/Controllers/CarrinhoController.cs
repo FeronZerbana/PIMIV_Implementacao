@@ -55,44 +55,74 @@ namespace PIM_WebApplication.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Adicionar(int idProduto, string tamanho = "", string modelo = "", int quantidade = 1)
+        public async Task<IActionResult> Adicionar(
+            int idProduto = 0, 
+            string nome = "", 
+            decimal preco = 0, 
+            string tamanho = "", 
+            string modelo = "", 
+            string imagemUrl = "", 
+            int quantidade = 1)
         {
-            var produto = await _produtoService.ObterPorIdAsync(idProduto);
-            if (produto == null)
+            if (quantidade <= 0) quantidade = 1;
+
+            Produto? produto = null;
+            if (idProduto > 0)
             {
-                TempData["MensagemToast"] = "Produto não encontrado.";
+                produto = await _produtoService.ObterPorIdAsync(idProduto);
+            }
+
+            int finalId;
+            string finalNome;
+            decimal finalPreco;
+            string finalVariacao;
+            int estoqueDisponivel;
+
+            if (produto != null)
+            {
+                finalId = produto.IdProduto;
+                finalNome = produto.TipoRoupa;
+                finalPreco = produto.Preco;
+                finalVariacao = !string.IsNullOrWhiteSpace(modelo) ? modelo : (!string.IsNullOrWhiteSpace(tamanho) ? tamanho : produto.Tamanho);
+                estoqueDisponivel = (produto.Estoque != null && produto.Estoque.QuantidadeDisponivel > 0)
+                    ? produto.Estoque.QuantidadeDisponivel
+                    : 20;
+            }
+            else if (!string.IsNullOrWhiteSpace(nome) && preco > 0)
+            {
+                finalId = idProduto > 0 ? idProduto : Math.Abs((nome + (modelo ?? "")).GetHashCode());
+                finalNome = nome;
+                finalPreco = preco;
+                finalVariacao = !string.IsNullOrWhiteSpace(modelo) ? modelo : (!string.IsNullOrWhiteSpace(tamanho) ? tamanho : "Padrao");
+                estoqueDisponivel = 20;
+            }
+            else
+            {
+                TempData["MensagemToast"] = "Produto nao encontrado.";
                 return RedirectToAction("Index", "Home");
             }
 
-            int estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
-            if (estoqueDisponivel <= 0)
-            {
-                TempData["MensagemToast"] = "Produto fora de estoque!";
-                return Redirect(Request.Headers["Referer"].ToString() ?? "/");
-            }
-
             var itens = ObterCarrinhoDaSessao();
-            var itemExistente = itens.FirstOrDefault(i => i.IdProduto == idProduto);
+            var itemExistente = itens.FirstOrDefault(i => i.IdProduto == finalId);
 
             if (itemExistente != null)
             {
                 if (itemExistente.Quantidade + quantidade > estoqueDisponivel)
                 {
-                    TempData["MensagemToast"] = "Quantidade solicitada excede o estoque disponível.";
+                    TempData["MensagemToast"] = "Quantidade solicitada excede o estoque disponivel.";
                     return RedirectToAction(nameof(Index));
                 }
                 itemExistente.Quantidade += quantidade;
             }
             else
             {
-                string variacao = !string.IsNullOrWhiteSpace(modelo) ? modelo : (!string.IsNullOrWhiteSpace(tamanho) ? tamanho : produto.Tamanho);
-
                 itens.Add(new ItemCarrinhoViewModel
                 {
-                    IdProduto = produto.IdProduto,
-                    Nome = produto.TipoRoupa,
-                    Preco = produto.Preco,
-                    Tamanho = variacao,
+                    IdProduto = finalId,
+                    Nome = finalNome,
+                    Preco = finalPreco,
+                    Tamanho = finalVariacao,
+                    ImagemUrl = imagemUrl,
                     Emoji = string.Empty,
                     Quantidade = Math.Min(quantidade, estoqueDisponivel),
                     EstoqueDisponivel = estoqueDisponivel
@@ -100,7 +130,7 @@ namespace PIM_WebApplication.Controllers
             }
 
             SalvarCarrinhoNaSessao(itens);
-            TempData["MensagemToast"] = "Produto adicionado ao carrinho!";
+            TempData["MensagemToast"] = $"'{finalNome}' adicionado ao carrinho!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -120,7 +150,7 @@ namespace PIM_WebApplication.Controllers
                 else if (item.Quantidade > item.EstoqueDisponivel)
                 {
                     item.Quantidade = item.EstoqueDisponivel;
-                    TempData["MensagemToast"] = "Estoque máximo atingido para este item.";
+                    TempData["MensagemToast"] = "Estoque maximo atingido para este item.";
                 }
                 SalvarCarrinhoNaSessao(itens);
             }
@@ -165,7 +195,7 @@ namespace PIM_WebApplication.Controllers
             else
             {
                 HttpContext.Session.Remove(SessionCouponKey);
-                TempData["MensagemToast"] = "Cupom inválido ou não elegível para esta compra.";
+                TempData["MensagemToast"] = "Cupom invalido ou nao elegivel para esta compra.";
             }
 
             return RedirectToAction(nameof(Index));
@@ -176,28 +206,30 @@ namespace PIM_WebApplication.Controllers
         {
             if (!User.Identity?.IsAuthenticated ?? true)
             {
-                TempData["MensagemToast"] = "Faça seu login para concluir a compra!";
+                TempData["MensagemToast"] = "Faca seu login para concluir a compra!";
                 return RedirectToAction("Login", "Conta", new { returnUrl = Url.Action("Index", "Carrinho") });
             }
 
             var itens = ObterCarrinhoDaSessao();
             if (!itens.Any())
             {
-                TempData["MensagemToast"] = "Seu carrinho está vazio.";
+                TempData["MensagemToast"] = "Seu carrinho esta vazio.";
                 return RedirectToAction(nameof(Index));
             }
 
             var idClienteClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!int.TryParse(idClienteClaim, out int idCliente))
             {
-                TempData["MensagemToast"] = "Sessão inválida. Por favor, autentique-se novamente.";
+                TempData["MensagemToast"] = "Sessao invalida. Por favor, autentique-se novamente.";
                 return RedirectToAction("Login", "Conta");
             }
 
             var dtos = itens.Select(i => new ItemCarrinhoDto
             {
                 CodProduto = i.IdProduto,
-                Quantidade = i.Quantidade
+                Quantidade = i.Quantidade,
+                Nome = i.Nome,
+                PrecoUnitario = i.Preco
             }).ToList();
 
             var cupom = HttpContext.Session.GetString(SessionCouponKey);
@@ -205,7 +237,6 @@ namespace PIM_WebApplication.Controllers
 
             if (sucesso)
             {
-                // Limpa carrinho e cupom
                 HttpContext.Session.Remove(SessionCartKey);
                 HttpContext.Session.Remove(SessionCouponKey);
 
