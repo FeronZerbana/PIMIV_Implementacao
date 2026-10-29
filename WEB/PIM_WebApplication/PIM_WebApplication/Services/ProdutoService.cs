@@ -17,6 +17,7 @@ namespace PIM_WebApplication.Services
         {
             return await _context.Produtos
                 .Include(p => p.Estoque)
+                .OrderByDescending(p => p.IdProduto)
                 .AsNoTracking()
                 .ToListAsync();
         }
@@ -85,7 +86,7 @@ namespace PIM_WebApplication.Services
                                       && !p.TipoInstrumento.ToLower().Contains("palhet"));
             }
 
-            return await query.ToListAsync();
+            return await query.OrderByDescending(p => p.IdProduto).ToListAsync();
         }
 
         public async Task<Produto> CriarProdutoAsync(Produto produto, int estoqueInicial = 0)

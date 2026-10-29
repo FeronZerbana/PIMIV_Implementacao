@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -47,54 +48,100 @@ namespace PIM_WebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CadastrarProduto(NovoProdutoViewModel model)
+        public async Task<IActionResult> CadastrarProduto([Bind(Prefix = "NovoProduto")] NovoProdutoViewModel? model)
         {
-            if (!ModelState.IsValid)
+            model ??= new NovoProdutoViewModel();
+
+            // Extração manual de contingência caso o model binder não tenha mapeado pelo prefixo
+            if (string.IsNullOrWhiteSpace(model.Nome))
             {
-                var produtos = await _produtoService.ObterTodosAsync();
-                var cupons = await _cupomService.ObterTodosAsync();
-                var vm = new AdminViewModel
+                model.Nome = Request.Form["NovoProduto.Nome"].FirstOrDefault() 
+                          ?? Request.Form["Nome"].FirstOrDefault() 
+                          ?? string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Modelo))
+            {
+                model.Modelo = Request.Form["NovoProduto.Modelo"].FirstOrDefault() 
+                            ?? Request.Form["Modelo"].FirstOrDefault() 
+                            ?? string.Empty;
+            }
+
+            if (model.Preco <= 0)
+            {
+                var precoRaw = Request.Form["NovoProduto.Preco"].FirstOrDefault() 
+                            ?? Request.Form["Preco"].FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(precoRaw))
                 {
-                    ProdutosCadastrados = produtos,
-                    NovoProduto = model,
-                    AdicionarEstoque = new AdicionarEstoqueViewModel(),
-                    CuponsCadastrados = cupons,
-                    NovoCupom = new NovoCupomViewModel()
-                };
-                return View("Index", vm);
+                    precoRaw = precoRaw.Replace(",", ".");
+                    if (decimal.TryParse(precoRaw, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal pVal))
+                    {
+                        model.Preco = pVal;
+                    }
+                }
+            }
+
+            if (model.EstoqueInicial <= 0)
+            {
+                var estRaw = Request.Form["NovoProduto.EstoqueInicial"].FirstOrDefault() 
+                          ?? Request.Form["EstoqueInicial"].FirstOrDefault();
+                if (int.TryParse(estRaw, out int estVal))
+                {
+                    model.EstoqueInicial = estVal;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(model.ImagemUrl))
+            {
+                model.ImagemUrl = Request.Form["NovoProduto.ImagemUrl"].FirstOrDefault() 
+                               ?? Request.Form["ImagemUrl"].FirstOrDefault();
+            }
+
+            var arquivoUpload = model.ImagemArquivo 
+                             ?? Request.Form.Files["NovoProduto.ImagemArquivo"] 
+                             ?? Request.Form.Files["ImagemArquivo"] 
+                             ?? (Request.Form.Files.Count > 0 ? Request.Form.Files[0] : null);
+
+            if (string.IsNullOrWhiteSpace(model.Nome) || string.IsNullOrWhiteSpace(model.Modelo) || model.Preco <= 0)
+            {
+                TempData["MensagemToast"] = "Por favor, preencha a categoria, a descrição/modelo e um preço válido maior que zero.";
+                return RedirectToAction(nameof(Index));
             }
 
             string? finalImagemUrl = !string.IsNullOrWhiteSpace(model.ImagemUrl) ? model.ImagemUrl.Trim() : null;
 
-            if (model.ImagemArquivo != null && model.ImagemArquivo.Length > 0)
+            if (arquivoUpload != null && arquivoUpload.Length > 0)
             {
                 var extensoesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
-                var extensao = Path.GetExtension(model.ImagemArquivo.FileName).ToLowerInvariant();
+                var extensao = Path.GetExtension(arquivoUpload.FileName).ToLowerInvariant();
 
                 if (!extensoesPermitidas.Contains(extensao))
                 {
-                    TempData["MensagemToast"] = "Formato de imagem invalido. Sao permitidos apenas arquivos .jpg, .jpeg, .png, .webp e .gif.";
+                    TempData["MensagemToast"] = "Formato de imagem inválido. São permitidos apenas arquivos .jpg, .jpeg, .png, .webp e .gif.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                if (model.ImagemArquivo.Length > 5 * 1024 * 1024)
+                if (arquivoUpload.Length > 5 * 1024 * 1024)
                 {
-                    TempData["MensagemToast"] = "A imagem excede o tamanho maximo de 5MB.";
+                    TempData["MensagemToast"] = "A imagem excede o tamanho máximo de 5MB.";
                     return RedirectToAction(nameof(Index));
                 }
 
-                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img", "uploads");
+                var webRoot = _webHostEnvironment.WebRootPath 
+                           ?? Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot");
+                var uploadsFolder = Path.Combine(webRoot, "img", "uploads");
+
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                var nomeArquivoUnico = $"{Guid.NewGuid():N}{extensao}";
+                var nomeArquivoUnico = $"{DateTime.UtcNow:yyyyMMddHHmmss}_{Guid.NewGuid():N}{extensao}";
                 var caminhoCompleto = Path.Combine(uploadsFolder, nomeArquivoUnico);
 
                 using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
                 {
-                    await model.ImagemArquivo.CopyToAsync(stream);
+                    await arquivoUpload.CopyToAsync(stream);
                 }
 
                 finalImagemUrl = $"/img/uploads/{nomeArquivoUnico}";
@@ -108,29 +155,43 @@ namespace PIM_WebApplication.Controllers
                 ImagemUrl = finalImagemUrl
             };
 
-            await _produtoService.CriarProdutoAsync(produto, model.EstoqueInicial);
-            TempData["MensagemToast"] = $"Instrumento '{produto.Modelo}' cadastrado com sucesso na categoria '{produto.TipoInstrumento}'!";
+            try
+            {
+                await _produtoService.CriarProdutoAsync(produto, model.EstoqueInicial);
+                TempData["MensagemToast"] = $"Instrumento '{produto.Modelo}' cadastrado com sucesso na categoria '{produto.TipoInstrumento}' com {model.EstoqueInicial} unidades em estoque!";
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemToast"] = $"Erro ao cadastrar instrumento: {ex.Message}";
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AdicionarEstoque(AdicionarEstoqueViewModel model)
+        public async Task<IActionResult> AdicionarEstoque([Bind(Prefix = "AdicionarEstoque")] AdicionarEstoqueViewModel? model)
         {
-            if (!ModelState.IsValid)
+            model ??= new AdicionarEstoqueViewModel();
+
+            if (model.IdProduto <= 0)
             {
-                var produtos = await _produtoService.ObterTodosAsync();
-                var cupons = await _cupomService.ObterTodosAsync();
-                var vm = new AdminViewModel
-                {
-                    ProdutosCadastrados = produtos,
-                    NovoProduto = new NovoProdutoViewModel(),
-                    AdicionarEstoque = model,
-                    CuponsCadastrados = cupons,
-                    NovoCupom = new NovoCupomViewModel()
-                };
-                return View("Index", vm);
+                var idStr = Request.Form["AdicionarEstoque.IdProduto"].FirstOrDefault() 
+                         ?? Request.Form["IdProduto"].FirstOrDefault();
+                if (int.TryParse(idStr, out int idVal)) model.IdProduto = idVal;
+            }
+
+            if (model.Quantidade <= 0)
+            {
+                var qtdStr = Request.Form["AdicionarEstoque.Quantidade"].FirstOrDefault() 
+                          ?? Request.Form["Quantidade"].FirstOrDefault();
+                if (int.TryParse(qtdStr, out int qtdVal)) model.Quantidade = qtdVal;
+            }
+
+            if (model.IdProduto <= 0 || model.Quantidade <= 0)
+            {
+                TempData["MensagemToast"] = "Selecione um produto e informe uma quantidade positiva para o estoque.";
+                return RedirectToAction(nameof(Index));
             }
 
             try
@@ -172,11 +233,27 @@ namespace PIM_WebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CadastrarCupom(NovoCupomViewModel model)
+        public async Task<IActionResult> CadastrarCupom([Bind(Prefix = "NovoCupom")] NovoCupomViewModel? model)
         {
-            if (!ModelState.IsValid)
+            model ??= new NovoCupomViewModel();
+
+            if (string.IsNullOrWhiteSpace(model.Valor))
             {
-                TempData["MensagemToast"] = "Por favor, preencha o código e o desconto (1% a 99%) corretamente.";
+                model.Valor = Request.Form["NovoCupom.Valor"].FirstOrDefault() 
+                           ?? Request.Form["Valor"].FirstOrDefault() 
+                           ?? string.Empty;
+            }
+
+            if (model.Desconto <= 0)
+            {
+                var descStr = Request.Form["NovoCupom.Desconto"].FirstOrDefault() 
+                           ?? Request.Form["Desconto"].FirstOrDefault();
+                if (int.TryParse(descStr, out int descVal)) model.Desconto = descVal;
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Valor) || model.Desconto < 1 || model.Desconto > 99)
+            {
+                TempData["MensagemToast"] = "Por favor, preencha o código e o percentual de desconto (1% a 99%) corretamente.";
                 return RedirectToAction(nameof(Index));
             }
 
