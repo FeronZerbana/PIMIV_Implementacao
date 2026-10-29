@@ -153,9 +153,12 @@
                 </div>
 
                 <div class="admin-field">
-                    <label asp-for="NovoCupom.Desconto" class="admin-label">Percentual de Desconto (1 a 99%)</label>
-                    <input asp-for="NovoCupom.Desconto" type="number" min="1" max="99" class="admin-input" placeholder="Ex: 15 (para 15% OFF)" required />
+                    <label asp-for="NovoCupom.Desconto" class="admin-label">Desconto do Cupom (Porcentagem de 1% a 99%)</label>
+                    <input asp-for="NovoCupom.Desconto" type="number" min="1" max="990" class="admin-input" placeholder="Ex: 50 (para 50% de desconto)" required />
                     <span asp-validation-for="NovoCupom.Desconto" class="text-danger"></span>
+                    <small style="color: var(--muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
+                        Digite o desconto desejado (ex: digite 50 para conceder 50% de desconto).
+                    </small>
                 </div>
             </div>
 

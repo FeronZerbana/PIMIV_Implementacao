@@ -244,16 +244,28 @@ namespace PIM_WebApplication.Controllers
                            ?? string.Empty;
             }
 
-            if (model.Desconto <= 0)
+            var descStr = Request.Form["NovoCupom.Desconto"].FirstOrDefault() 
+                       ?? Request.Form["Desconto"].FirstOrDefault() 
+                       ?? (model.Desconto > 0 ? model.Desconto.ToString() : string.Empty);
+
+            if (!string.IsNullOrWhiteSpace(descStr))
             {
-                var descStr = Request.Form["NovoCupom.Desconto"].FirstOrDefault() 
-                           ?? Request.Form["Desconto"].FirstOrDefault();
-                if (int.TryParse(descStr, out int descVal)) model.Desconto = descVal;
+                descStr = descStr.Replace("%", "").Trim();
+                if (int.TryParse(descStr, out int descVal))
+                {
+                    model.Desconto = descVal;
+                }
+            }
+
+            // Normaliza escala x10 caso seja informado valor em escala multiplicada (ex: 500 para 50%)
+            if (model.Desconto >= 100 && model.Desconto <= 990)
+            {
+                model.Desconto = (int)Math.Round(model.Desconto / 10.0);
             }
 
             if (string.IsNullOrWhiteSpace(model.Valor) || model.Desconto < 1 || model.Desconto > 99)
             {
-                TempData["MensagemToast"] = "Por favor, preencha o código e o percentual de desconto (1% a 99%) corretamente.";
+                TempData["MensagemToast"] = "Por favor, preencha o código do cupom e o desconto corretamente (ex: digite 50 para conceder 50% de desconto).";
                 return RedirectToAction(nameof(Index));
             }
 

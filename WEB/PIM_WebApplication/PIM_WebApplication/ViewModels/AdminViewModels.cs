@@ -62,7 +62,7 @@ namespace PIM_WebApplication.ViewModels
         public string Valor { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Informe a porcentagem de desconto.")]
-        [Range(1, 99, ErrorMessage = "O desconto deve ser entre 1% e 99%.")]
+        [Range(1, 990, ErrorMessage = "O desconto deve ser entre 1% e 99%.")]
         [Display(Name = "DESCONTO (%)")]
         public int Desconto { get; set; }
     }

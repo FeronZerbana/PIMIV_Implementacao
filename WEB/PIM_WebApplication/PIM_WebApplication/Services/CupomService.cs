@@ -80,6 +80,12 @@ namespace PIM_WebApplication.Services
                 return (false, "O código do cupom é obrigatório.");
             }
 
+            // Normaliza escala x10 caso seja informado valor em escala multiplicada (ex: 500 para 50%)
+            if (desconto >= 100 && desconto <= 990)
+            {
+                desconto = (int)Math.Round(desconto / 10.0);
+            }
+
             if (desconto < 1 || desconto > 99)
             {
                 return (false, "O percentual de desconto deve estar entre 1% e 99%.");
