@@ -31,5 +31,8 @@ namespace PIM_WebApplication.Models
 
         [Column("isAdmin")]
         public bool IsAdmin { get; set; } = false;
+
+        [Column("FirstTime")]
+        public bool FirstTime { get; set; } = true;
     }
 }

@@ -21,6 +21,7 @@ namespace PIM_WebApplication
             // 2. Registro de Servicos de Dominio e Negocio
             builder.Services.AddScoped<IProdutoService, ProdutoService>();
             builder.Services.AddScoped<IEstoqueService, EstoqueService>();
+            builder.Services.AddScoped<ICupomService, CupomService>();
             builder.Services.AddScoped<IVendaService, VendaService>();
             builder.Services.AddScoped<IUsuarioService, UsuarioService>();
             builder.Services.AddHttpContextAccessor();

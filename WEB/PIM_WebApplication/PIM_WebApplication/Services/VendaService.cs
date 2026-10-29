@@ -7,43 +7,44 @@ namespace PIM_WebApplication.Services
     public interface IVendaService
     {
         Task<(bool Sucesso, string Mensagem, int VendaId)> FinalizarVendaAsync(int codCliente, List<ItemCarrinhoDto> itens, string? codigoCupom = null);
-        Task<decimal> CalcularDescontoCupomAsync(string codigoCupom, decimal subtotal);
+        Task<decimal> CalcularDescontoCupomAsync(string codigoCupom, decimal subtotal, int? codCliente = null);
         Task<List<VendaHistoricoDto>> ObterHistoricoPorClienteAsync(int codCliente);
     }
 
     public class VendaService : IVendaService
     {
         private readonly AppDbContext _context;
+        private readonly ICupomService _cupomService;
 
-        public VendaService(AppDbContext context)
+        public VendaService(AppDbContext context, ICupomService cupomService)
         {
             _context = context;
+            _cupomService = cupomService;
         }
 
-        public Task<decimal> CalcularDescontoCupomAsync(string codigoCupom, decimal subtotal)
+        public async Task<decimal> CalcularDescontoCupomAsync(string codigoCupom, decimal subtotal, int? codCliente = null)
         {
-            if (string.IsNullOrWhiteSpace(codigoCupom))
+            if (string.IsNullOrWhiteSpace(codigoCupom) || subtotal <= 0)
             {
-                return Task.FromResult(0m);
+                return 0m;
             }
 
-            var cupomNormalizado = codigoCupom.Trim().ToUpperInvariant();
-            decimal desconto = cupomNormalizado switch
+            var (valido, _, percentualDesconto) = await _cupomService.ValidarCupomClienteAsync(codigoCupom, codCliente);
+            if (!valido || percentualDesconto <= 0)
             {
-                "FRETE22" => 20m,
-                "DEV10" => 10m,
-                "SHOPNOW15" => 15m,
-                _ => 0m
-            };
+                return 0m;
+            }
+
+            decimal desconto = Math.Round(subtotal * (percentualDesconto / 100m), 2, MidpointRounding.AwayFromZero);
 
             // Regra RN-PREC-04: Desconto maximo permitido de 50% do subtotal
-            decimal maxDesconto = subtotal * 0.50m;
+            decimal maxDesconto = Math.Round(subtotal * 0.50m, 2, MidpointRounding.AwayFromZero);
             if (desconto > maxDesconto)
             {
                 desconto = maxDesconto;
             }
 
-            return Task.FromResult(desconto);
+            return desconto;
         }
 
         public async Task<(bool Sucesso, string Mensagem, int VendaId)> FinalizarVendaAsync(int codCliente, List<ItemCarrinhoDto> itens, string? codigoCupom = null)
@@ -60,6 +61,16 @@ namespace PIM_WebApplication.Services
                 return (false, "Cliente nao encontrado.", 0);
             }
 
+            // Validacao prévia de cupom se informado
+            if (!string.IsNullOrWhiteSpace(codigoCupom))
+            {
+                var (cupomValido, msgCupom, _) = await _cupomService.ValidarCupomClienteAsync(codigoCupom, codCliente);
+                if (!cupomValido)
+                {
+                    return (false, msgCupom, 0);
+                }
+            }
+
             // Executar em transacao atomica
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -73,6 +84,8 @@ namespace PIM_WebApplication.Services
                 _context.Vendas.Add(venda);
                 await _context.SaveChangesAsync();
 
+                decimal subtotalTotal = 0m;
+
                 foreach (var item in itens)
                 {
                     var produto = await _context.Produtos.FindAsync(item.CodProduto);
@@ -80,7 +93,7 @@ namespace PIM_WebApplication.Services
                     {
                         produto = new Produto
                         {
-                            TipoInstrumento = !string.IsNullOrWhiteSpace(item.Nome) ? item.Nome : $"Instrumento #{item.CodProduto}",
+                            TipoInstrumento = !string.IsNullOrWhiteSpace(item.Nome) ? item.Nome : "Outros",
                             Preco = item.PrecoUnitario > 0 ? item.PrecoUnitario : 999.00m,
                             Modelo = "Padrao"
                         };
@@ -106,17 +119,34 @@ namespace PIM_WebApplication.Services
                         throw new InvalidOperationException($"Estoque insuficiente para o instrumento '{produto.TipoInstrumento}'. Disponivel: {estoque.QuantidadeDisponivel}.");
                     }
 
+                    decimal valorItem = produto.Preco;
+                    decimal totalLinha = Math.Round(valorItem * item.Quantidade, 2, MidpointRounding.AwayFromZero);
+                    subtotalTotal += totalLinha;
+
                     var itemVenda = new ItemVenda
                     {
                         CodVenda = venda.IdVenda,
                         CodProduto = item.CodProduto,
                         Quantidade = item.Quantidade,
-                        ValorUnitario = produto.Preco,
-                        ValorTotal = Math.Round(produto.Preco * item.Quantidade, 2, MidpointRounding.AwayFromZero)
+                        ValorUnitario = valorItem,
+                        ValorTotal = totalLinha
                     };
 
                     estoque.QuantidadeDisponivel -= item.Quantidade;
                     _context.ItemVendas.Add(itemVenda);
+                }
+
+                // Registro do uso unico do cupom
+                if (!string.IsNullOrWhiteSpace(codigoCupom))
+                {
+                    await _cupomService.RegistrarUsoCupomAsync(codCliente, codigoCupom, venda.IdVenda);
+                }
+
+                // Atualizacao da regra de primeira compra (FirstTime)
+                if (cliente.FirstTime)
+                {
+                    cliente.FirstTime = false;
+                    _context.Clientes.Update(cliente);
                 }
 
                 await _context.SaveChangesAsync();

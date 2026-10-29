@@ -1,85 +1,10 @@
-﻿@{
+@model IEnumerable<PIM_WebApplication.Models.Produto>
+@{
     ViewData["Title"] = "Guitarras - Loja de Música";
+    var fallbackCategoria = Url.Content("~/img/guitarra.jpeg");
 
-    /* ==============================================================================
-       DADOS DEMONSTRATIVOS PARA PRÉVIA VISUAL (FRONT-END)
-       ------------------------------------------------------------------------------
-       O modelo atual (Produto.cs) e a base de dados ainda não possuem campos de marca,
-       modelo detalhado, especificações técnicas e categorização por instrumento.
-       Estes dados são demonstrativos e servem para validação da interface visual,
-       respeitando o layout profissional e os mockups do projeto.
-       ============================================================================== */
-
-    var instrumentos = new[]
-    {
-        new {
-            Nome = "Guitarra Fender Player Stratocaster",
-            Marca = "FENDER",
-            Modelo = "Player Stratocaster",
-            Preco = 6899.00m,
-            ImagemUrl = Url.Content("~/img/guitarra.jpeg"),
-            MaisVendido = true
-        },
-        new {
-            Nome = "Guitarra Tagima TG-530 Stratocaster",
-            Marca = "TAGIMA",
-            Modelo = "TG-530 Woodstock",
-            Preco = 899.00m,
-            ImagemUrl = Url.Content("~/img/guitarra.jpeg"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Guitarra Epiphone Les Paul Standard 60s",
-            Marca = "EPIPHONE",
-            Modelo = "Les Paul Standard 60s",
-            Preco = 5499.00m,
-            ImagemUrl = Url.Content("~/img/guitarra.jpeg"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Guitarra Ibanez GRG121DX Superstrato",
-            Marca = "IBANEZ",
-            Modelo = "GRG121DX GIO",
-            Preco = 1999.00m,
-            ImagemUrl = Url.Content("~/img/guitarra.jpeg"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Guitarra PRS SE Custom 24 Vintage Sunburst",
-            Marca = "PRS",
-            Modelo = "SE Custom 24",
-            Preco = 7299.00m,
-            ImagemUrl = Url.Content("~/img/guitarra.jpeg"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Guitarra Fender Player Telecaster Butterscotch",
-            Marca = "FENDER",
-            Modelo = "Player Telecaster",
-            Preco = 6999.00m,
-            ImagemUrl = Url.Content("~/img/guitarra.jpeg"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Guitarra Jackson JS22 Dinky Satin Black",
-            Marca = "JACKSON",
-            Modelo = "JS Series Dinky JS22",
-            Preco = 2299.00m,
-            ImagemUrl = Url.Content("~/img/guitarra.jpeg"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Guitarra Ibanez Artcore AS53 Semi-Acústica",
-            Marca = "IBANEZ",
-            Modelo = "Artcore AS53",
-            Preco = 3899.00m,
-            ImagemUrl = Url.Content("~/img/guitarra.jpeg"),
-            MaisVendido = false
-        }
-    };
-
-    var marcas = new[] { "Fender", "Ibanez", "Gibson / Epiphone", "Tagima", "PRS", "Jackson", "Outras" };
-    var tipos = new[] { "Stratocaster", "Telecaster", "Les Paul", "Superstrato", "Semi-acústica", "7 Cordas" };
+    var marcas = new[] { "Fender", "Ibanez", "Gibson", "Tagima", "PRS", "Jackson", "Outras" };
+    var tipos = new[] { "Stratocaster", "Telecaster", "Les Paul", "Superstrato", "Semi-acústica" };
 }
 
 @section Styles {
@@ -103,42 +28,31 @@
                 <p class="categoria-descricao">Pegada, atitude e timbres marcantes para elevar sua performance.</p>
             </div>
 
-            <!-- Ilustração Neon em SVG: Guitarra Elétrica e Notas -->
             <div class="categoria-neon-art" aria-hidden="true">
                 <svg viewBox="0 0 220 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Corpo da guitarra elétrica (double cutaway / Strat) -->
                     <path d="M125 38 C120 28, 126 18, 140 22 C146 24, 144 32, 148 35 C156 26, 166 30, 162 44 C160 52, 154 58, 150 66 C158 72, 160 82, 146 86 C132 88, 116 80, 112 66 C110 56, 116 48, 125 38 Z"
                           stroke="#c084fc" stroke-width="2.2" stroke-linejoin="round" />
-                    <!-- Escudo e captadores -->
                     <path d="M130 42 C135 44, 142 42, 146 45 C147 55, 142 65, 134 68 Z" stroke="#a855f7" stroke-width="1.2" />
                     <rect x="133" y="47" width="10" height="3" rx="1.5" stroke="#c084fc" stroke-width="1.2" />
                     <rect x="131" y="54" width="10" height="3" rx="1.5" stroke="#c084fc" stroke-width="1.2" />
                     <rect x="129" y="61" width="10" height="3" rx="1.5" stroke="#c084fc" stroke-width="1.2" />
-                    <!-- Ponte / Tremolo -->
                     <rect x="126" y="68" width="12" height="4" rx="1.5" stroke="#c084fc" stroke-width="1.5" />
-                    <!-- Braço da guitarra -->
                     <line x1="126" y1="38" x2="65" y2="10" stroke="#c084fc" stroke-width="3.5" stroke-linecap="round" />
-                    <!-- Trastes -->
                     <line x1="114" y1="32" x2="112" y2="37" stroke="#a855f7" stroke-width="1.2" />
                     <line x1="102" y1="27" x2="100" y2="32" stroke="#a855f7" stroke-width="1.2" />
                     <line x1="90" y1="21" x2="88" y2="26" stroke="#a855f7" stroke-width="1.2" />
                     <line x1="78" y1="16" x2="76" y2="21" stroke="#a855f7" stroke-width="1.2" />
-                    <!-- Headstock assimétrico -->
                     <path d="M65 10 L44 3 L40 10 L52 14 L62 17 Z" stroke="#c084fc" stroke-width="1.8" />
-                    <!-- 6 tarraxas em linha -->
                     <circle cx="46" cy="4" r="1.3" fill="#e9d5ff" />
                     <circle cx="49" cy="6" r="1.3" fill="#e9d5ff" />
                     <circle cx="52" cy="8" r="1.3" fill="#e9d5ff" />
                     <circle cx="55" cy="10" r="1.3" fill="#e9d5ff" />
                     <circle cx="58" cy="12" r="1.3" fill="#e9d5ff" />
                     <circle cx="61" cy="14" r="1.3" fill="#e9d5ff" />
-
-                    <!-- Notas e ondas sonoras -->
                     <path d="M180 18 Q190 8 200 18 L200 34" stroke="#e9d5ff" stroke-width="1.8" stroke-linecap="round" />
                     <ellipse cx="194" cy="34" rx="3.5" ry="2.5" fill="#e9d5ff" transform="rotate(-20 194 34)" />
                     <path d="M175 42 Q183 36 187 44 L187 54" stroke="#a855f7" stroke-width="1.5" stroke-linecap="round" />
                     <ellipse cx="183" cy="54" rx="3" ry="2" fill="#a855f7" transform="rotate(-20 183 54)" />
-                    <!-- Relâmpago / onda rock -->
                     <path d="M168 66 L175 60 L173 68 L182 62" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
             </div>
@@ -155,32 +69,16 @@
                 <option value="populares" selected>Mais populares</option>
                 <option value="menor-preco">Menor preço</option>
                 <option value="maior-preco">Maior preço</option>
-                <option value="recentes">Mais recentes</option>
-                <option value="avaliados">Mais avaliados</option>
             </select>
         </div>
     </div>
 
-    <!-- CORPO PRINCIPAL: FILTROS + GRADE -->
-    <div class="categoria-layout">
-        <!-- PAINEL LATERAL DE FILTROS -->
-        <aside class="categoria-sidebar" aria-label="Filtros de produtos">
-            <div class="filtro-titulo-principal">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="4" y1="21" x2="4" y2="14"></line>
-                    <line x1="4" y1="10" x2="4" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12" y2="3"></line>
-                    <line x1="20" y1="21" x2="20" y2="16"></line>
-                    <line x1="20" y1="12" x2="20" y2="3"></line>
-                    <line x1="1" y1="14" x2="7" y2="14"></line>
-                    <line x1="9" y1="8" x2="15" y2="8"></line>
-                    <line x1="17" y1="16" x2="23" y2="16"></line>
-                </svg>
-                <span>Filtrar</span>
-            </div>
+    <!-- ÁREA PRINCIPAL: FILTROS + PRODUTOS -->
+    <div class="categoria-conteudo">
+        <!-- BARRA LATERAL DE FILTROS -->
+        <aside class="categoria-filtros" aria-label="Filtros de produtos">
+            <h2 class="filtros-titulo">Filtros</h2>
 
-            <!-- Filtro de Marca -->
             <div class="filtro-secao">
                 <div class="filtro-secao-header">
                     <span>Marca</span>
@@ -201,7 +99,6 @@
                 </ul>
             </div>
 
-            <!-- Filtro de Tipo -->
             <div class="filtro-secao">
                 <div class="filtro-secao-header">
                     <span>Tipo</span>
@@ -222,7 +119,6 @@
                 </ul>
             </div>
 
-            <!-- Filtro de Faixa de Preço -->
             <div class="filtro-secao">
                 <div class="filtro-secao-header">
                     <span>Faixa de preço</span>
@@ -231,10 +127,10 @@
                     </svg>
                 </div>
                 <div class="filtro-preco-box">
-                    <input type="range" min="800" max="20000" value="7000" class="preco-slider-range" aria-label="Faixa de preço" />
+                    <input type="range" min="500" max="15000" value="7000" class="preco-slider-range" aria-label="Faixa de preço" />
                     <div class="preco-valores">
-                        <span>R$ 800</span>
-                        <span>R$ 20.000+</span>
+                        <span>R$ 500</span>
+                        <span>R$ 15.000+</span>
                     </div>
                 </div>
             </div>
@@ -242,41 +138,50 @@
 
         <!-- GRADE DE PRODUTOS -->
         <main class="categoria-produtos-grid" role="region" aria-label="Lista de Guitarras">
-            @foreach (var produto in instrumentos)
+            @if (Model != null && Model.Any())
             {
-                <article class="instrumento-card">
-                    @if (produto.MaisVendido)
-                    {
-                        <span class="instrumento-badge">Mais vendido</span>
-                    }
+                @foreach (var produto in Model)
+                {
+                    var imgFinal = !string.IsNullOrWhiteSpace(produto.ImagemUrl) ? produto.ImagemUrl : fallbackCategoria;
+                    var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
+                    var temEstoque = estoqueDisponivel > 0;
 
-                    <div class="instrumento-img-area">
-                        <img src="@produto.ImagemUrl" alt="@produto.Nome" class="instrumento-img" loading="lazy" />
-                    </div>
+                    <article class="instrumento-card">
+                        <div class="instrumento-img-area">
+                            <img src="@imgFinal" alt="@produto.Modelo" class="instrumento-img" loading="lazy" onerror="this.onerror=null;this.src='@fallbackCategoria';" />
+                        </div>
 
-                    <div class="instrumento-info">
-                        <h2 class="instrumento-nome" title="@produto.Nome">@produto.Nome</h2>
-                        <span class="instrumento-marca">@produto.Marca</span>
-                        <div class="instrumento-preco">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</div>
+                        <div class="instrumento-info">
+                            <h2 class="instrumento-nome" title="@produto.Modelo">@produto.Modelo</h2>
+                            <span class="instrumento-marca">@produto.TipoInstrumento</span>
+                            <div class="instrumento-preco">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</div>
 
-                        <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
-                            <input type="hidden" name="idProduto" value="@(Math.Abs((produto.Nome + produto.Modelo).GetHashCode()))" />
-                            <input type="hidden" name="nome" value="@produto.Nome" />
-                            <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
-                            <input type="hidden" name="modelo" value="@produto.Modelo" />
-                            <input type="hidden" name="tamanho" value="@produto.Modelo" />
-                            <input type="hidden" name="imagemUrl" value="@produto.ImagemUrl" />
-                            <button type="submit" class="btn-carrinho" title="Adicionar ao carrinho">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="9" cy="21" r="1"></circle>
-                                    <circle cx="20" cy="21" r="1"></circle>
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                </svg>
-                                <span>Adicionar ao carrinho</span>
-                            </button>
-                        </form>
-                    </div>
-                </article>
+                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
+                                <input type="hidden" name="idProduto" value="@produto.IdProduto" />
+                                <input type="hidden" name="nome" value="@produto.TipoInstrumento" />
+                                <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                <input type="hidden" name="modelo" value="@produto.Modelo" />
+                                <input type="hidden" name="tamanho" value="@produto.Modelo" />
+                                <input type="hidden" name="imagemUrl" value="@imgFinal" />
+                                <button type="submit" class="btn-carrinho" title="Adicionar ao carrinho" @(!temEstoque ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "")>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="9" cy="21" r="1"></circle>
+                                        <circle cx="20" cy="21" r="1"></circle>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                    </svg>
+                                    <span>@(temEstoque ? "Adicionar ao carrinho" : "Fora de estoque")</span>
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                }
+            }
+            else
+            {
+                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--muted);">
+                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Nenhum produto cadastrado nesta categoria no momento.</p>
+                    <a asp-controller="Home" asp-action="Index" class="btn-hero" style="display:inline-block; margin-top:1rem;">Ver outras categorias</a>
+                </div>
             }
         </main>
     </div>

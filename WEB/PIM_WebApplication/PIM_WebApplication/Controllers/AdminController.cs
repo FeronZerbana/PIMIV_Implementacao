@@ -11,22 +11,31 @@ namespace PIM_WebApplication.Controllers
     {
         private readonly IProdutoService _produtoService;
         private readonly IEstoqueService _estoqueService;
+        private readonly ICupomService _cupomService;
 
-        public AdminController(IProdutoService produtoService, IEstoqueService estoqueService)
+        public AdminController(
+            IProdutoService produtoService, 
+            IEstoqueService estoqueService,
+            ICupomService cupomService)
         {
             _produtoService = produtoService;
             _estoqueService = estoqueService;
+            _cupomService = cupomService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             var produtos = await _produtoService.ObterTodosAsync();
+            var cupons = await _cupomService.ObterTodosAsync();
+
             var viewModel = new AdminViewModel
             {
                 ProdutosCadastrados = produtos,
                 NovoProduto = new NovoProdutoViewModel(),
-                AdicionarEstoque = new AdicionarEstoqueViewModel()
+                AdicionarEstoque = new AdicionarEstoqueViewModel(),
+                CuponsCadastrados = cupons,
+                NovoCupom = new NovoCupomViewModel()
             };
 
             return View(viewModel);
@@ -39,11 +48,14 @@ namespace PIM_WebApplication.Controllers
             if (!ModelState.IsValid)
             {
                 var produtos = await _produtoService.ObterTodosAsync();
+                var cupons = await _cupomService.ObterTodosAsync();
                 var vm = new AdminViewModel
                 {
                     ProdutosCadastrados = produtos,
                     NovoProduto = model,
-                    AdicionarEstoque = new AdicionarEstoqueViewModel()
+                    AdicionarEstoque = new AdicionarEstoqueViewModel(),
+                    CuponsCadastrados = cupons,
+                    NovoCupom = new NovoCupomViewModel()
                 };
                 return View("Index", vm);
             }
@@ -52,12 +64,12 @@ namespace PIM_WebApplication.Controllers
             {
                 TipoInstrumento = model.Nome.Trim(),
                 Preco = model.Preco,
-                Modelo = !string.IsNullOrWhiteSpace(model.Modelo) ? model.Modelo : (model.Tamanho ?? string.Empty),
+                Modelo = !string.IsNullOrWhiteSpace(model.Modelo) ? model.Modelo.Trim() : (model.Tamanho ?? string.Empty),
                 ImagemUrl = !string.IsNullOrWhiteSpace(model.ImagemUrl) ? model.ImagemUrl.Trim() : null
             };
 
             await _produtoService.CriarProdutoAsync(produto, model.EstoqueInicial);
-            TempData["MensagemToast"] = $"Instrumento '{produto.TipoInstrumento}' cadastrado com sucesso!";
+            TempData["MensagemToast"] = $"Instrumento '{produto.Modelo}' cadastrado com sucesso na categoria '{produto.TipoInstrumento}'!";
 
             return RedirectToAction(nameof(Index));
         }
@@ -69,11 +81,14 @@ namespace PIM_WebApplication.Controllers
             if (!ModelState.IsValid)
             {
                 var produtos = await _produtoService.ObterTodosAsync();
+                var cupons = await _cupomService.ObterTodosAsync();
                 var vm = new AdminViewModel
                 {
                     ProdutosCadastrados = produtos,
                     NovoProduto = new NovoProdutoViewModel(),
-                    AdicionarEstoque = model
+                    AdicionarEstoque = model,
+                    CuponsCadastrados = cupons,
+                    NovoCupom = new NovoCupomViewModel()
                 };
                 return View("Index", vm);
             }
@@ -110,6 +125,39 @@ namespace PIM_WebApplication.Controllers
             catch (Exception ex)
             {
                 TempData["MensagemToast"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CadastrarCupom(NovoCupomViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["MensagemToast"] = "Por favor, preencha o código e o desconto (1% a 99%) corretamente.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var (sucesso, mensagem) = await _cupomService.CriarCupomAsync(model.Valor, model.Desconto);
+            TempData["MensagemToast"] = mensagem;
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExcluirCupom(int id)
+        {
+            bool excluido = await _cupomService.ExcluirCupomAsync(id);
+            if (excluido)
+            {
+                TempData["MensagemToast"] = "Cupom removido com sucesso do banco de dados.";
+            }
+            else
+            {
+                TempData["MensagemToast"] = "Cupom não encontrado.";
             }
 
             return RedirectToAction(nameof(Index));

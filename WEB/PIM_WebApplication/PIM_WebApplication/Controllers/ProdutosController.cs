@@ -1,9 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
+using PIM_WebApplication.Services;
 
 namespace PIM_WebApplication.Controllers
 {
     public class ProdutosController : Controller
     {
+        private readonly IProdutoService _produtoService;
+
+        public ProdutosController(IProdutoService produtoService)
+        {
+            _produtoService = produtoService;
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -11,39 +19,45 @@ namespace PIM_WebApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult Guitarras()
+        public async Task<IActionResult> Guitarras()
         {
-            return View();
+            var produtos = await _produtoService.ObterPorCategoriaAsync("Guitarras");
+            return View(produtos);
         }
 
         [HttpGet]
-        public IActionResult Violoes()
+        public async Task<IActionResult> Violoes()
         {
-            return View();
+            var produtos = await _produtoService.ObterPorCategoriaAsync("Violões");
+            return View(produtos);
         }
 
         [HttpGet]
-        public IActionResult Teclados()
+        public async Task<IActionResult> Teclados()
         {
-            return View();
+            var produtos = await _produtoService.ObterPorCategoriaAsync("Teclados");
+            return View(produtos);
         }
 
         [HttpGet]
-        public IActionResult Baterias()
+        public async Task<IActionResult> Baterias()
         {
-            return View();
+            var produtos = await _produtoService.ObterPorCategoriaAsync("Baterias");
+            return View(produtos);
         }
 
         [HttpGet]
-        public IActionResult Outros()
+        public async Task<IActionResult> Outros()
         {
-            return View();
+            var produtos = await _produtoService.ObterPorCategoriaAsync("Outros");
+            return View(produtos);
         }
 
         [HttpGet]
-        public IActionResult Acessorios()
+        public async Task<IActionResult> Acessorios()
         {
-            return View();
+            var produtos = await _produtoService.ObterPorCategoriaAsync("Acessórios");
+            return View(produtos);
         }
     }
 }

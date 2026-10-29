@@ -5,9 +5,17 @@ namespace PIM_WebApplication.ViewModels
         public List<ItemCarrinhoViewModel> Itens { get; set; } = new();
         public decimal Subtotal => Itens.Sum(i => i.Subtotal);
         public int TotalQuantidade => Itens.Sum(i => i.Quantidade);
-        public decimal Desconto { get; set; } = 0m;
+        
+        public bool PrimeiraCompraElegivel { get; set; } = false;
+        public decimal DescontoPrimeiraCompra { get; set; } = 0m;
+        public decimal DescontoCupom { get; set; } = 0m;
+
+        // Desconto total consolidado respeitando o teto de 50% da regra RN-PREC-04
+        public decimal Desconto => Math.Min(Math.Round(Subtotal * 0.50m, 2), DescontoPrimeiraCompra + DescontoCupom);
+
         public decimal Frete => (Subtotal >= 99m || Subtotal == 0m) ? 0m : 15m;
         public decimal Total => Math.Max(0m, Subtotal - Desconto + Frete);
+
         public string? CupomAplicado { get; set; }
         public string? MensagemCupom { get; set; }
         public bool CupomValido { get; set; }

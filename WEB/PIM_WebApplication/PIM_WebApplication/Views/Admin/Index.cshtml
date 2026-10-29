@@ -1,28 +1,26 @@
 @model PIM_WebApplication.ViewModels.AdminViewModel
 @{
-    ViewData["Title"] = "Painel do Administrador";
+    ViewData["Title"] = "Painel Administrativo";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 }
 
-<div class="admin-topo">
-    <a asp-controller="Home" asp-action="Index" class="admin-btn-voltar">&larr; Voltar para a Loja</a>
-</div>
-
-<div class="admin-header">
-    <h1 class="admin-titulo">Painel de Administrador</h1>
-    <p class="admin-subtitulo">Gerencie produtos e o estoque da Loja de Instrumentos Musicais</p>
-</div>
-
 <div class="admin-wrapper">
-    <!-- Card 1: Cadastrar Novo Produto -->
+    <div class="admin-header">
+        <div>
+            <h1 class="admin-title">Painel Administrativo</h1>
+            <p class="admin-subtitle">Gestão de catálogo de instrumentos musicais, estoques e cupons de desconto.</p>
+        </div>
+    </div>
+
+    <!-- CARD 1: Cadastrar Novo Produto -->
     <div class="admin-card">
         <div class="admin-card-header">
             <div>
-                <h2 class="admin-card-titulo">Cadastrar Novo Produto</h2>
-                <p class="admin-card-sub">Adicione um novo instrumento ou acessório e seu estoque inicial ao catálogo</p>
+                <h2 class="admin-card-titulo">Cadastrar Novo Instrumento</h2>
+                <p class="admin-card-sub">Adicione um novo instrumento ou acessório ao catálogo oficial da loja</p>
             </div>
         </div>
 
@@ -31,98 +29,58 @@
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.Nome" class="admin-label">Nome do Produto</label>
-                    <input asp-for="NovoProduto.Nome" class="admin-input" placeholder="Ex: Saxofone Alto Michael ou Cabo P10 Ninja" />
+                    <label asp-for="NovoProduto.Nome" class="admin-label">Categoria do Instrumento</label>
+                    <select asp-for="NovoProduto.Nome" id="instrumentCategory" class="admin-select">
+                        <option value="" disabled selected>Selecione uma categoria oficial</option>
+                        <option value="Guitarras">Guitarras</option>
+                        <option value="Violões">Violões</option>
+                        <option value="Teclados">Teclados</option>
+                        <option value="Baterias">Baterias</option>
+                        <option value="Outros">Outros</option>
+                        <option value="Acessórios">Acessórios</option>
+                    </select>
                     <span asp-validation-for="NovoProduto.Nome" class="text-danger"></span>
                 </div>
 
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.Preco" class="admin-label">Preço (R$)</label>
-                    <input asp-for="NovoProduto.Preco" type="number" step="0.01" class="admin-input" placeholder="Ex: 2499.90" />
-                    <span asp-validation-for="NovoProduto.Preco" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="admin-form-row">
-                <div class="admin-field">
-                    <label class="admin-label">Categoria / Tipo</label>
-                    <select id="instrumentType" class="admin-select">
-                        <option value="" disabled selected>Selecione uma categoria</option>
-                        <option value="Guitarra">Guitarra</option>
-                        <option value="Violão">Violão</option>
-                        <option value="Teclado">Teclado</option>
-                        <option value="Bateria">Bateria</option>
-                        <option value="Outros">Outros</option>
-                        <option value="Acessórios">Acessórios</option>
-                    </select>
-                </div>
-
-                <div class="admin-field">
-                    <label asp-for="NovoProduto.Modelo" class="admin-label">Modelo / Subtipo</label>
-                    <select asp-for="NovoProduto.Modelo" class="admin-select" id="modeloSelect">
-                        <option value="" disabled selected>Selecione um modelo</option>
-                        <!-- Guitarra -->
-                        <option class="guitarra" value="Stratocaster">Stratocaster</option>
-                        <option class="guitarra" value="Telecaster">Telecaster</option>
-                        <option class="guitarra" value="Les Paul">Les Paul</option>
-                        <option class="guitarra" value="Superstrato">Superstrato</option>
-                        <!-- Violão -->
-                        <option class="violao" value="Clássico">Clássico</option>
-                        <option class="violao" value="Folk">Folk</option>
-                        <option class="violao" value="Jumbo">Jumbo</option>
-                        <!-- Teclado -->
-                        <option class="teclado" value="Arranjadores">Arranjadores</option>
-                        <option class="teclado" value="Pianos Digitais">Pianos Digitais</option>
-                        <option class="teclado" value="Sintetizadores">Sintetizadores</option>
-                        <!-- Bateria -->
-                        <option class="bateria" value="Acústica">Acústica</option>
-                        <option class="bateria" value="Eletrônica">Eletrônica</option>
-                        <option class="bateria" value="Compacta">Compacta</option>
-                        <!-- Outros -->
-                        <option class="outros" value="Saxofone">Saxofone</option>
-                        <option class="outros" value="Violino">Violino</option>
-                        <option class="outros" value="Flauta">Flauta</option>
-                        <option class="outros" value="Trompete">Trompete</option>
-                        <option class="outros" value="Acordeon">Acordeon</option>
-                        <option class="outros" value="Gaita">Gaita</option>
-                        <option class="outros" value="Ukulele">Ukulele</option>
-                        <!-- Acessórios -->
-                        <option class="acessorios" value="Cabos">Cabos</option>
-                        <option class="acessorios" value="Afinadores">Afinadores</option>
-                        <option class="acessorios" value="Palhetas">Palhetas</option>
-                        <option class="acessorios" value="Correias">Correias</option>
-                        <option class="acessorios" value="Suportes">Suportes</option>
-                        <option class="acessorios" value="Cordas">Cordas</option>
-                        <option class="acessorios" value="Capotrastes">Capotrastes</option>
-                        <option class="acessorios" value="Bags e Cases">Bags e Cases</option>
-                    </select>
+                    <label asp-for="NovoProduto.Modelo" class="admin-label">Modelo / Especificação</label>
+                    <input asp-for="NovoProduto.Modelo" class="admin-input" placeholder="Ex: Stratocaster Sunburst Maple ou Cabo P10 5m" />
                     <span asp-validation-for="NovoProduto.Modelo" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label asp-for="NovoProduto.EstoqueInicial" class="admin-label">Estoque Inicial</label>
-                    <input asp-for="NovoProduto.EstoqueInicial" type="number" min="0" class="admin-input" placeholder="Ex: 10" />
+                    <label asp-for="NovoProduto.Preco" class="admin-label">Preço Unitário (R$)</label>
+                    <input asp-for="NovoProduto.Preco" type="number" step="0.01" class="admin-input" placeholder="Ex: 2499.90" />
+                    <span asp-validation-for="NovoProduto.Preco" class="text-danger"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="NovoProduto.EstoqueInicial" class="admin-label">Estoque Inicial (unidades)</label>
+                    <input asp-for="NovoProduto.EstoqueInicial" type="number" min="0" class="admin-input" placeholder="Ex: 15" />
                     <span asp-validation-for="NovoProduto.EstoqueInicial" class="text-danger"></span>
                 </div>
-                <div class="admin-field">
-                    <label asp-for="NovoProduto.ImagemUrl" class="admin-label">URL da Imagem (opcional)</label>
-                    <input asp-for="NovoProduto.ImagemUrl" class="admin-input" placeholder="Ex: /img/guitarra.png ou URL de upload" />
+            </div>
+
+            <div class="admin-form-row">
+                <div class="admin-field" style="grid-column: 1 / -1;">
+                    <label asp-for="NovoProduto.ImagemUrl" class="admin-label">URL da Imagem (Opcional - usa a imagem da categoria se vazio)</label>
+                    <input asp-for="NovoProduto.ImagemUrl" class="admin-input" placeholder="Ex: /uploads/produtos/foto.png ou /img/guitarra.jpeg" />
                     <span asp-validation-for="NovoProduto.ImagemUrl" class="text-danger"></span>
                 </div>
             </div>
 
-            <button type="submit" class="admin-btn">Cadastrar Produto</button>
+            <button type="submit" class="admin-btn">Cadastrar Instrumento</button>
         </form>
     </div>
 
-    <!-- Card 2: Adicionar Estoque -->
+    <!-- CARD 2: Adicionar Estoque -->
     <div class="admin-card">
         <div class="admin-card-header">
             <div>
-                <h2 class="admin-card-titulo">Adicionar Estoque</h2>
-                <p class="admin-card-sub">Aumente a quantidade disponível de um produto existente</p>
+                <h2 class="admin-card-titulo">Entrada de Estoque</h2>
+                <p class="admin-card-sub">Incremente o saldo físico de um item já existente no banco de dados</p>
             </div>
         </div>
 
@@ -131,13 +89,13 @@
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label asp-for="AdicionarEstoque.IdProduto" class="admin-label">Selecione um produto</label>
+                    <label asp-for="AdicionarEstoque.IdProduto" class="admin-label">Selecionar Instrumento</label>
                     <select asp-for="AdicionarEstoque.IdProduto" class="admin-select">
                         <option value="" disabled selected>Selecione um produto</option>
                         @foreach (var p in Model.ProdutosCadastrados)
                         {
                             <option value="@p.IdProduto">
-                                @p.TipoInstrumento (Modelo: @p.Modelo) — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un]
+                                [@p.TipoInstrumento] @p.Modelo — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un]
                             </option>
                         }
                     </select>
@@ -145,22 +103,100 @@
                 </div>
 
                 <div class="admin-field">
-                    <label asp-for="AdicionarEstoque.Quantidade" class="admin-label">Quantidade</label>
+                    <label asp-for="AdicionarEstoque.Quantidade" class="admin-label">Quantidade a Adicionar</label>
                     <input asp-for="AdicionarEstoque.Quantidade" type="number" min="1" class="admin-input" placeholder="Ex: 10" />
                     <span asp-validation-for="AdicionarEstoque.Quantidade" class="text-danger"></span>
                 </div>
             </div>
 
-            <button type="submit" class="admin-btn">Adicionar Estoque</button>
+            <button type="submit" class="admin-btn">Atualizar Saldo de Estoque</button>
         </form>
     </div>
 
-    <!-- Card 3: Lista de Produtos Cadastrados -->
+    <!-- CARD 3: Gestão de Cupons de Desconto -->
     <div class="admin-card">
         <div class="admin-card-header">
             <div>
-                <h2 class="admin-card-titulo">Produtos no Catálogo</h2>
-                <p class="admin-card-sub">Visualização e controle de todos os itens cadastrados</p>
+                <h2 class="admin-card-titulo">Gestão de Cupons de Desconto</h2>
+                <p class="admin-card-sub">Cadastre novos cupons de 1% a 99% válidos imediatamente na loja</p>
+            </div>
+        </div>
+
+        <form asp-controller="Admin" asp-action="CadastrarCupom" method="post" class="admin-form">
+            @Html.AntiForgeryToken()
+
+            <div class="admin-form-row">
+                <div class="admin-field">
+                    <label asp-for="NovoCupom.Valor" class="admin-label">Código do Cupom (String)</label>
+                    <input asp-for="NovoCupom.Valor" class="admin-input" placeholder="Ex: ROCK15, DEV10, PROMO25" style="text-transform: uppercase;" />
+                    <span asp-validation-for="NovoCupom.Valor" class="text-danger"></span>
+                </div>
+
+                <div class="admin-field">
+                    <label asp-for="NovoCupom.Desconto" class="admin-label">Percentual de Desconto (1 a 99%)</label>
+                    <input asp-for="NovoCupom.Desconto" type="number" min="1" max="99" class="admin-input" placeholder="Ex: 15 (para 15% OFF)" />
+                    <span asp-validation-for="NovoCupom.Desconto" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="admin-btn">Registrar Cupom no Banco</button>
+        </form>
+
+        <div style="margin-top: 2rem;">
+            <h3 style="font-size: 1.05rem; font-weight: 600; margin-bottom: 0.8rem; color: #f1f5f9;">Cupons Cadastrados no Banco</h3>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Código / String</th>
+                            <th>Desconto</th>
+                            <th>Status</th>
+                            <th>Criado Em</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.CuponsCadastrados.Any())
+                        {
+                            @foreach (var c in Model.CuponsCadastrados)
+                            {
+                                <tr>
+                                    <td>@c.IdCupom</td>
+                                    <td><strong style="color: #a78bfa; font-family: monospace; font-size: 1rem;">@c.Valor</strong></td>
+                                    <td><span style="color: #34d399; font-weight: 700;">@c.Desconto% OFF</span></td>
+                                    <td>@(c.Ativo ? "Ativo" : "Inativo")</td>
+                                    <td>@c.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        <form asp-controller="Admin" asp-action="ExcluirCupom" method="post" onsubmit="return confirm('Deseja realmente remover este cupom?');" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@c.IdCupom" />
+                                            <button type="submit" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; font-weight:600; text-decoration:underline;">Remover</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: var(--muted); padding: 1.5rem;">
+                                    Nenhum cupom cadastrado no momento.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARD 4: Tabela de Produtos Cadastrados -->
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <div>
+                <h2 class="admin-card-titulo">Catálogo de Instrumentos Cadastrados</h2>
+                <p class="admin-card-sub">Listagem de todos os instrumentos ativos na base relacional do sistema</p>
             </div>
         </div>
 
@@ -169,8 +205,8 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Produto / Instrumento</th>
-                        <th>Modelo / Tipo</th>
+                        <th>Categoria Oficial</th>
+                        <th>Modelo / Descrição</th>
                         <th>Preço</th>
                         <th>Estoque</th>
                         <th>Ações</th>
@@ -183,12 +219,13 @@
                         {
                             <tr>
                                 <td>@item.IdProduto</td>
-                                <td><strong>@item.TipoInstrumento</strong></td>
-                                <td>@item.Modelo</td>
+                                <td><span style="background: rgba(124, 58, 237, 0.2); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">@item.TipoInstrumento</span></td>
+                                <td><strong>@item.Modelo</strong></td>
                                 <td>R$ @item.Preco.ToString("N2")</td>
                                 <td>@(item.Estoque?.QuantidadeDisponivel ?? 0) un</td>
                                 <td>
                                     <form asp-controller="Admin" asp-action="ExcluirProduto" method="post" onsubmit="return confirm('Deseja realmente excluir este produto?');" style="display:inline;">
+                                        @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@item.IdProduto" />
                                         <button type="submit" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; font-weight:600; text-decoration:underline;">Excluir</button>
                                     </form>
@@ -200,7 +237,7 @@
                     {
                         <tr>
                             <td colspan="6" style="text-align: center; color: var(--muted); padding: 2rem;">
-                                Nenhum produto cadastrado.
+                                Nenhum instrumento cadastrado no banco de dados.
                             </td>
                         </tr>
                     }
@@ -212,21 +249,4 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        // Filtra modelos de acordo com o tipo de instrumento ou acessorio selecionado
-        document.getElementById('instrumentType')?.addEventListener('change', function () {
-            var selected = (this.value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-            var modeloSelect = document.getElementById('modeloSelect');
-            for (var i = 0; i < modeloSelect.options.length; i++) {
-                var opt = modeloSelect.options[i];
-                var cls = (opt.className || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-                if (!opt.value) { // placeholder option
-                    opt.hidden = false;
-                    continue;
-                }
-                opt.hidden = (cls !== selected);
-            }
-            modeloSelect.value = "";
-        });
-    </script>
 }

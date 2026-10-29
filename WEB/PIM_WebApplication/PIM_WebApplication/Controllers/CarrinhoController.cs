@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PIM_WebApplication.Helpers;
 using PIM_WebApplication.Models;
@@ -10,16 +9,24 @@ namespace PIM_WebApplication.Controllers
 {
     public class CarrinhoController : Controller
     {
-        private const string SessionCartKey = "SHOPNOW_CART_ITEMS";
-        private const string SessionCouponKey = "SHOPNOW_COUPON_CODE";
+        private const string SessionCartKey = "SessionCart";
+        private const string SessionCouponKey = "SessionCoupon";
 
         private readonly IProdutoService _produtoService;
         private readonly IVendaService _vendaService;
+        private readonly ICupomService _cupomService;
+        private readonly IUsuarioService _usuarioService;
 
-        public CarrinhoController(IProdutoService produtoService, IVendaService vendaService)
+        public CarrinhoController(
+            IProdutoService produtoService, 
+            IVendaService vendaService,
+            ICupomService cupomService,
+            IUsuarioService usuarioService)
         {
             _produtoService = produtoService;
             _vendaService = vendaService;
+            _cupomService = cupomService;
+            _usuarioService = usuarioService;
         }
 
         private List<ItemCarrinhoViewModel> ObterCarrinhoDaSessao()
@@ -44,11 +51,38 @@ namespace PIM_WebApplication.Controllers
                 CupomAplicado = cupom
             };
 
+            int? idCliente = null;
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var idClienteClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (int.TryParse(idClienteClaim, out int id))
+                {
+                    idCliente = id;
+                    var cliente = await _usuarioService.ObterPorIdAsync(id);
+                    if (cliente?.FirstTime == true)
+                    {
+                        viewModel.PrimeiraCompraElegivel = true;
+                        viewModel.DescontoPrimeiraCompra = Math.Round(viewModel.Subtotal * 0.50m, 2);
+                    }
+                }
+            }
+
             if (!string.IsNullOrEmpty(cupom))
             {
-                decimal desconto = await _vendaService.CalcularDescontoCupomAsync(cupom, viewModel.Subtotal);
-                viewModel.Desconto = desconto;
-                viewModel.CupomValido = desconto > 0;
+                var (valido, msg, _) = await _cupomService.ValidarCupomClienteAsync(cupom, idCliente);
+                viewModel.CupomValido = valido;
+                viewModel.MensagemCupom = msg;
+
+                if (valido)
+                {
+                    decimal desconto = await _vendaService.CalcularDescontoCupomAsync(cupom, viewModel.Subtotal, idCliente);
+                    viewModel.DescontoCupom = desconto;
+                }
+                else
+                {
+                    HttpContext.Session.Remove(SessionCouponKey);
+                    viewModel.CupomAplicado = null;
+                }
             }
 
             return View(viewModel);
@@ -58,18 +92,29 @@ namespace PIM_WebApplication.Controllers
         public async Task<IActionResult> Adicionar(
             int idProduto = 0, 
             string nome = "", 
-            decimal preco = 0, 
+            decimal preco = 0m, 
             string tamanho = "", 
             string modelo = "", 
             string imagemUrl = "", 
             int quantidade = 1)
         {
-            if (quantidade <= 0) quantidade = 1;
+            if (quantidade <= 0)
+            {
+                quantidade = 1;
+            }
 
             Produto? produto = null;
             if (idProduto > 0)
             {
                 produto = await _produtoService.ObterPorIdAsync(idProduto);
+            }
+
+            if (produto == null && !string.IsNullOrWhiteSpace(nome))
+            {
+                var todos = await _produtoService.ObterTodosAsync();
+                produto = todos.FirstOrDefault(p => 
+                    p.TipoInstrumento.Equals(nome, StringComparison.OrdinalIgnoreCase) ||
+                    p.Modelo.Equals(nome, StringComparison.OrdinalIgnoreCase));
             }
 
             int finalId;
@@ -139,30 +184,6 @@ namespace PIM_WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult AlterarQuantidade(int idProduto, int delta)
-        {
-            var itens = ObterCarrinhoDaSessao();
-            var item = itens.FirstOrDefault(i => i.IdProduto == idProduto);
-
-            if (item != null)
-            {
-                item.Quantidade += delta;
-                if (item.Quantidade <= 0)
-                {
-                    itens.Remove(item);
-                }
-                else if (item.Quantidade > item.EstoqueDisponivel)
-                {
-                    item.Quantidade = item.EstoqueDisponivel;
-                    TempData["MensagemToast"] = "Estoque maximo atingido para este item.";
-                }
-                SalvarCarrinhoNaSessao(itens);
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
         public IActionResult Remover(int idProduto)
         {
             var itens = ObterCarrinhoDaSessao();
@@ -171,7 +192,44 @@ namespace PIM_WebApplication.Controllers
             {
                 itens.Remove(item);
                 SalvarCarrinhoNaSessao(itens);
-                TempData["MensagemToast"] = "Item removido do carrinho.";
+                TempData["MensagemToast"] = $"'{item.Nome}' removido do carrinho.";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult AlterarQuantidade(int idProduto, int delta)
+        {
+            return AtualizarQuantidade(idProduto, delta);
+        }
+
+        [HttpPost]
+        public IActionResult AtualizarQuantidade(int idProduto, int delta)
+        {
+            var itens = ObterCarrinhoDaSessao();
+            var item = itens.FirstOrDefault(i => i.IdProduto == idProduto);
+
+            if (item != null)
+            {
+                int novaQuantidade = item.Quantidade + delta;
+                if (novaQuantidade > item.EstoqueDisponivel)
+                {
+                    TempData["MensagemToast"] = "Limite de estoque atingido para este item.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (novaQuantidade <= 0)
+                {
+                    itens.Remove(item);
+                    TempData["MensagemToast"] = $"'{item.Nome}' removido do carrinho.";
+                }
+                else
+                {
+                    item.Quantidade = novaQuantidade;
+                }
+
+                SalvarCarrinhoNaSessao(itens);
             }
 
             return RedirectToAction(nameof(Index));
@@ -180,9 +238,6 @@ namespace PIM_WebApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> AplicarCupom(string codigoCupom)
         {
-            var itens = ObterCarrinhoDaSessao();
-            decimal subtotal = itens.Sum(i => i.Subtotal);
-
             if (string.IsNullOrWhiteSpace(codigoCupom))
             {
                 HttpContext.Session.Remove(SessionCouponKey);
@@ -190,16 +245,26 @@ namespace PIM_WebApplication.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            decimal desconto = await _vendaService.CalcularDescontoCupomAsync(codigoCupom, subtotal);
-            if (desconto > 0)
+            int? idCliente = null;
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var claimId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (int.TryParse(claimId, out int id))
+                {
+                    idCliente = id;
+                }
+            }
+
+            var (valido, mensagem, _) = await _cupomService.ValidarCupomClienteAsync(codigoCupom, idCliente);
+            if (valido)
             {
                 HttpContext.Session.SetString(SessionCouponKey, codigoCupom.Trim().ToUpperInvariant());
-                TempData["MensagemToast"] = $"Cupom {codigoCupom.ToUpperInvariant()} aplicado com sucesso! Desconto de R$ {desconto:N2}";
+                TempData["MensagemToast"] = mensagem;
             }
             else
             {
                 HttpContext.Session.Remove(SessionCouponKey);
-                TempData["MensagemToast"] = "Cupom invalido ou nao elegivel para esta compra.";
+                TempData["MensagemToast"] = mensagem;
             }
 
             return RedirectToAction(nameof(Index));

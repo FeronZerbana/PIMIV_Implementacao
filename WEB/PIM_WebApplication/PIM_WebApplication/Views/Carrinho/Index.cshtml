@@ -39,7 +39,7 @@
                         <div class="cart-item-produto">
                             <div class="cart-item-info">
                                 <div class="cart-item-nome">@item.Nome</div>
-                                <div class="cart-item-desc">Tamanho: @item.Tamanho - Saldo: @item.EstoqueDisponivel un</div>
+                                <div class="cart-item-desc">Modelo: @item.Modelo - Saldo: @item.EstoqueDisponivel un</div>
                                 <form asp-controller="Carrinho" asp-action="Remover" method="post" style="display:inline;">
                                     <input type="hidden" name="idProduto" value="@item.IdProduto" />
                                     <button type="submit" class="cart-item-remover">Remover</button>
@@ -76,7 +76,7 @@
 
             <div class="cart-coupon">
                 <form asp-controller="Carrinho" asp-action="AplicarCupom" method="post" style="display:flex; flex:1; gap:0.8rem;">
-                    <input type="text" name="codigoCupom" value="@Model.CupomAplicado" placeholder="Cupom (ex: FRETE22, DEV10, SHOPNOW15)" />
+                    <input type="text" name="codigoCupom" value="@Model.CupomAplicado" placeholder="Cupom (ex: ROCK15, DEV10, PROMO20)" />
                     <button type="submit" class="btn-coupon">Aplicar</button>
                 </form>
             </div>
@@ -91,13 +91,42 @@
                 Resumo da compra
             </div>
 
+            @if (Model.PrimeiraCompraElegivel)
+            {
+                <div style="background: rgba(124, 58, 237, 0.15); border: 1px solid var(--accent); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem; font-size: 0.85rem; color: #d8b4fe;">
+                    <strong>Oferta de 1ª Compra:</strong> 50% de desconto aplicado no seu pedido!
+                </div>
+            }
+            else if (!User.Identity?.IsAuthenticated ?? true)
+            {
+                <div style="background: rgba(255, 255, 255, 0.04); border: 1px dashed var(--muted); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem; font-size: 0.82rem; color: var(--muted);">
+                    Faça login ou registre-se para receber <strong>50% OFF</strong> na sua 1ª compra!
+                </div>
+            }
+
             <div class="summary-row">
                 <span>Subtotal (@Model.TotalQuantidade @(Model.TotalQuantidade == 1 ? "produto" : "produtos"))</span>
                 <span>R$ @Model.Subtotal.ToString("N2")</span>
             </div>
 
+            @if (Model.DescontoPrimeiraCompra > 0)
+            {
+                <div class="summary-row" style="color:#c084fc; font-size:0.85rem;">
+                    <span>&bull; Desconto 1ª Compra (50%)</span>
+                    <span>– R$ @Model.DescontoPrimeiraCompra.ToString("N2")</span>
+                </div>
+            }
+
+            @if (Model.DescontoCupom > 0)
+            {
+                <div class="summary-row" style="color:#34d399; font-size:0.85rem;">
+                    <span>&bull; Cupom @Model.CupomAplicado</span>
+                    <span>– R$ @Model.DescontoCupom.ToString("N2")</span>
+                </div>
+            }
+
             <div class="summary-row">
-                <span>Descontos</span>
+                <span>Total de Descontos</span>
                 <span class="summary-desconto">– R$ @Model.Desconto.ToString("N2")</span>
             </div>
 

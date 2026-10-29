@@ -14,6 +14,8 @@ namespace PIM_WebApplication.Data
         public DbSet<Estoque> Estoques { get; set; } = null!;
         public DbSet<Venda> Vendas { get; set; } = null!;
         public DbSet<ItemVenda> ItemVendas { get; set; } = null!;
+        public DbSet<Cupom> Cupons { get; set; } = null!;
+        public DbSet<CupomUso> CupomUsos { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +31,7 @@ namespace PIM_WebApplication.Data
                 entity.Property(e => e.Senha).HasColumnName("Senha").HasMaxLength(255).IsRequired();
                 entity.Property(e => e.Telefone).HasColumnName("Telefone").HasMaxLength(30);
                 entity.Property(e => e.IsAdmin).HasColumnName("isAdmin").HasDefaultValue(false);
+                entity.Property(e => e.FirstTime).HasColumnName("FirstTime").HasDefaultValue(true);
             });
 
             modelBuilder.Entity<Produto>(entity =>
@@ -85,6 +88,35 @@ namespace PIM_WebApplication.Data
                       .WithMany()
                       .HasForeignKey(i => i.CodProduto)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Cupom>(entity =>
+            {
+                entity.ToTable("CUPONS");
+                entity.HasKey(e => e.IdCupom);
+                entity.Property(e => e.IdCupom).HasColumnName("id_Cupom");
+                entity.Property(e => e.Valor).HasColumnName("VALOR").HasMaxLength(50).IsRequired();
+                entity.HasIndex(e => e.Valor).IsUnique();
+                entity.Property(e => e.Desconto).HasColumnName("DESCONTO").IsRequired();
+                entity.Property(e => e.Ativo).HasColumnName("Ativo").HasDefaultValue(true);
+                entity.Property(e => e.DataCriacao).HasColumnName("DataCriacao").HasDefaultValueSql("GETDATE()");
+            });
+
+            modelBuilder.Entity<CupomUso>(entity =>
+            {
+                entity.ToTable("CUPOM_USOS");
+                entity.HasKey(e => e.IdCupomUso);
+                entity.Property(e => e.IdCupomUso).HasColumnName("id_CupomUso");
+                entity.Property(e => e.CodCliente).HasColumnName("Cod_do_Cliente").IsRequired();
+                entity.Property(e => e.CodigoCupom).HasColumnName("Codigo_Cupom").HasMaxLength(50).IsRequired();
+                entity.Property(e => e.IdVenda).HasColumnName("id_Venda");
+                entity.Property(e => e.DataUso).HasColumnName("Data_Uso").HasDefaultValueSql("GETDATE()");
+                entity.HasIndex(e => new { e.CodCliente, e.CodigoCupom }).IsUnique();
+
+                entity.HasOne(e => e.Cliente)
+                      .WithMany()
+                      .HasForeignKey(e => e.CodCliente)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

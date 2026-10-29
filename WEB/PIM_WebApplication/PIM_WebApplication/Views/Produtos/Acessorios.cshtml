@@ -1,80 +1,7 @@
+@model IEnumerable<PIM_WebApplication.Models.Produto>
 @{
     ViewData["Title"] = "Acessórios - Loja de Música";
-
-    /* ==============================================================================
-       DADOS DEMONSTRATIVOS PARA PRÉVIA VISUAL (FRONT-END)
-       ------------------------------------------------------------------------------
-       Estes dados demonstram a nova categoria de artefatos do tipo acessório
-       (cabos, afinadores, palhetas, correias, suportes e bags), separados dos instrumentos.
-       ============================================================================== */
-
-    var instrumentos = new[]
-    {
-        new {
-            Nome = "Cabo P10 Ninja Santo Angelo 3.05m",
-            Marca = "SANTO ANGELO",
-            Modelo = "Ninja P10 3m",
-            Preco = 89.00m,
-            ImagemUrl = Url.Content("~/img/acessorios.png"),
-            MaisVendido = true
-        },
-        new {
-            Nome = "Afinador Digital Clip-on Boss TU-02",
-            Marca = "BOSS",
-            Modelo = "TU-02 Cromático",
-            Preco = 159.00m,
-            ImagemUrl = Url.Content("~/img/acessorios.png"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Pack 12 Palhetas Dunlop Tortex Standard 0.88mm",
-            Marca = "DUNLOP",
-            Modelo = "Tortex 0.88mm Green",
-            Preco = 79.00m,
-            ImagemUrl = Url.Content("~/img/acessorios.png"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Correia D'Addario Planet Waves Polypropylene",
-            Marca = "D'ADDARIO",
-            Modelo = "50A01 Polypropylene",
-            Preco = 69.00m,
-            ImagemUrl = Url.Content("~/img/acessorios.png"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Suporte de Chão Hercules GS414B Auto Grip",
-            Marca = "HERCULES",
-            Modelo = "GS414B Plus Auto Grip",
-            Preco = 299.00m,
-            ImagemUrl = Url.Content("~/img/acessorios.png"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Encordoamento Guitarra 010 Elixir Nanoweb",
-            Marca = "ELIXIR",
-            Modelo = "Nanoweb Light 010-046",
-            Preco = 129.00m,
-            ImagemUrl = Url.Content("~/img/acessorios.png"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Capotraste Rápido G7th Nashville",
-            Marca = "G7TH",
-            Modelo = "Nashville Quick Change",
-            Preco = 189.00m,
-            ImagemUrl = Url.Content("~/img/acessorios.png"),
-            MaisVendido = false
-        },
-        new {
-            Nome = "Bag Luxo Acolchoado para Guitarra Solid Sound",
-            Marca = "SOLID SOUND",
-            Modelo = "Case Luxo 25mm",
-            Preco = 329.00m,
-            ImagemUrl = Url.Content("~/img/acessorios.png"),
-            MaisVendido = false
-        }
-    };
+    var fallbackCategoria = Url.Content("~/img/acessorios.png");
 
     var marcas = new[] { "Santo Angelo", "Boss", "Dunlop", "D'Addario", "Hercules", "Elixir", "G7th", "Outras" };
     var tipos = new[] { "Cabos", "Afinadores", "Palhetas", "Correias", "Suportes", "Cordas", "Capotrastes", "Bags e Cases" };
@@ -129,30 +56,15 @@
                 <option value="populares" selected>Mais populares</option>
                 <option value="menor-preco">Menor preço</option>
                 <option value="maior-preco">Maior preço</option>
-                <option value="recentes">Mais recentes</option>
-                <option value="avaliados">Mais avaliados</option>
             </select>
         </div>
     </div>
 
     <!-- CORPO PRINCIPAL: FILTROS + GRADE -->
-    <div class="categoria-layout">
-        <!-- PAINEL LATERAL DE FILTROS -->
-        <aside class="categoria-sidebar" aria-label="Filtros de produtos">
-            <div class="filtro-titulo-principal">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="4" y1="21" x2="4" y2="14"></line>
-                    <line x1="4" y1="10" x2="4" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12" y2="3"></line>
-                    <line x1="20" y1="21" x2="20" y2="16"></line>
-                    <line x1="20" y1="12" x2="20" y2="3"></line>
-                    <line x1="1" y1="14" x2="7" y2="14"></line>
-                    <line x1="9" y1="8" x2="15" y2="8"></line>
-                    <line x1="17" y1="16" x2="23" y2="16"></line>
-                </svg>
-                <span>Filtrar</span>
-            </div>
+    <div class="categoria-conteudo">
+        <!-- BARRA LATERAL DE FILTROS -->
+        <aside class="categoria-filtros" aria-label="Filtros de produtos">
+            <h2 class="filtros-titulo">Filtros</h2>
 
             <!-- Filtro de Marca -->
             <div class="filtro-secao">
@@ -216,41 +128,50 @@
 
         <!-- GRADE DE PRODUTOS -->
         <main class="categoria-produtos-grid" role="region" aria-label="Lista de Acessórios">
-            @foreach (var produto in instrumentos)
+            @if (Model != null && Model.Any())
             {
-                <article class="instrumento-card">
-                    @if (produto.MaisVendido)
-                    {
-                        <span class="instrumento-badge">Mais vendido</span>
-                    }
+                @foreach (var produto in Model)
+                {
+                    var imgFinal = !string.IsNullOrWhiteSpace(produto.ImagemUrl) ? produto.ImagemUrl : fallbackCategoria;
+                    var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
+                    var temEstoque = estoqueDisponivel > 0;
 
-                    <div class="instrumento-img-area">
-                        <img src="@produto.ImagemUrl" alt="@produto.Nome" class="instrumento-img" loading="lazy" />
-                    </div>
+                    <article class="instrumento-card">
+                        <div class="instrumento-img-area">
+                            <img src="@imgFinal" alt="@produto.Modelo" class="instrumento-img" loading="lazy" onerror="this.onerror=null;this.src='@fallbackCategoria';" />
+                        </div>
 
-                    <div class="instrumento-info">
-                        <h2 class="instrumento-nome" title="@produto.Nome">@produto.Nome</h2>
-                        <span class="instrumento-marca">@produto.Marca</span>
-                        <div class="instrumento-preco">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</div>
+                        <div class="instrumento-info">
+                            <h2 class="instrumento-nome" title="@produto.Modelo">@produto.Modelo</h2>
+                            <span class="instrumento-marca">@produto.TipoInstrumento</span>
+                            <div class="instrumento-preco">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</div>
 
-                        <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
-                            <input type="hidden" name="idProduto" value="@(Math.Abs((produto.Nome + produto.Modelo).GetHashCode()))" />
-                            <input type="hidden" name="nome" value="@produto.Nome" />
-                            <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
-                            <input type="hidden" name="modelo" value="@produto.Modelo" />
-                            <input type="hidden" name="tamanho" value="@produto.Modelo" />
-                            <input type="hidden" name="imagemUrl" value="@produto.ImagemUrl" />
-                            <button type="submit" class="btn-carrinho" title="Adicionar ao carrinho">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="9" cy="21" r="1"></circle>
-                                    <circle cx="20" cy="21" r="1"></circle>
-                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                </svg>
-                                <span>Adicionar ao carrinho</span>
-                            </button>
-                        </form>
-                    </div>
-                </article>
+                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
+                                <input type="hidden" name="idProduto" value="@produto.IdProduto" />
+                                <input type="hidden" name="nome" value="@produto.TipoInstrumento" />
+                                <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                <input type="hidden" name="modelo" value="@produto.Modelo" />
+                                <input type="hidden" name="tamanho" value="@produto.Modelo" />
+                                <input type="hidden" name="imagemUrl" value="@imgFinal" />
+                                <button type="submit" class="btn-carrinho" title="Adicionar ao carrinho" @(!temEstoque ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "")>
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="9" cy="21" r="1"></circle>
+                                        <circle cx="20" cy="21" r="1"></circle>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                    </svg>
+                                    <span>@(temEstoque ? "Adicionar ao carrinho" : "Fora de estoque")</span>
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                }
+            }
+            else
+            {
+                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--muted);">
+                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Nenhum produto cadastrado nesta categoria no momento.</p>
+                    <a asp-controller="Home" asp-action="Index" class="btn-hero" style="display:inline-block; margin-top:1rem;">Ver outras categorias</a>
+                </div>
             }
         </main>
     </div>
