@@ -28,6 +28,9 @@ namespace PIM_WebApplication.Data
                 // 3. Provisionamento dos diretorios fisicos para uploads de midia
                 ProvisionarDiretoriosUpload(logger);
 
+                // 4. Provisionamento das Stored Procedures, Triggers e Auditoria Corporativa
+                await ProvisionarProceduresETriggersAsync(context, logger);
+
                 logger.LogInformation("Inicializacao do banco de dados concluida. Catalogo pronto e vazio para operacao.");
             }
             catch (Exception ex)
@@ -149,6 +152,58 @@ namespace PIM_WebApplication.Data
             catch (Exception ex)
             {
                 logger.LogWarning(ex, "Falha ao provisionar diretorios fisicos de uploads.");
+            }
+        }
+
+        private static async Task ProvisionarProceduresETriggersAsync(AppDbContext context, ILogger logger)
+        {
+            try
+            {
+                var possiblePaths = new[]
+                {
+                    Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "Database", "StoredProcedures_Triggers_ShopNow.sql"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "..", "Database", "StoredProcedures_Triggers_ShopNow.sql"),
+                    Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "Database", "StoredProcedures_Triggers_ShopNow.sql"),
+                    @"c:\Users\vinic\Documents\PIM\Implementacao\Database\StoredProcedures_Triggers_ShopNow.sql"
+                };
+
+                string? scriptPath = possiblePaths.FirstOrDefault(File.Exists);
+
+                if (scriptPath != null)
+                {
+                    var sqlCompleto = await File.ReadAllTextAsync(scriptPath);
+                    var batches = System.Text.RegularExpressions.Regex.Split(
+                        sqlCompleto,
+                        @"^\s*GO\s*$",
+                        System.Text.RegularExpressions.RegexOptions.Multiline | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+                    foreach (var batch in batches)
+                    {
+                        var trimmed = batch.Trim();
+                        if (string.IsNullOrWhiteSpace(trimmed) || trimmed.StartsWith("USE ", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        // Remove bloco de comentarios finais com cenarios de teste da execucao de startup
+                        if (trimmed.StartsWith("/*") && trimmed.Contains("CENARIOS DE TESTE"))
+                        {
+                            continue;
+                        }
+
+                        await context.Database.ExecuteSqlRawAsync(trimmed);
+                    }
+
+                    logger.LogInformation("Stored Procedures, Triggers e Auditoria provisionados com sucesso via {Caminho}.", scriptPath);
+                }
+                else
+                {
+                    logger.LogWarning("Script StoredProcedures_Triggers_ShopNow.sql nao encontrado para provisionamento automatico.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Aviso ao provisionar Stored Procedures e Triggers no banco de dados.");
             }
         }
     }

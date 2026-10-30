@@ -11,6 +11,7 @@ namespace PIM_WebApplication.ViewModels
         public AdicionarEstoqueViewModel AdicionarEstoque { get; set; } = new();
         public List<Cupom> CuponsCadastrados { get; set; } = new();
         public NovoCupomViewModel NovoCupom { get; set; } = new();
+        public List<AuditoriaVendaDto> RegistrosAuditoria { get; set; } = new();
     }
 
     public class NovoProdutoViewModel
@@ -65,5 +66,15 @@ namespace PIM_WebApplication.ViewModels
         [Range(1, 990, ErrorMessage = "O desconto deve ser entre 1% e 99%.")]
         [Display(Name = "DESCONTO (%)")]
         public int Desconto { get; set; }
+    }
+
+    public class AuditoriaVendaDto
+    {
+        public int IdAuditoria { get; set; }
+        public int IdVenda { get; set; }
+        public int CodCliente { get; set; }
+        public DateTime DataAcao { get; set; }
+        public string TipoAcao { get; set; } = string.Empty;
+        public string UsuarioSO { get; set; } = string.Empty;
     }
 }

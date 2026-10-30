@@ -132,7 +132,7 @@ namespace PIM_WebApplication.Services
                         ValorTotal = totalLinha
                     };
 
-                    estoque.QuantidadeDisponivel -= item.Quantidade;
+                    // A baixa definitiva e atomica de saldo e executada pelo trigger relacional 'trg_AtualizarEstoque_ItemVenda'
                     _context.ItemVendas.Add(itemVenda);
                 }
 

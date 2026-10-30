@@ -91,20 +91,58 @@ namespace PIM_WebApplication.Services
 
         public async Task<Produto> CriarProdutoAsync(Produto produto, int estoqueInicial = 0)
         {
-            _context.Produtos.Add(produto);
-            await _context.SaveChangesAsync();
-
-            var estoque = new Estoque
+            try
             {
-                CodProduto = produto.IdProduto,
-                QuantidadeDisponivel = estoqueInicial >= 0 ? estoqueInicial : 0
-            };
+                // Insercao atomica via Stored Procedure sp_CadastrarProdutoComEstoque
+                var idParam = new Microsoft.Data.SqlClient.SqlParameter
+                {
+                    ParameterName = "@IdProdutoGerado",
+                    SqlDbType = System.Data.SqlDbType.Int,
+                    Direction = System.Data.ParameterDirection.Output
+                };
 
-            _context.Estoques.Add(estoque);
-            await _context.SaveChangesAsync();
+                var tipoParam = new Microsoft.Data.SqlClient.SqlParameter("@TipoInstrumento", produto.TipoInstrumento ?? "Outros");
+                var precoParam = new Microsoft.Data.SqlClient.SqlParameter("@Preco", produto.Preco);
+                var modeloParam = new Microsoft.Data.SqlClient.SqlParameter("@Modelo", produto.Modelo ?? string.Empty);
+                var imgParam = new Microsoft.Data.SqlClient.SqlParameter("@ImagemUrl", (object?)produto.ImagemUrl ?? DBNull.Value);
+                var qtdParam = new Microsoft.Data.SqlClient.SqlParameter("@QuantidadeEstoque", estoqueInicial >= 0 ? estoqueInicial : 0);
 
-            produto.Estoque = estoque;
-            return produto;
+                await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC sp_CadastrarProdutoComEstoque @TipoInstrumento, @Preco, @Modelo, @ImagemUrl, @QuantidadeEstoque, @IdProdutoGerado OUTPUT",
+                    tipoParam, precoParam, modeloParam, imgParam, qtdParam, idParam);
+
+                if (idParam.Value != null && idParam.Value != DBNull.Value)
+                {
+                    produto.IdProduto = (int)idParam.Value;
+                }
+
+                var estoque = new Estoque
+                {
+                    CodProduto = produto.IdProduto,
+                    QuantidadeDisponivel = estoqueInicial >= 0 ? estoqueInicial : 0
+                };
+
+                produto.Estoque = estoque;
+                return produto;
+            }
+            catch
+            {
+                // Fallback resiliente via EF Core tradicional
+                _context.Produtos.Add(produto);
+                await _context.SaveChangesAsync();
+
+                var estoque = new Estoque
+                {
+                    CodProduto = produto.IdProduto,
+                    QuantidadeDisponivel = estoqueInicial >= 0 ? estoqueInicial : 0
+                };
+
+                _context.Estoques.Add(estoque);
+                await _context.SaveChangesAsync();
+
+                produto.Estoque = estoque;
+                return produto;
+            }
         }
 
         public async Task<Produto?> AtualizarProdutoAsync(int id, Produto produtoAtualizado)

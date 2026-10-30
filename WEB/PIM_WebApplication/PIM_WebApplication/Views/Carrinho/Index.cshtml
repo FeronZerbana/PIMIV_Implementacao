@@ -76,7 +76,7 @@
 
             <div class="cart-coupon">
                 <form asp-controller="Carrinho" asp-action="AplicarCupom" method="post" style="display:flex; flex:1; gap:0.8rem;">
-                    <input type="text" name="codigoCupom" value="@Model.CupomAplicado" placeholder="Cupom (ex: ROCK15, DEV10, PROMO20)" />
+                    <input type="text" name="codigoCupom" value="@Model.CupomAplicado" placeholder="Cupom" />
                     <button type="submit" class="btn-coupon">Aplicar</button>
                 </form>
             </div>

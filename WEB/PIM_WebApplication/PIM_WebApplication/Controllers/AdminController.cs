@@ -2,6 +2,8 @@ using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PIM_WebApplication.Data;
 using PIM_WebApplication.Models;
 using PIM_WebApplication.Services;
 using PIM_WebApplication.ViewModels;
@@ -15,17 +17,20 @@ namespace PIM_WebApplication.Controllers
         private readonly IEstoqueService _estoqueService;
         private readonly ICupomService _cupomService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly AppDbContext _context;
 
         public AdminController(
             IProdutoService produtoService, 
             IEstoqueService estoqueService,
             ICupomService cupomService,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            AppDbContext context)
         {
             _produtoService = produtoService;
             _estoqueService = estoqueService;
             _cupomService = cupomService;
             _webHostEnvironment = webHostEnvironment;
+            _context = context;
         }
 
         [HttpGet]
@@ -34,13 +39,51 @@ namespace PIM_WebApplication.Controllers
             var produtos = await _produtoService.ObterTodosAsync();
             var cupons = await _cupomService.ObterTodosAsync();
 
+            var auditorias = new List<AuditoriaVendaDto>();
+            try
+            {
+                var conn = _context.Database.GetDbConnection();
+                if (conn.State != System.Data.ConnectionState.Open)
+                {
+                    await conn.OpenAsync();
+                }
+
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = @"
+                    IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'AUDITORIA_VENDAS')
+                    BEGIN
+                        SELECT TOP 10 id_Auditoria, id_Venda, Cod_do_Cliente, Data_Acao, Tipo_Acao, Usuario_SO 
+                        FROM AUDITORIA_VENDAS 
+                        ORDER BY id_Auditoria DESC;
+                    END";
+
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (await reader.ReadAsync())
+                {
+                    auditorias.Add(new AuditoriaVendaDto
+                    {
+                        IdAuditoria = reader.GetInt32(0),
+                        IdVenda = reader.GetInt32(1),
+                        CodCliente = reader.GetInt32(2),
+                        DataAcao = reader.GetDateTime(3),
+                        TipoAcao = reader.GetString(4),
+                        UsuarioSO = reader.IsDBNull(5) ? string.Empty : reader.GetString(5)
+                    });
+                }
+            }
+            catch
+            {
+                // Resiliencia caso a tabela de auditoria ainda nao esteja populada
+            }
+
             var viewModel = new AdminViewModel
             {
                 ProdutosCadastrados = produtos,
                 NovoProduto = new NovoProdutoViewModel(),
                 AdicionarEstoque = new AdicionarEstoqueViewModel(),
                 CuponsCadastrados = cupons,
-                NovoCupom = new NovoCupomViewModel()
+                NovoCupom = new NovoCupomViewModel(),
+                RegistrosAuditoria = auditorias
             };
 
             return View(viewModel);
