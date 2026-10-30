@@ -126,30 +126,33 @@ namespace PIM_WebApplication.Services
             return true;
         }
 
-        public async Task RegistrarUsoCupomAsync(int codCliente, string codigoCupom, int? idVenda = null)
+        public async Task<CupomUso?> RegistrarUsoCupomAsync(int codCliente, string codigoCupom, int? idVenda = null)
         {
             if (codCliente <= 0 || string.IsNullOrWhiteSpace(codigoCupom))
             {
-                return;
+                return null;
             }
 
             var normalizado = codigoCupom.Trim().ToUpperInvariant();
-            bool jaRegistrado = await _context.CupomUsos
-                .AnyAsync(u => u.CodCliente == codCliente && u.CodigoCupom == normalizado);
+            var usoExistente = await _context.CupomUsos
+                .FirstOrDefaultAsync(u => u.CodCliente == codCliente && u.CodigoCupom == normalizado);
 
-            if (!jaRegistrado)
+            if (usoExistente != null)
             {
-                var uso = new CupomUso
-                {
-                    CodCliente = codCliente,
-                    CodigoCupom = normalizado,
-                    IdVenda = idVenda,
-                    DataUso = DateTime.Now
-                };
-
-                _context.CupomUsos.Add(uso);
-                await _context.SaveChangesAsync();
+                return usoExistente;
             }
+
+            var uso = new CupomUso
+            {
+                CodCliente = codCliente,
+                CodigoCupom = normalizado,
+                IdVenda = idVenda,
+                DataUso = DateTime.Now
+            };
+
+            _context.CupomUsos.Add(uso);
+            await _context.SaveChangesAsync();
+            return uso;
         }
     }
 }

@@ -243,17 +243,19 @@ GO
 
 -- 3.3. Procedure: sp_RegistrarVendaCompleta
 -- Finalidade: Executar transacionalmente a emissao de uma venda, atualizando FirstTime e
--- gravando o vinculo com cupom em CUPOM_USOS de forma estritamente atomica.
+-- gravando o vinculo com cupom em CUPOM_USOS e propagando id_CupomUso para ITEM_VENDAS.
 CREATE OR ALTER PROCEDURE sp_RegistrarVendaCompleta
     @CodCliente INT,
     @CodigoCupom VARCHAR(50) = NULL,
     @IdVendaGerada INT OUTPUT,
+    @IdCupomUsoGerado INT = NULL OUTPUT,
     @MensagemRetorno VARCHAR(255) OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
 
     SET @IdVendaGerada = 0;
+    SET @IdCupomUsoGerado = NULL;
     SET @MensagemRetorno = '';
 
     -- Validacao do cliente
@@ -279,6 +281,12 @@ BEGIN
 
             INSERT INTO CUPOM_USOS (Cod_do_Cliente, Codigo_Cupom, id_Venda, Data_Uso)
             VALUES (@CodCliente, @CodCupomNormalizado, @IdVendaGerada, GETDATE());
+
+            SET @IdCupomUsoGerado = SCOPE_IDENTITY();
+        END;
+        ELSE
+        BEGIN
+            SET @IdCupomUsoGerado = NULL;
         END;
 
         -- 3. Atualizacao da flag de primeira compra (Regra RN-PREC-05)

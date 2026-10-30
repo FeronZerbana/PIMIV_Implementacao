@@ -24,10 +24,16 @@ namespace PIM_WebApplication.Models
         [Column("Valor_Total", TypeName = "decimal(8,2)")]
         public decimal ValorTotal { get; set; }
 
+        [Column("id_CupomUso")]
+        public int? IdCupomUso { get; set; }
+
         [ForeignKey("CodVenda")]
         public Venda? Venda { get; set; }
 
         [ForeignKey("CodProduto")]
         public Produto? Produto { get; set; }
+
+        [ForeignKey("IdCupomUso")]
+        public CupomUso? CupomUso { get; set; }
     }
 }

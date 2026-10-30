@@ -120,10 +120,24 @@ namespace PIM_WebApplication.Data
                             CONSTRAINT UQ_CupomUso UNIQUE (Cod_do_Cliente, Codigo_Cupom)
                         );
                     END;
+
+                    -- 8. Adiciona coluna id_CupomUso na tabela ITEM_VENDAS se ainda nao existir
+                    IF NOT EXISTS (
+                        SELECT 1 FROM sys.columns 
+                        WHERE object_id = OBJECT_ID('ITEM_VENDAS') AND name = 'id_CupomUso'
+                    )
+                    BEGIN
+                        ALTER TABLE ITEM_VENDAS ADD id_CupomUso INT NULL;
+                        IF EXISTS (SELECT 1 FROM sys.tables WHERE name = 'CUPOM_USOS')
+                        BEGIN
+                            ALTER TABLE ITEM_VENDAS ADD CONSTRAINT FK_ITEM_VENDAS_CUPOM_USOS
+                                FOREIGN KEY (id_CupomUso) REFERENCES CUPOM_USOS(id_CupomUso);
+                        END;
+                    END;
                 ";
 
                 await context.Database.ExecuteSqlRawAsync(sqlAtualizacao);
-                logger.LogInformation("Estrutura do banco de dados (PRODUTOS, CLIENTES, CUPONS, CUPOM_USOS) verificada e sincronizada.");
+                logger.LogInformation("Estrutura do banco de dados (PRODUTOS, CLIENTES, CUPONS, CUPOM_USOS, ITEM_VENDAS) verificada e sincronizada.");
             }
             catch (Exception ex)
             {

@@ -83,11 +83,17 @@ namespace PIM_WebApplication.Data
                 entity.Property(e => e.Quantidade).HasColumnName("Quantidade").IsRequired();
                 entity.Property(e => e.ValorUnitario).HasColumnName("Valor_Unitario").HasColumnType("decimal(8,2)").IsRequired();
                 entity.Property(e => e.ValorTotal).HasColumnName("Valor_Total").HasColumnType("decimal(8,2)").IsRequired();
+                entity.Property(e => e.IdCupomUso).HasColumnName("id_CupomUso");
 
                 entity.HasOne(i => i.Produto)
                       .WithMany()
                       .HasForeignKey(i => i.CodProduto)
                       .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(i => i.CupomUso)
+                      .WithMany()
+                      .HasForeignKey(i => i.IdCupomUso)
+                      .OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Cupom>(entity =>

@@ -84,6 +84,14 @@ namespace PIM_WebApplication.Services
                 _context.Vendas.Add(venda);
                 await _context.SaveChangesAsync();
 
+                // Registro do uso unico do cupom se informado (gerando o id_CupomUso)
+                int? idCupomUso = null;
+                if (!string.IsNullOrWhiteSpace(codigoCupom))
+                {
+                    var uso = await _cupomService.RegistrarUsoCupomAsync(codCliente, codigoCupom, venda.IdVenda);
+                    idCupomUso = uso?.IdCupomUso;
+                }
+
                 decimal subtotalTotal = 0m;
 
                 foreach (var item in itens)
@@ -129,17 +137,12 @@ namespace PIM_WebApplication.Services
                         CodProduto = item.CodProduto,
                         Quantidade = item.Quantidade,
                         ValorUnitario = valorItem,
-                        ValorTotal = totalLinha
+                        ValorTotal = totalLinha,
+                        IdCupomUso = idCupomUso
                     };
 
                     // A baixa definitiva e atomica de saldo e executada pelo trigger relacional 'trg_AtualizarEstoque_ItemVenda'
                     _context.ItemVendas.Add(itemVenda);
-                }
-
-                // Registro do uso unico do cupom
-                if (!string.IsNullOrWhiteSpace(codigoCupom))
-                {
-                    await _cupomService.RegistrarUsoCupomAsync(codCliente, codigoCupom, venda.IdVenda);
                 }
 
                 // Atualizacao da regra de primeira compra (FirstTime)
@@ -183,7 +186,8 @@ namespace PIM_WebApplication.Services
                     NomeProduto = i.Produto?.TipoInstrumento ?? $"Instrumento #{i.CodProduto}",
                     Quantidade = i.Quantidade,
                     ValorUnitario = i.ValorUnitario,
-                    ValorTotal = i.ValorTotal
+                    ValorTotal = i.ValorTotal,
+                    IdCupomUso = i.IdCupomUso
                 }).ToList()
             }).ToList();
         }
