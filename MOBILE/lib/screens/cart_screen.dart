@@ -1,7 +1,6 @@
 import 'package:apppim/screens/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-
 import 'package:apppim/models/user_model.dart';
 import 'package:apppim/models/cart_model.dart';
 import 'package:apppim/screens/login_screen.dart';
@@ -18,41 +17,44 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Meu Carrinho'),
+        centerTitle: true,
         actions: [
           Container(
-            padding: const EdgeInsets.only(right: 8.0),
+            padding: const EdgeInsets.only(right: 16.0),
             alignment: Alignment.center,
             child: ScopedModelDescendant<CartModel>(
               builder: (context, child, model) {
                 final int p = model.itemCount;
-
                 return Text(
                   '$p ${p == 1 ? "ITEM" : "ITENS"}',
-                  style: const TextStyle(fontSize: 17.0),
+                  style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                 );
               },
             ),
           ),
         ],
       ),
-
       body: ScopedModelDescendant<CartModel>(
         builder: (context, child, model) {
-          final bool isLoggedIn =
-          UserModel.of(context).isLoggedIn();
+          final bool isLoggedIn = UserModel.of(context).isLoggedIn();
 
-          // Carregamento
-          if (model.isLoading && isLoggedIn) {
+          if (model.isLoading) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Registrando pedido e processando estoque...'),
+                ],
+              ),
             );
           }
 
-          // Usuário não autenticado
           if (!isLoggedIn) {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,25 +64,20 @@ class CartScreen extends StatelessWidget {
                       size: 80.0,
                       color: Theme.of(context).primaryColor,
                     ),
-
                     const SizedBox(height: 16.0),
-
                     const Text(
-                      'Faça o login para acessar seu carrinho!',
+                      'Faca login para acessar seu carrinho e finalizar compras!',
                       style: TextStyle(
-                        fontSize: 20.0,
+                        fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
                     ),
-
                     const SizedBox(height: 16.0),
-
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.white,
-                        backgroundColor:
-                        Theme.of(context).primaryColor,
+                        backgroundColor: Theme.of(context).primaryColor,
                       ),
                       onPressed: () {
                         Navigator.of(context).push(
@@ -90,8 +87,8 @@ class CartScreen extends StatelessWidget {
                         );
                       },
                       child: const Text(
-                        'Entrar',
-                        style: TextStyle(fontSize: 18.0),
+                        'Entrar na Minha Conta',
+                        style: TextStyle(fontSize: 16.0),
                       ),
                     ),
                   ],
@@ -100,53 +97,66 @@ class CartScreen extends StatelessWidget {
             );
           }
 
-          // Carrinho vazio
           if (model.products.isEmpty) {
-            return const Center(
-              child: Text(
-                'Nenhum produto no carrinho!',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.shopping_bag_outlined,
+                      size: 70,
+                      color: Colors.grey.shade400,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Seu carrinho esta vazio!',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Explore nosso catalogo e adicione instrumentos musicais.',
+                      style: TextStyle(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
-                textAlign: TextAlign.center,
               ),
             );
           }
 
-          // Carrinho com produtos
           return ListView(
-            padding: const EdgeInsets.only(
-              top: 4.0,
-              bottom: 16.0,
-            ),
+            padding: const EdgeInsets.only(top: 4.0, bottom: 20.0),
             children: [
-              // Produtos do carrinho
-              ...model.products.map(
-                    (product) => CartTile(product),
-              ),
-
+              ...model.products.map((product) => CartTile(product)),
               const SizedBox(height: 8.0),
-
-              // Cupom de desconto
               const DiscountCard(),
-
-              // Calcular frete
               const ShipCard(),
-
               const SizedBox(height: 8.0),
-
-              // Resumo do pedido e botão finalizar
               CartPrice(() async {
-                final String? orderId =
-                await model.finishOrder();
+                final String? orderId = await model.finishOrder();
 
-                if (orderId != null &&
-                    orderId.isNotEmpty &&
-                    context.mounted) {
+                if (!context.mounted) return;
+
+                if (orderId != null && orderId.isNotEmpty) {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
                       builder: (_) => OrderScreen(orderId),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        model.lastOrderError ?? 'Nao foi possivel concluir a compra.',
+                      ),
+                      backgroundColor: Colors.redAccent,
+                      duration: const Duration(seconds: 4),
                     ),
                   );
                 }

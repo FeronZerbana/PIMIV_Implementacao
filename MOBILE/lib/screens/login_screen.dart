@@ -1,12 +1,14 @@
-
 import 'package:apppim/models/user_model.dart';
 import 'package:apppim/screens/signup_screen.dart';
+import 'package:apppim/widgets/server_settings_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
@@ -25,25 +27,25 @@ class _LoginScreenState extends State<LoginScreen> {
   void _onSuccess() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Login realizado com sucesso!"),
+        content: const Text("Login realizado com sucesso!"),
         backgroundColor: Theme.of(context).primaryColor,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
 
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted && Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
     });
   }
 
-  void _onFail() {
+  void _onFail(String error) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text("Falha ao entrar! Verifique seus dados."),
+        content: Text(error),
         backgroundColor: Colors.redAccent,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 3),
       ),
     );
   }
@@ -52,99 +54,97 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Entrar"),
+        title: const Text("Entrar"),
         centerTitle: true,
         actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.dns, size: 22),
+            tooltip: 'Configurar Servidor / API',
+            onPressed: () {
+              ServerSettingsDialog.show(context);
+            },
+          ),
           TextButton(
-            child: Text(
-              "CRIAR CONTA",
-              style: TextStyle(
-                fontSize: 15.0,
-              ),
-            ),
             style: TextButton.styleFrom(
-              foregroundColor: Colors.black,
+              foregroundColor: Colors.white,
             ),
             onPressed: () {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(
-                  builder: (context) => SignupScreen(),
+                  builder: (context) => const SignupScreen(),
                 ),
               );
             },
+            child: const Text(
+              "CRIAR CONTA",
+              style: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
       body: ScopedModelDescendant<UserModel>(
         builder: (context, child, model) {
           if (model.isLoading) {
-            return Center(
-              child: CircularProgressIndicator(),
+            return const Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 12),
+                  Text('Autenticando contra o servidor...'),
+                ],
+              ),
             );
           }
 
           return Form(
             key: _formKey,
             child: ListView(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               children: <Widget>[
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(
-                    hintText: "E-mail",
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "E-mail",
+                    hintText: "exemplo@email.com",
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (text) {
-                    if (text == null ||
-                        text.isEmpty ||
-                        !text.contains("@")) {
-                      return "E-mail inválido";
+                    if (text == null || text.isEmpty || !text.contains("@")) {
+                      return "E-mail invalido";
                     }
                     return null;
                   },
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 TextFormField(
                   controller: _passController,
-                  decoration: InputDecoration(
-                    hintText: "Senha",
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Senha",
+                    hintText: "Minimo 6 caracteres",
                   ),
                   obscureText: true,
                   validator: (text) {
                     if (text == null || text.length < 6) {
-                      return "Senha inválida";
+                      return "A senha deve ter no minimo 6 caracteres";
                     }
                     return null;
                   },
                 ),
+                const SizedBox(height: 12.0),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () async {
-                      final email = _emailController.text.trim();
-
-                      if (email.isEmpty || !email.contains("@")) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Insira um e-mail válido.",
-                            ),
-                          ),
-                        );
-                        return;
-                      }
-
-                      final encontrado =
-                      await model.recoverPass(email);
-
-                      if (!mounted) return;
-
+                    onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text(
-                            encontrado
-                                ? "E-mail cadastrado. A recuperação real será implementada na API."
-                                : "E-mail não encontrado.",
+                            "Para redefinicao de senha, solicite suporte ao administrador da loja.",
                           ),
                         ),
                       );
@@ -152,26 +152,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextButton.styleFrom(
                       padding: EdgeInsets.zero,
                     ),
-                    child: Text(
+                    child: const Text(
                       "Esqueci minha senha",
                       textAlign: TextAlign.right,
                     ),
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 SizedBox(
-                  height: 44.0,
+                  height: 48.0,
                   child: ElevatedButton(
-                    child: Text(
-                      "Entrar",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                      ),
-                    ),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor:
-                      Theme.of(context).primaryColor,
+                      backgroundColor: Theme.of(context).primaryColor,
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -179,10 +172,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           email: _emailController.text.trim(),
                           pass: _passController.text,
                           onSucess: _onSuccess,
-                          onFail: _onFail,
+                          onFail: (err) => _onFail(err),
                         );
                       }
                     },
+                    child: const Text(
+                      "Entrar",
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ],

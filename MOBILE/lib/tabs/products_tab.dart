@@ -1,29 +1,36 @@
-
 import 'package:apppim/tiles/category_tile.dart';
 import 'package:flutter/material.dart';
-
 
 class ProductsTab extends StatelessWidget {
   ProductsTab({super.key});
 
   final List<Map<String, String>> categories = [
     {
-      'title': 'Baquetas',
-      'icon': 'assets/imagens/baqtmenu.png',
+      'title': 'Guitarras',
+      'icon': 'assets/imagens/guitarramenu.png',
+    },
+    {
+      'title': 'Violoes',
+      'icon': 'assets/imagens/instrumentos.jpg',
     },
     {
       'title': 'Baterias',
       'icon': 'assets/imagens/bateriamenu.png',
     },
     {
-      'title': 'Guitarras',
-      'icon': 'assets/imagens/guitarramenu.png',
+      'title': 'Teclados',
+      'icon': 'assets/imagens/amplificador.jpg',
     },
     {
-      'title': 'Baixos',
-      'icon': 'assets/imagens/baixomenu.png',
+      'title': 'Acessorios',
+      'icon': 'assets/imagens/baqtmenu.png',
+    },
+    {
+      'title': 'Outros',
+      'icon': 'assets/imagens/violino.jpg',
     },
   ];
+
   @override
   Widget build(BuildContext context) {
     final dividedTiles = ListTile.divideTiles(
@@ -42,4 +49,3 @@ class ProductsTab extends StatelessWidget {
     );
   }
 }
-

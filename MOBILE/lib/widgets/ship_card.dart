@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import '../models/cart_model.dart';
 
 class ShipCard extends StatefulWidget {
   const ShipCard({super.key});
@@ -9,11 +9,9 @@ class ShipCard extends StatefulWidget {
 }
 
 class _ShipCardState extends State<ShipCard> {
-  final TextEditingController _cepController =
-  TextEditingController();
-
+  final TextEditingController _cepController = TextEditingController();
   bool _isLoading = false;
-  String? _cep;
+  String? _calculatedCep;
 
   @override
   void dispose() {
@@ -30,23 +28,43 @@ class _ShipCardState extends State<ShipCard> {
     }
 
     if (!RegExp(r'^\d{5}-?\d{3}$').hasMatch(cep)) {
-      _showMessage('Digite um CEP válido.');
+      _showMessage('Digite um CEP valido (ex: 01001-000).');
       return;
     }
 
     setState(() {
       _isLoading = true;
-      _cep = cep;
     });
 
-    // Futuramente, a API receberá o CEP,
-    // consultará o serviço de frete e retornará o valor.
+    // Simulacao de tarifario regional por faixa de CEP
+    double calculated = 19.90;
+    final digits = cep.replaceAll(RegExp(r'\D'), '');
+    if (digits.startsWith('0')) {
+      calculated = 12.50; // Regiao Metropolitana SP
+    } else if (digits.startsWith('1')) {
+      calculated = 18.00; // Interior SP
+    } else {
+      calculated = 28.90; // Demais Estados
+    }
+
+    // Regra de Frete Gratis para compras acima de R$ 800
+    final cartModel = CartModel.of(context);
+    if (cartModel.getProductsPrice() >= 800) {
+      calculated = 0.0;
+    }
+
+    cartModel.setShippingPrice(calculated);
 
     setState(() {
       _isLoading = false;
+      _calculatedCep = cep;
     });
 
-    _showMessage('CEP informado com sucesso!');
+    _showMessage(
+      calculated == 0.0
+          ? 'Frete Gratis aplicado para compras acima de R\$ 800!'
+          : 'Frete calculado: R\$ ${calculated.toStringAsFixed(2)}',
+    );
   }
 
   void _showMessage(String message) {
@@ -60,21 +78,28 @@ class _ShipCardState extends State<ShipCard> {
 
   @override
   Widget build(BuildContext context) {
+    final cartModel = CartModel.of(context);
+
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: 8.0,
         vertical: 4.0,
       ),
       child: ExpansionTile(
-        title: const Text(
-          'Calcular Frete',
+        title: Text(
+          _calculatedCep != null
+              ? 'Frete: R\$ ${cartModel.shipPrice.toStringAsFixed(2)} ($_calculatedCep)'
+              : 'Calcular Frete e Entrega',
           textAlign: TextAlign.start,
           style: TextStyle(
             fontWeight: FontWeight.w500,
-            color: Colors.grey,
+            color: _calculatedCep != null ? Theme.of(context).primaryColor : Colors.grey.shade700,
           ),
         ),
-        leading: const Icon(Icons.location_on),
+        leading: Icon(
+          Icons.location_on,
+          color: _calculatedCep != null ? Theme.of(context).primaryColor : null,
+        ),
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -86,28 +111,30 @@ class _ShipCardState extends State<ShipCard> {
                   maxLength: 9,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    hintText: 'Digite seu CEP',
+                    hintText: '01001-000',
+                    labelText: 'CEP de Entrega',
                     counterText: '',
                   ),
-                  onFieldSubmitted: (_) {
-                    _calculateShipping();
-                  },
+                  onFieldSubmitted: (_) => _calculateShipping(),
                 ),
                 const SizedBox(height: 12.0),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed:
-                    _isLoading ? null : _calculateShipping,
-                    child: const Text('Calcular'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: _isLoading ? null : _calculateShipping,
+                    child: _isLoading
+                        ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                        : const Text('Calcular Frete'),
                   ),
                 ),
-                if (_isLoading)
-                  const CircularProgressIndicator(),
-                if (_cep != null) ...[
-                  const SizedBox(height: 8.0),
-                  Text('CEP informado: $_cep'),
-                ],
               ],
             ),
           ),

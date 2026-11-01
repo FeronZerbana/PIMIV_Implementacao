@@ -1,7 +1,7 @@
-
 import 'package:apppim/models/user_model.dart';
 import 'package:apppim/screens/login_screen.dart';
 import 'package:apppim/tiles/drawer_tile.dart';
+import 'package:apppim/widgets/server_settings_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -33,8 +33,9 @@ class CustomDrawer extends StatelessWidget {
           _buildDrawerBack(),
           ListView(
             padding: const EdgeInsets.only(
-              left: 32.0,
+              left: 24.0,
               top: 16.0,
+              right: 16.0,
             ),
             children: [
               Container(
@@ -69,7 +70,7 @@ class CustomDrawer extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Olá, $userName',
+                                'Ola, $userName',
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -100,11 +101,10 @@ class CustomDrawer extends StatelessWidget {
 
                                     Navigator.of(context).pop();
 
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(
+                                    ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                          'Você saiu da sua conta.',
+                                          'Voce saiu da sua conta.',
                                         ),
                                       ),
                                     );
@@ -124,7 +124,7 @@ class CustomDrawer extends StatelessWidget {
 
               DrawerTile(
                 Icons.home,
-                'Início',
+                'Inicio',
                 pageController,
                 0,
               ),
@@ -141,6 +141,23 @@ class CustomDrawer extends StatelessWidget {
                 'Meus Pedidos',
                 pageController,
                 2,
+              ),
+
+              const Divider(),
+
+              ListTile(
+                leading: Icon(
+                  Icons.dns,
+                  color: Theme.of(context).primaryColor,
+                ),
+                title: const Text(
+                  'Configuracoes de Servidor / API',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  ServerSettingsDialog.show(context);
+                },
               ),
             ],
           ),

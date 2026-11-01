@@ -1,4 +1,3 @@
-
 import 'package:apppim/datas/product_data.dart';
 
 class CartProduct {
@@ -33,6 +32,15 @@ class CartProduct {
         'description': productData.description,
         'price': productData.price,
       },
+    };
+  }
+
+  Map<String, dynamic> toItemCarrinhoDto() {
+    return {
+      'codProduto': int.tryParse(pid) ?? 0,
+      'quantidade': quantity,
+      'precoUnitario': productData.price,
+      'nome': productData.title,
     };
   }
 }
