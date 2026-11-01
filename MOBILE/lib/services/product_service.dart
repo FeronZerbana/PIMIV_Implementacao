@@ -1,5 +1,4 @@
 import '../datas/product_data.dart';
-import '../data/store_data.dart' as fallback;
 import 'api_client.dart';
 
 class ProductService {
@@ -16,12 +15,12 @@ class ProductService {
       },
     );
 
-    if (response.success && response.data != null && response.data!.isNotEmpty) {
+    if (response.success && response.data != null) {
       return response.data!;
     }
 
-    // Fallback de contingencia caso o backend esteja temporariamente inacessivel
-    return fallback.products;
+    // Se nao houver conexao ou a API retornar vazio/erro, nenhum produto deve aparecer
+    return <ProductData>[];
   }
 
   static Future<List<ProductData>> getProductsByCategory(String categoria) async {
@@ -37,14 +36,12 @@ class ProductService {
       },
     );
 
-    if (response.success && response.data != null && response.data!.isNotEmpty) {
+    if (response.success && response.data != null) {
       return response.data!;
     }
 
-    // Fallback filtrando produtos locais
-    return fallback.products.where((p) {
-      return p.category.toLowerCase() == categoria.toLowerCase();
-    }).toList();
+    // Se nao houver conexao ou a API retornar vazio/erro, nenhum produto deve aparecer
+    return <ProductData>[];
   }
 
   static Future<ProductData?> getProductById(int id) async {
@@ -57,10 +54,6 @@ class ProductService {
       return response.data;
     }
 
-    try {
-      return fallback.products.firstWhere((p) => p.id == id.toString());
-    } catch (_) {
-      return null;
-    }
+    return null;
   }
 }
