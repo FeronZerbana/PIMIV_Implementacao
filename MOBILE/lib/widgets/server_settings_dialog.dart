@@ -75,7 +75,7 @@ class _ServerSettingsDialogState extends State<ServerSettingsDialog> {
         children: [
           Icon(Icons.dns, size: 24),
           SizedBox(width: 8),
-          Text('Configuracao da API'),
+          Text('Configuração do servidor'),
         ],
       ),
       content: SingleChildScrollView(

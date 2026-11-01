@@ -51,7 +51,6 @@ class _DiscountCardState extends State<DiscountCard> {
     }
 
     // 2. Deteccao dinamica caso a API esteja temporariamente inacessivel:
-    // Extrai o percentual se o codigo contiver numero (ex: PROMO20 -> 20, CUPOM30 -> 30, ROCK15 -> 15)
     final numMatch = RegExp(r'(\d{1,2})$').firstMatch(clean);
     if (numMatch != null) {
       final int parsed = int.tryParse(numMatch.group(1)!) ?? 0;
@@ -160,8 +159,7 @@ class _DiscountCardState extends State<DiscountCard> {
                   textCapitalization: TextCapitalization.characters,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
-                    hintText: 'Ex: ROCK15, DEV10, PRIMEIRACOMPRA',
-                    labelText: 'Codigo do Cupom',
+                    labelText: 'Cupom de Desconto',
                     suffixIcon: hasCoupon
                         ? IconButton(
                       icon: const Icon(Icons.clear),

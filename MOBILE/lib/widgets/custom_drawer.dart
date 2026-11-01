@@ -132,7 +132,7 @@ class CustomDrawer extends StatelessWidget {
 
               DrawerTile(
                 Icons.list,
-                'Produtos',
+                'Categorias',
                 pageController,
                 1,
               ),
@@ -152,7 +152,7 @@ class CustomDrawer extends StatelessWidget {
                   color: Theme.of(context).primaryColor,
                 ),
                 title: const Text(
-                  'Configuracoes de Servidor / API',
+                  'Configurações do Servidor',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 onTap: () {

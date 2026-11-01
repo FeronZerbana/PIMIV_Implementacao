@@ -69,7 +69,7 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.dns, color: Colors.white),
-                    tooltip: 'Configurar Servidor / API',
+                    tooltip: 'Configurar Servidor',
                     onPressed: () async {
                       await ServerSettingsDialog.show(context);
                       _loadProducts();

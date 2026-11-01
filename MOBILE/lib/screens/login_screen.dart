@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.dns, size: 22),
-            tooltip: 'Configurar Servidor / API',
+            tooltip: 'Configurar Servidor',
             onPressed: () {
               ServerSettingsDialog.show(context);
             },
