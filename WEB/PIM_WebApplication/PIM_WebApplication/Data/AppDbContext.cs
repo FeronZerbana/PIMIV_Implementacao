@@ -52,7 +52,8 @@ namespace PIM_WebApplication.Data
 
             modelBuilder.Entity<Estoque>(entity =>
             {
-                entity.ToTable("ESTOQUE");
+                // Configuracao de trigger para evitar incompatibilidade com clausula OUTPUT do SQL Server no EF Core
+                entity.ToTable("ESTOQUE", tb => tb.HasTrigger("trg_ValidarEstoqueMinimo"));
                 entity.HasKey(e => e.IdEstoque);
                 entity.Property(e => e.IdEstoque).HasColumnName("id_Estoque");
                 entity.Property(e => e.CodProduto).HasColumnName("Cod_do_Produto").IsRequired();
@@ -61,7 +62,8 @@ namespace PIM_WebApplication.Data
 
             modelBuilder.Entity<Venda>(entity =>
             {
-                entity.ToTable("VENDAS");
+                // Configuracao de trigger para evitar incompatibilidade com clausula OUTPUT do SQL Server no EF Core
+                entity.ToTable("VENDAS", tb => tb.HasTrigger("trg_AuditoriaVendas"));
                 entity.HasKey(e => e.IdVenda);
                 entity.Property(e => e.IdVenda).HasColumnName("id_Vendas");
                 entity.Property(e => e.CodCliente).HasColumnName("Cod_do_Cliente").IsRequired();
@@ -75,7 +77,8 @@ namespace PIM_WebApplication.Data
 
             modelBuilder.Entity<ItemVenda>(entity =>
             {
-                entity.ToTable("ITEM_VENDAS");
+                // Configuracao de trigger para evitar incompatibilidade com clausula OUTPUT do SQL Server no EF Core
+                entity.ToTable("ITEM_VENDAS", tb => tb.HasTrigger("trg_AtualizarEstoque_ItemVenda"));
                 entity.HasKey(e => e.IdItemVenda);
                 entity.Property(e => e.IdItemVenda).HasColumnName("id_Item_Venda");
                 entity.Property(e => e.CodVenda).HasColumnName("Cod_da_Venda").IsRequired();
