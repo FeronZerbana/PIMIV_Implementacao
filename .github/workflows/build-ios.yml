@@ -1,0 +1,59 @@
+name: Build iOS IPA (Unsigned)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ feat/mobile ]
+    paths:
+      - 'MOBILE/**'
+      - '.github/workflows/build-ios.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-ios:
+    name: Build iOS IPA
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: MOBILE
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Baixar artefatos do iOS (Flutter precache)
+        run: flutter precache --ios
+
+      - name: Instalar dependencias do Flutter
+        run: flutter pub get
+
+      - name: Inspecionar ambiente (Flutter Doctor)
+        run: flutter doctor -v
+
+      - name: Compilar iOS Release (sem assinatura)
+        run: flutter build ios --release --no-codesign
+
+      - name: Empacotar Payload em IPA
+        run: |
+          rm -rf Payload app-release-unsigned.ipa
+          mkdir -p Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -ry app-release-unsigned.ipa Payload
+          rm -rf Payload
+
+      - name: Publicar IPA como Artefato
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa-release
+          path: MOBILE/app-release-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 5
