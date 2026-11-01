@@ -54,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Entrar"),
+        title: const Text("Entrar na Conta"),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: const Text(
               "CRIAR CONTA",
               style: TextStyle(
-                fontSize: 14.0,
+                fontSize: 13.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -180,6 +180,47 @@ class _LoginScreenState extends State<LoginScreen> {
                       "Entrar",
                       style: TextStyle(
                         fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24.0),
+                Row(
+                  children: const [
+                    Expanded(child: Divider()),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Text(
+                        "OU",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Divider()),
+                  ],
+                ),
+                const SizedBox(height: 20.0),
+                SizedBox(
+                  height: 48.0,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const SignupScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Nao tem conta? Criar uma conta",
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

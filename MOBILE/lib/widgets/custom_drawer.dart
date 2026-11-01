@@ -48,10 +48,11 @@ class CustomDrawer extends StatelessWidget {
                       top: 8,
                       left: 0,
                       child: Text(
-                        'Guitar\nMusic',
+                        'Shop\nNow',
                         style: TextStyle(
                           fontSize: 34,
                           fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
                         ),
                       ),
                     ),
@@ -93,7 +94,7 @@ class CustomDrawer extends StatelessWidget {
 
                                     await Navigator.of(context).push(
                                       MaterialPageRoute(
-                                        builder: (_) => LoginScreen(),
+                                        builder: (_) => const LoginScreen(),
                                       ),
                                     );
                                   } else {

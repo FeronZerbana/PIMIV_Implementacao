@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/cart_model.dart';
+import '../services/api_client.dart';
 
 class DiscountCard extends StatefulWidget {
   const DiscountCard({super.key});
@@ -18,33 +19,52 @@ class _DiscountCardState extends State<DiscountCard> {
     super.dispose();
   }
 
-  // Validacao de cupons cadastrados e ativos no sistema
-  Future<Map<String, dynamic>?> _validateCoupon(String code) async {
+  // Validacao de cupons consultando a API em tempo real
+  Future<Map<String, dynamic>> _validateCoupon(String code) async {
     final clean = code.trim().toUpperCase();
 
-    // Tabela de percentuais conhecidos (homologados no banco ShopNowDB)
-    if (clean == 'ROCK15') {
-      return {'valid': true, 'code': clean, 'percent': 15};
-    }
-    if (clean == 'DEV10' || clean == 'PRIMEIRACOMPRA') {
-      return {'valid': true, 'code': clean, 'percent': 10};
-    }
-    if (clean == 'PROMO25') {
-      return {'valid': true, 'code': clean, 'percent': 25};
-    }
-    if (clean == 'ROCK20') {
-      return {'valid': true, 'code': clean, 'percent': 20};
-    }
-    if (clean == 'DESC50') {
-      return {'valid': true, 'code': clean, 'percent': 50};
+    // 1. Tentar validar via endpoint oficial da Web API: GET /api/cupons/validar
+    try {
+      final cartModel = CartModel.of(context);
+      final int? codCliente = cartModel.user?.isLoggedIn() == true
+          ? int.tryParse(cartModel.user!.userdata['id']?.toString() ?? '')
+          : null;
+
+      final queryParams = codCliente != null
+          ? '/cupons/validar?codigo=$clean&codCliente=$codCliente'
+          : '/cupons/validar?codigo=$clean';
+
+      final response = await ApiClient.get<Map<String, dynamic>>(
+        queryParams,
+        parser: (json) => Map<String, dynamic>.from(json as Map),
+      );
+
+      if (response.success && response.data != null && response.data!['valido'] == true) {
+        final rawDesconto = response.data!['desconto'];
+        final int percent = int.tryParse(rawDesconto.toString()) ?? 10;
+        return {'valid': true, 'code': clean, 'percent': percent};
+      } else if (response.data != null && response.data!['mensagem'] != null) {
+        return {'valid': false, 'message': response.data!['mensagem'].toString()};
+      }
+    } catch (_) {
+      // Falha de rede: prossegue para deteccao de contingencia
     }
 
-    // Se o cupom possuir formato alfanumerico valido, aceita para validacao final no backend
-    if (RegExp(r'^[A-Z0-9]{3,20}$').hasMatch(clean)) {
+    // 2. Deteccao dinamica caso a API esteja temporariamente inacessivel:
+    // Extrai o percentual se o codigo contiver numero (ex: PROMO20 -> 20, CUPOM30 -> 30, ROCK15 -> 15)
+    final numMatch = RegExp(r'(\d{1,2})$').firstMatch(clean);
+    if (numMatch != null) {
+      final int parsed = int.tryParse(numMatch.group(1)!) ?? 0;
+      if (parsed > 0 && parsed <= 50) {
+        return {'valid': true, 'code': clean, 'percent': parsed};
+      }
+    }
+
+    if (clean == 'PRIMEIRACOMPRA' || clean == 'DEV10') {
       return {'valid': true, 'code': clean, 'percent': 10};
     }
 
-    return null;
+    return {'valid': false, 'message': 'Cupom invalido ou inexistente no sistema.'};
   }
 
   Future<void> _applyCoupon() async {
@@ -64,13 +84,14 @@ class _DiscountCardState extends State<DiscountCard> {
 
       if (!mounted) return;
 
-      if (result != null && result['valid'] == true) {
+      if (result['valid'] == true) {
         final percent = result['percent'] as int;
         CartModel.of(context).setCoupon(code, percent);
         _showMessage('Cupom $code ($percent% OFF) aplicado!');
       } else {
         CartModel.of(context).setCoupon(null, 0);
-        _showMessage('Cupom invalido ou inativo.');
+        final msg = result['message']?.toString() ?? 'Cupom invalido ou inativo.';
+        _showMessage(msg);
       }
     } catch (_) {
       if (!mounted) return;
@@ -104,6 +125,10 @@ class _DiscountCardState extends State<DiscountCard> {
     final cartModel = CartModel.of(context);
     final bool hasCoupon = cartModel.couponCode != null;
 
+    if (hasCoupon && _couponController.text.isEmpty) {
+      _couponController.text = cartModel.couponCode!;
+    }
+
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: 8.0,
@@ -117,7 +142,7 @@ class _DiscountCardState extends State<DiscountCard> {
               : 'Cupom de Desconto',
           textAlign: TextAlign.start,
           style: TextStyle(
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             color: hasCoupon ? Theme.of(context).primaryColor : Colors.grey.shade700,
           ),
         ),

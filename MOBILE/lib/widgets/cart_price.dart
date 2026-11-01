@@ -1,4 +1,3 @@
-
 import 'package:apppim/models/cart_model.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -55,9 +54,15 @@ class CartPrice extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Desconto'),
+                    Text(model.discountPercentage > 0
+                        ? 'Desconto (${model.discountPercentage}% OFF)'
+                        : 'Desconto'),
                     Text(
                       '- R\$ ${discount.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        color: discount > 0 ? Colors.green.shade700 : null,
+                        fontWeight: discount > 0 ? FontWeight.bold : null,
+                      ),
                     ),
                   ],
                 ),
@@ -109,13 +114,12 @@ class CartPrice extends StatelessWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor:
-                      Theme.of(context).primaryColor,
+                      backgroundColor: Theme.of(context).primaryColor,
                     ),
                     onPressed: model.isLoading ? null : buy,
                     child: const Text(
                       'Finalizar Pedido',
-                      style: TextStyle(fontSize: 16.0),
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
