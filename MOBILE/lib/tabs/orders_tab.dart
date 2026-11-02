@@ -175,6 +175,10 @@ class _OrdersTabState extends State<OrdersTab> {
                 data = DateTime.tryParse(v['dataVenda'].toString()) ?? DateTime.now();
               }
               final double total = double.tryParse(v['totalVenda']?.toString() ?? '0') ?? 0.0;
+              final double subtotal = double.tryParse(v['subtotal']?.toString() ?? '0') ?? 0.0;
+              final double valorFrete = double.tryParse(v['valorFrete']?.toString() ?? '0') ?? 0.0;
+              final double valorDesconto = double.tryParse(v['valorDesconto']?.toString() ?? '0') ?? 0.0;
+              final String? codigoCupom = v['codigoCupom']?.toString();
               final List itens = (v['itens'] is List) ? v['itens'] as List : [];
               final int itemCount = itens.isNotEmpty
                   ? itens.fold<int>(0, (acc, item) => acc + (int.tryParse(item['quantidade']?.toString() ?? '1') ?? 1))
@@ -185,6 +189,11 @@ class _OrdersTabState extends State<OrdersTab> {
                 orderDate: data,
                 itemCount: itemCount,
                 total: total,
+                subtotal: subtotal > 0 ? subtotal : null,
+                valorFrete: valorFrete,
+                valorDesconto: valorDesconto,
+                codigoCupom: codigoCupom,
+                itens: itens,
                 currentStep: 2, // Em transporte / confirmado
               );
             },

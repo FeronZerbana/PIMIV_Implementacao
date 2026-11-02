@@ -36,16 +36,8 @@ class _ShipCardState extends State<ShipCard> {
       _isLoading = true;
     });
 
-    // Simulacao de tarifario regional por faixa de CEP
-    double calculated = 19.90;
-    final digits = cep.replaceAll(RegExp(r'\D'), '');
-    if (digits.startsWith('0')) {
-      calculated = 12.50; // Regiao Metropolitana SP
-    } else if (digits.startsWith('1')) {
-      calculated = 18.00; // Interior SP
-    } else {
-      calculated = 28.90; // Demais Estados
-    }
+    // Taxa fixa padrao de R$ 9,99 conforme alinhado entre plataformas
+    double calculated = 9.99;
 
     // Regra de Frete Gratis para compras acima de R$ 800
     final cartModel = CartModel.of(context);
@@ -63,7 +55,7 @@ class _ShipCardState extends State<ShipCard> {
     _showMessage(
       calculated == 0.0
           ? 'Frete Gratis aplicado para compras acima de R\$ 800!'
-          : 'Frete calculado: R\$ ${calculated.toStringAsFixed(2)}',
+          : 'Frete fixo calculado: R\$ ${calculated.toStringAsFixed(2)}',
     );
   }
 
@@ -88,7 +80,9 @@ class _ShipCardState extends State<ShipCard> {
       child: ExpansionTile(
         title: Text(
           _calculatedCep != null
-              ? 'Frete: R\$ ${cartModel.shipPrice.toStringAsFixed(2)} ($_calculatedCep)'
+              ? (cartModel.getShipPrice() == 0.0
+                  ? 'Frete: Gratis ($_calculatedCep)'
+                  : 'Frete: R\$ ${cartModel.getShipPrice().toStringAsFixed(2)} ($_calculatedCep)')
               : 'Calcular Frete e Entrega',
           textAlign: TextAlign.start,
           style: TextStyle(
@@ -98,44 +92,54 @@ class _ShipCardState extends State<ShipCard> {
         ),
         leading: Icon(
           Icons.location_on,
-          color: _calculatedCep != null ? Theme.of(context).primaryColor : null,
+          color: Theme.of(context).primaryColor,
         ),
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _cepController,
-                  keyboardType: TextInputType.number,
-                  maxLength: 9,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: '01001-000',
-                    labelText: 'CEP de Entrega',
-                    counterText: '',
-                  ),
-                  onFieldSubmitted: (_) => _calculateShipping(),
-                ),
-                const SizedBox(height: 12.0),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                      foregroundColor: Colors.white,
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: _cepController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Digite seu CEP (ex: 01001-000)',
+                      labelText: 'CEP de Entrega',
                     ),
-                    onPressed: _isLoading ? null : _calculateShipping,
-                    child: _isLoading
-                        ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                    )
-                        : const Text('Calcular Frete'),
+                    keyboardType: TextInputType.number,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8.0),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                      onPressed: _isLoading ? null : _calculateShipping,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text('Calcular Frete'),
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    'Frete gratis para compras a partir de R\$ 800,00',
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

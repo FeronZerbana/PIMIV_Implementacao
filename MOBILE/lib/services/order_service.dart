@@ -5,11 +5,13 @@ class OrderService {
     required int codCliente,
     required List<Map<String, dynamic>> itens,
     String? cupom,
+    double? valorFrete,
   }) async {
     final body = {
       'codCliente': codCliente,
       'itens': itens,
       'cupom': cupom != null && cupom.trim().isNotEmpty ? cupom.trim().toUpperCase() : null,
+      'valorFrete': valorFrete,
     };
 
     return await ApiClient.post<int>(

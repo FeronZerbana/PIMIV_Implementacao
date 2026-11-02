@@ -129,6 +129,9 @@ class CartModel extends Model {
   }
 
   double getShipPrice() {
+    if (getProductsPrice() >= 800.0 || getProductsPrice() == 0.0) {
+      return 0.0;
+    }
     return shipPrice;
   }
 
@@ -177,6 +180,7 @@ class CartModel extends Model {
         codCliente: codCliente,
         itens: itensDto,
         cupom: couponCode,
+        valorFrete: getShipPrice(),
       );
 
       if (response.success && response.data != null && response.data! > 0) {
