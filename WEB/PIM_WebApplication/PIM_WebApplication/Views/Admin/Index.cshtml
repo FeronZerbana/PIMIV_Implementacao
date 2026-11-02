@@ -28,7 +28,7 @@
         <div class="admin-card-header">
             <div>
                 <h2 class="admin-card-titulo">Cadastrar Novo Produto</h2>
-                <p class="admin-card-sub">Adicione um novo produto ao catálogo da loja</p>
+                <p class="admin-card-sub">Adicione um novo produto ao catálogo da loja com estoque e descrição</p>
             </div>
         </div>
 
@@ -71,6 +71,12 @@
                 </div>
             </div>
 
+            <div class="admin-field">
+                <label asp-for="NovoProduto.Descricao" class="admin-label">Descrição Detalhada do Produto (Opcional)</label>
+                <textarea asp-for="NovoProduto.Descricao" class="admin-input" rows="3" placeholder="Informações técnicas, diferenciais e detalhes do instrumento..."></textarea>
+                <span asp-validation-for="NovoProduto.Descricao" class="text-danger"></span>
+            </div>
+
             <div class="admin-form-row">
                 <div class="admin-field">
                     <label asp-for="NovoProduto.ImagemArquivo" class="admin-label">Upload de Imagem</label>
@@ -83,10 +89,10 @@
 
                 <div class="admin-field">
                     <label asp-for="NovoProduto.ImagemUrl" class="admin-label">URL Externa / Imagem Manual (Opcional)</label>
-                    <input asp-for="NovoProduto.ImagemUrl" class="admin-input" placeholder="Caminho de objetos a partir de: '/img/uploads/<nome_do_arquivo>'" />
+                    <input asp-for="NovoProduto.ImagemUrl" class="admin-input" placeholder="Ex: /img/uploads/guitarra.jpg" />
                     <span asp-validation-for="NovoProduto.ImagemUrl" class="text-danger"></span>
                     <small style="color: var(--muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
-                        Se vazio e sem arquivo, será utilizada a imagem padrão da categoria selecionada.
+                        Se vazio e sem arquivo, será utilizada a imagem padrão da categoria.
                     </small>
                 </div>
             </div>
@@ -115,7 +121,7 @@
                         @foreach (var p in Model.ProdutosCadastrados)
                         {
                             <option value="@p.IdProduto">
-                                [@p.TipoInstrumento] @p.Modelo — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un]
+                                [@p.TipoInstrumento] @p.Modelo — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un] @(!p.Ativo ? "(Inativo)" : "")
                             </option>
                         }
                     </select>
@@ -138,7 +144,7 @@
         <div class="admin-card-header">
             <div>
                 <h2 class="admin-card-titulo">Gestão de Cupons de Desconto</h2>
-                <p class="admin-card-sub">Cadastre novos cupons de 1% a 99% válidos imediatamente na loja</p>
+                <p class="admin-card-sub">Cadastre e gerencie cupons de 1% a 99% com desativação lógica (soft delete)</p>
             </div>
         </div>
 
@@ -188,13 +194,29 @@
                                     <td>@c.IdCupom</td>
                                     <td><strong style="color: #a78bfa; font-family: monospace; font-size: 1rem;">@c.Valor</strong></td>
                                     <td><span style="color: #34d399; font-weight: 700;">@c.Desconto% OFF</span></td>
-                                    <td>@(c.Ativo ? "Ativo" : "Inativo")</td>
+                                    <td>
+                                        @if (c.Ativo)
+                                        {
+                                            <span class="admin-badge-active">Ativo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="admin-badge-inactive">Desativado</span>
+                                        }
+                                    </td>
                                     <td>@c.DataCriacao.ToString("dd/MM/yyyy HH:mm")</td>
                                     <td>
-                                        <form asp-controller="Admin" asp-action="ExcluirCupom" method="post" onsubmit="return confirm('Deseja realmente remover este cupom?');" style="display:inline;">
+                                        <form asp-controller="Admin" asp-action="AlternarStatusCupom" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@c.IdCupom" />
-                                            <button type="submit" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; font-weight:600; text-decoration:underline;">Remover</button>
+                                            @if (c.Ativo)
+                                            {
+                                                <button type="submit" class="admin-btn-action-danger" title="Desativar cupom da loja">Desativar</button>
+                                            }
+                                            else
+                                            {
+                                                <button type="submit" class="admin-btn-action-success" title="Reativar cupom para uso">Ativar</button>
+                                            }
                                         </form>
                                     </td>
                                 </tr>
@@ -219,7 +241,7 @@
         <div class="admin-card-header">
             <div>
                 <h2 class="admin-card-titulo">Catálogo de Instrumentos Cadastrados</h2>
-                <p class="admin-card-sub">Listagem de todos os instrumentos ativos na base relacional do sistema</p>
+                <p class="admin-card-sub">Listagem de todos os instrumentos cadastrados na base com edição direta e desativação lógica</p>
             </div>
         </div>
 
@@ -230,9 +252,11 @@
                         <th>ID</th>
                         <th>Foto</th>
                         <th>Categoria Oficial</th>
-                        <th>Modelo / Descrição</th>
+                        <th>Modelo / Especificação</th>
+                        <th>Descrição</th>
                         <th>Preço</th>
                         <th>Estoque</th>
+                        <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -251,13 +275,38 @@
                                 </td>
                                 <td><span style="background: rgba(124, 58, 237, 0.2); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">@item.TipoInstrumento</span></td>
                                 <td><strong>@item.Modelo</strong></td>
+                                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 0.85rem;" title="@item.Descricao">
+                                    @(string.IsNullOrWhiteSpace(item.Descricao) ? "—" : item.Descricao)
+                                </td>
                                 <td>R$ @item.Preco.ToString("N2")</td>
                                 <td>@(item.Estoque?.QuantidadeDisponivel ?? 0) un</td>
                                 <td>
-                                    <form asp-controller="Admin" asp-action="ExcluirProduto" method="post" onsubmit="return confirm('Deseja realmente excluir este produto?');" style="display:inline;">
+                                    @if (item.Ativo)
+                                    {
+                                        <span class="admin-badge-active">Ativo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="admin-badge-inactive">Desativado</span>
+                                    }
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    <button type="button" 
+                                            class="admin-btn-action-edit"
+                                            onclick="abrirModalEdicao('@item.IdProduto', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(item.TipoInstrumento))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(item.Modelo))', '@item.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(item.Descricao ?? ""))', '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(item.ImagemUrl ?? ""))', @(item.Ativo ? "true" : "false"))">
+                                        Editar
+                                    </button>
+                                    <form asp-controller="Admin" asp-action="AlternarStatusProduto" method="post" style="display:inline; margin-left: 0.4rem;">
                                         @Html.AntiForgeryToken()
                                         <input type="hidden" name="id" value="@item.IdProduto" />
-                                        <button type="submit" style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.85rem; font-weight:600; text-decoration:underline;">Excluir</button>
+                                        @if (item.Ativo)
+                                        {
+                                            <button type="submit" class="admin-btn-action-danger" title="Desativar produto da loja (soft delete)">Desativar</button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="admin-btn-action-success" title="Reativar produto na loja">Ativar</button>
+                                        }
                                     </form>
                                 </td>
                             </tr>
@@ -266,7 +315,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="7" style="text-align: center; color: var(--muted); padding: 2rem;">
+                            <td colspan="9" style="text-align: center; color: var(--muted); padding: 2rem;">
                                 Nenhum instrumento cadastrado no banco de dados.
                             </td>
                         </tr>
@@ -321,6 +370,105 @@
     }
 </div>
 
+<!-- MODAL: Editar Produto -->
+<div id="modalEditarProduto" class="admin-modal-backdrop" onclick="fecharModalEdicaoAoClicarFora(event)">
+    <div class="admin-modal" onclick="event.stopPropagation()">
+        <div class="admin-modal-header">
+            <div>
+                <h3 style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 700; color: var(--text-heading); margin-bottom: 0.2rem;">Editar Instrumento</h3>
+                <p style="font-size: 0.85rem; color: var(--muted); margin: 0;">Atualize as informações cadastrais do produto sem recriá-lo</p>
+            </div>
+            <button type="button" class="admin-modal-close" onclick="fecharModalEdicao()">&times;</button>
+        </div>
+
+        <form asp-controller="Admin" asp-action="EditarProduto" method="post" enctype="multipart/form-data" class="admin-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="editIdProduto" name="EditarProduto.IdProduto" />
+
+            <div class="admin-form-row">
+                <div class="admin-field">
+                    <label class="admin-label" for="editNome">Categoria do Produto</label>
+                    <select id="editNome" name="EditarProduto.Nome" class="admin-select" required>
+                        <option value="Guitarras">Guitarras</option>
+                        <option value="Violões">Violões</option>
+                        <option value="Teclados">Teclados</option>
+                        <option value="Baterias">Baterias</option>
+                        <option value="Outros">Outros</option>
+                        <option value="Acessórios">Acessórios</option>
+                    </select>
+                </div>
+
+                <div class="admin-field">
+                    <label class="admin-label" for="editModelo">Modelo / Especificação</label>
+                    <input id="editModelo" name="EditarProduto.Modelo" class="admin-input" required />
+                </div>
+            </div>
+
+            <div class="admin-form-row">
+                <div class="admin-field">
+                    <label class="admin-label" for="editPreco">Preço Unitário (R$)</label>
+                    <input id="editPreco" name="EditarProduto.Preco" type="number" step="0.01" min="0.01" class="admin-input" required />
+                </div>
+
+                <div class="admin-field">
+                    <label class="admin-label" for="editAtivo">Status do Produto</label>
+                    <select id="editAtivo" name="EditarProduto.Ativo" class="admin-select">
+                        <option value="true">Ativo (visível no catálogo)</option>
+                        <option value="false">Desativado (oculto no catálogo)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="admin-field">
+                <label class="admin-label" for="editDescricao">Descrição Detalhada do Produto</label>
+                <textarea id="editDescricao" name="EditarProduto.Descricao" class="admin-input" rows="3" placeholder="Informações técnicas, diferenciais e detalhes do instrumento..."></textarea>
+            </div>
+
+            <div class="admin-form-row">
+                <div class="admin-field">
+                    <label class="admin-label" for="editImagemArquivo">Substituir Imagem (Upload)</label>
+                    <input id="editImagemArquivo" name="EditarProduto.ImagemArquivo" type="file" accept="image/png, image/jpeg, image/webp" class="admin-input" style="padding: 0.45rem 0.75rem;" />
+                    <small style="color: var(--muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
+                        Deixe em branco para manter a imagem atual.
+                    </small>
+                </div>
+
+                <div class="admin-field">
+                    <label class="admin-label" for="editImagemUrl">URL Externa da Imagem</label>
+                    <input id="editImagemUrl" name="EditarProduto.ImagemUrl" class="admin-input" placeholder="Ex: /img/uploads/guitarra.jpg" />
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem;">
+                <button type="button" class="admin-btn" style="background: var(--surface2); border: 1px solid var(--border); color: var(--text);" onclick="fecharModalEdicao()">Cancelar</button>
+                <button type="submit" class="admin-btn">Salvar Alterações</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function abrirModalEdicao(id, nome, modelo, preco, descricao, imagemUrl, ativo) {
+            document.getElementById('editIdProduto').value = id;
+            document.getElementById('editNome').value = nome;
+            document.getElementById('editModelo').value = modelo;
+            document.getElementById('editPreco').value = preco;
+            document.getElementById('editDescricao').value = descricao || '';
+            document.getElementById('editImagemUrl').value = imagemUrl || '';
+            document.getElementById('editAtivo').value = ativo ? 'true' : 'false';
+            document.getElementById('modalEditarProduto').classList.add('active');
+        }
+
+        function fecharModalEdicao() {
+            document.getElementById('modalEditarProduto').classList.remove('active');
+        }
+
+        function fecharModalEdicaoAoClicarFora(event) {
+            if (event.target === document.getElementById('modalEditarProduto')) {
+                fecharModalEdicao();
+            }
+        }
+    </script>
 }

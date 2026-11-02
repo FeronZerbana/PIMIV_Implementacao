@@ -13,7 +13,24 @@ namespace PIM_WebApplication.Services
             _context = context;
         }
 
-        public async Task<List<Produto>> ObterTodosAsync()
+        public async Task<List<Produto>> ObterTodosAsync(bool apenasAtivos = true)
+        {
+            var query = _context.Produtos
+                .Include(p => p.Estoque)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (apenasAtivos)
+            {
+                query = query.Where(p => p.Ativo);
+            }
+
+            return await query
+                .OrderByDescending(p => p.IdProduto)
+                .ToListAsync();
+        }
+
+        public async Task<List<Produto>> ObterTodosAdminAsync()
         {
             return await _context.Produtos
                 .Include(p => p.Estoque)
@@ -31,16 +48,18 @@ namespace PIM_WebApplication.Services
 
         public async Task<List<Produto>> ObterPorCategoriaAsync(string categoria)
         {
+            var query = _context.Produtos
+                .Include(p => p.Estoque)
+                .Where(p => p.Ativo)
+                .AsNoTracking()
+                .AsQueryable();
+
             if (string.IsNullOrWhiteSpace(categoria))
             {
-                return await ObterTodosAsync();
+                return await query.OrderByDescending(p => p.IdProduto).ToListAsync();
             }
 
             var cat = categoria.Trim().ToLowerInvariant();
-            var query = _context.Produtos
-                .Include(p => p.Estoque)
-                .AsNoTracking()
-                .AsQueryable();
 
             if (cat.Contains("guitar"))
             {
@@ -91,6 +110,8 @@ namespace PIM_WebApplication.Services
 
         public async Task<Produto> CriarProdutoAsync(Produto produto, int estoqueInicial = 0)
         {
+            produto.Ativo = true;
+
             try
             {
                 // Insercao atomica via Stored Procedure sp_CadastrarProdutoComEstoque
@@ -114,6 +135,18 @@ namespace PIM_WebApplication.Services
                 if (idParam.Value != null && idParam.Value != DBNull.Value)
                 {
                     produto.IdProduto = (int)idParam.Value;
+
+                    // Atualiza campos adicionais (Descricao e Ativo) que nao compoem a assinatura da SP legada
+                    if (!string.IsNullOrWhiteSpace(produto.Descricao))
+                    {
+                        var criadoNoDb = await _context.Produtos.FindAsync(produto.IdProduto);
+                        if (criadoNoDb != null)
+                        {
+                            criadoNoDb.Descricao = produto.Descricao;
+                            criadoNoDb.Ativo = true;
+                            await _context.SaveChangesAsync();
+                        }
+                    }
                 }
 
                 var estoque = new Estoque
@@ -159,6 +192,8 @@ namespace PIM_WebApplication.Services
             produtoExistente.TipoInstrumento = produtoAtualizado.TipoInstrumento;
             produtoExistente.Preco = produtoAtualizado.Preco;
             produtoExistente.Modelo = produtoAtualizado.Modelo;
+            produtoExistente.Descricao = produtoAtualizado.Descricao;
+            produtoExistente.Ativo = produtoAtualizado.Ativo;
 
             if (!string.IsNullOrWhiteSpace(produtoAtualizado.ImagemUrl))
             {
@@ -182,44 +217,31 @@ namespace PIM_WebApplication.Services
             return true;
         }
 
-        public async Task<bool> ExcluirProdutoAsync(int id)
+        public async Task<bool> AlternarStatusProdutoAsync(int id)
         {
-            var produto = await _context.Produtos
-                .Include(p => p.Estoque)
-                .FirstOrDefaultAsync(p => p.IdProduto == id);
-
+            var produto = await _context.Produtos.FindAsync(id);
             if (produto == null)
             {
                 return false;
             }
 
-            // Verifica se o produto tem historico de vendas associado
-            bool possuiVendas = await _context.ItemVendas.AnyAsync(i => i.CodProduto == id);
-            if (possuiVendas)
+            produto.Ativo = !produto.Ativo;
+            _context.Produtos.Update(produto);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> ExcluirProdutoAsync(int id)
+        {
+            var produto = await _context.Produtos.FindAsync(id);
+            if (produto == null)
             {
-                throw new InvalidOperationException("Nao e possivel excluir um produto que possui historico de vendas.");
+                return false;
             }
 
-            // Remocao de imagem física em disco se for upload
-            if (!string.IsNullOrWhiteSpace(produto.ImagemUrl) && produto.ImagemUrl.StartsWith("/uploads/"))
-            {
-                try
-                {
-                    var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
-                    var cleanPath = produto.ImagemUrl.TrimStart('/', '\\').Replace('/', Path.DirectorySeparatorChar);
-                    var fullPath = Path.Combine(basePath, cleanPath);
-                    if (File.Exists(fullPath))
-                    {
-                        File.Delete(fullPath);
-                    }
-                }
-                catch
-                {
-                    // Nao impede a remocao do registro caso haja lock no arquivo
-                }
-            }
-
-            _context.Produtos.Remove(produto);
+            // Soft delete: preserva integridade referencial com vendas e auditoria
+            produto.Ativo = false;
+            _context.Produtos.Update(produto);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -228,6 +250,7 @@ namespace PIM_WebApplication.Services
         {
             return await _context.Produtos
                 .Include(p => p.Estoque)
+                .Where(p => p.Ativo)
                 .AsNoTracking()
                 .Take(quantidade)
                 .ToListAsync();
@@ -237,6 +260,7 @@ namespace PIM_WebApplication.Services
         {
             return await _context.Produtos
                 .Include(p => p.Estoque)
+                .Where(p => p.Ativo)
                 .AsNoTracking()
                 .ToListAsync();
         }

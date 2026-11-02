@@ -70,7 +70,9 @@ namespace PIM_WebApplication.Controllers.Api
                 TipoInstrumento = dto.TipoInstrumento.Trim(),
                 Preco = dto.Preco,
                 Modelo = dto.Modelo?.Trim() ?? string.Empty,
-                ImagemUrl = !string.IsNullOrWhiteSpace(dto.ImagemUrl) ? dto.ImagemUrl.Trim() : null
+                Descricao = dto.Descricao?.Trim(),
+                ImagemUrl = !string.IsNullOrWhiteSpace(dto.ImagemUrl) ? dto.ImagemUrl.Trim() : null,
+                Ativo = true
             };
 
             var criado = await _produtoService.CriarProdutoAsync(produto, dto.EstoqueInicial);
@@ -93,7 +95,9 @@ namespace PIM_WebApplication.Controllers.Api
                 TipoInstrumento = dto.TipoInstrumento.Trim(),
                 Preco = dto.Preco,
                 Modelo = dto.Modelo?.Trim() ?? string.Empty,
-                ImagemUrl = !string.IsNullOrWhiteSpace(dto.ImagemUrl) ? dto.ImagemUrl.Trim() : null
+                Descricao = dto.Descricao?.Trim(),
+                ImagemUrl = !string.IsNullOrWhiteSpace(dto.ImagemUrl) ? dto.ImagemUrl.Trim() : null,
+                Ativo = dto.Ativo ?? true
             };
 
             var resultado = await _produtoService.AtualizarProdutoAsync(id, produtoAtualizado);
@@ -160,7 +164,7 @@ namespace PIM_WebApplication.Controllers.Api
                     Directory.CreateDirectory(pastaUploads);
                 }
 
-                // Remove imagem física anterior se tiver sido gerada por upload
+                // Remove imagem fisica anterior se tiver sido gerada por upload
                 RemoverArquivoImagemFisico(produto.ImagemUrl);
 
                 var nomeArquivo = $"{Guid.NewGuid():N}{extensao}";
@@ -223,7 +227,9 @@ namespace PIM_WebApplication.Controllers.Api
                 Nome = p.TipoInstrumento,
                 Preco = p.Preco,
                 Modelo = p.Modelo,
+                Descricao = p.Descricao,
                 ImagemUrl = p.ImagemUrl,
+                Ativo = p.Ativo,
                 QuantidadeEstoque = p.Estoque?.QuantidadeDisponivel ?? 0
             };
         }

@@ -30,6 +30,8 @@ namespace PIM_WebApplication.Models
         public string Nome { get; set; } = string.Empty;
         public decimal Preco { get; set; }
         public string Modelo { get; set; } = string.Empty;
+        public string? Descricao { get; set; }
+        public bool Ativo { get; set; } = true;
         public string? ImagemUrl { get; set; }
         public int QuantidadeEstoque { get; set; }
     }
@@ -46,6 +48,9 @@ namespace PIM_WebApplication.Models
 
         [StringLength(100, ErrorMessage = "O modelo deve ter no maximo 100 caracteres.")]
         public string Modelo { get; set; } = string.Empty;
+
+        [StringLength(1000, ErrorMessage = "A descricao deve ter no maximo 1000 caracteres.")]
+        public string? Descricao { get; set; }
 
         [StringLength(255)]
         public string? ImagemUrl { get; set; }
@@ -66,6 +71,11 @@ namespace PIM_WebApplication.Models
 
         [StringLength(100)]
         public string Modelo { get; set; } = string.Empty;
+
+        [StringLength(1000)]
+        public string? Descricao { get; set; }
+
+        public bool? Ativo { get; set; }
 
         [StringLength(255)]
         public string? ImagemUrl { get; set; }

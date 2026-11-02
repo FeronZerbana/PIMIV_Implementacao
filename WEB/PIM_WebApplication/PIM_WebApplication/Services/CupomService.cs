@@ -49,7 +49,7 @@ namespace PIM_WebApplication.Services
         {
             if (string.IsNullOrWhiteSpace(codigo))
             {
-                return (false, "Informe o código do cupom.", 0);
+                return (false, "Informe o codigo do cupom.", 0);
             }
 
             var normalizado = codigo.Trim().ToUpperInvariant();
@@ -58,7 +58,7 @@ namespace PIM_WebApplication.Services
 
             if (cupom == null)
             {
-                return (false, "Cupom inválido ou inexistente.", 0);
+                return (false, "Cupom invalido ou inexistente.", 0);
             }
 
             if (codCliente.HasValue && codCliente.Value > 0)
@@ -66,7 +66,7 @@ namespace PIM_WebApplication.Services
                 bool jaUsou = await ClienteJaUsouCupomAsync(codCliente.Value, normalizado);
                 if (jaUsou)
                 {
-                    return (false, $"O cupom '{normalizado}' já foi utilizado por você nesta conta. Cada cupom é de uso único.", 0);
+                    return (false, $"O cupom '{normalizado}' ja foi utilizado por voce nesta conta. Cada cupom e de uso unico.", 0);
                 }
             }
 
@@ -77,7 +77,7 @@ namespace PIM_WebApplication.Services
         {
             if (string.IsNullOrWhiteSpace(valor))
             {
-                return (false, "O código do cupom é obrigatório.");
+                return (false, "O codigo do cupom e obrigatorio.");
             }
 
             // Normaliza escala x10 caso seja informado valor em escala multiplicada (ex: 500 para 50%)
@@ -93,10 +93,18 @@ namespace PIM_WebApplication.Services
 
             var normalizado = valor.Trim().ToUpperInvariant();
 
-            bool jaExiste = await _context.Cupons.AnyAsync(c => c.Valor == normalizado);
-            if (jaExiste)
+            var cupomExistente = await _context.Cupons.FirstOrDefaultAsync(c => c.Valor == normalizado);
+            if (cupomExistente != null)
             {
-                return (false, $"O cupom '{normalizado}' já está cadastrado no sistema.");
+                if (!cupomExistente.Ativo)
+                {
+                    cupomExistente.Ativo = true;
+                    cupomExistente.Desconto = desconto;
+                    await _context.SaveChangesAsync();
+                    return (true, $"Cupom '{normalizado}' reativado com sucesso com {desconto}% de desconto!");
+                }
+
+                return (false, $"O cupom '{normalizado}' ja esta cadastrado no sistema.");
             }
 
             var novoCupom = new Cupom
@@ -113,6 +121,19 @@ namespace PIM_WebApplication.Services
             return (true, $"Cupom '{normalizado}' cadastrado com sucesso com {desconto}% de desconto!");
         }
 
+        public async Task<bool> AlternarStatusCupomAsync(int id)
+        {
+            var cupom = await _context.Cupons.FindAsync(id);
+            if (cupom == null)
+            {
+                return false;
+            }
+
+            cupom.Ativo = !cupom.Ativo;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> ExcluirCupomAsync(int id)
         {
             var cupom = await _context.Cupons.FindAsync(id);
@@ -121,7 +142,8 @@ namespace PIM_WebApplication.Services
                 return false;
             }
 
-            _context.Cupons.Remove(cupom);
+            // Soft delete para preservar integridade de historico e auditoria
+            cupom.Ativo = false;
             await _context.SaveChangesAsync();
             return true;
         }

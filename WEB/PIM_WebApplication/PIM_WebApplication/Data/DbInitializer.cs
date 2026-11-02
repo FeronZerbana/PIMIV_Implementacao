@@ -159,6 +159,33 @@ namespace PIM_WebApplication.Data
                     BEGIN
                         ALTER TABLE VENDAS ADD Valor_Total DECIMAL(8,2) NULL;
                     END;
+
+                    -- 10. Adiciona coluna Ativo na tabela PRODUTOS para soft delete
+                    IF NOT EXISTS (
+                        SELECT 1 FROM sys.columns 
+                        WHERE object_id = OBJECT_ID('PRODUTOS') AND name = 'Ativo'
+                    )
+                    BEGIN
+                        ALTER TABLE PRODUTOS ADD Ativo BIT NOT NULL CONSTRAINT DF_PRODUTOS_Ativo DEFAULT 1;
+                    END;
+
+                    -- 11. Adiciona coluna Descricao na tabela PRODUTOS
+                    IF NOT EXISTS (
+                        SELECT 1 FROM sys.columns 
+                        WHERE object_id = OBJECT_ID('PRODUTOS') AND name = 'Descricao'
+                    )
+                    BEGIN
+                        ALTER TABLE PRODUTOS ADD Descricao VARCHAR(1000) NULL;
+                    END;
+
+                    -- 12. Garante coluna Ativo na tabela CUPONS para soft delete
+                    IF NOT EXISTS (
+                        SELECT 1 FROM sys.columns 
+                        WHERE object_id = OBJECT_ID('CUPONS') AND name = 'Ativo'
+                    )
+                    BEGIN
+                        ALTER TABLE CUPONS ADD Ativo BIT NOT NULL CONSTRAINT DF_CUPONS_Ativo DEFAULT 1;
+                    END;
                 ";
 
                 await context.Database.ExecuteSqlRawAsync(sqlAtualizacao);

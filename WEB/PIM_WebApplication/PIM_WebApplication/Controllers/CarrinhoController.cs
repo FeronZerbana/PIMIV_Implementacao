@@ -148,6 +148,12 @@ namespace PIM_WebApplication.Controllers
 
             if (produto != null)
             {
+                if (!produto.Ativo)
+                {
+                    TempData["MensagemToast"] = "Este produto esta desativado e indisponivel para compra.";
+                    return RedirectToAction("Index", "Home");
+                }
+
                 finalId = produto.IdProduto;
                 finalNome = produto.TipoInstrumento;
                 finalPreco = produto.Preco;
@@ -326,7 +332,7 @@ namespace PIM_WebApplication.Controllers
             var cupom = HttpContext.Session.GetString(SessionCouponKey);
             var subtotal = itens.Sum(i => i.Subtotal);
 
-            // Regra de Frete: Grátis acima de R$ 800,00; caso contrário taxa fixa de R$ 9,99
+            // Regra de Frete: Gratis acima de R$ 800,00; caso contrario taxa fixa de R$ 9,99
             decimal frete = subtotal >= 800m ? 0m : 9.99m;
 
             var (sucesso, mensagem, vendaId) = await _vendaService.FinalizarVendaAsync(idCliente, dtos, cupom, frete);

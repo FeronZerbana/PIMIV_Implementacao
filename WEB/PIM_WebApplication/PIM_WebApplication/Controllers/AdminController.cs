@@ -36,7 +36,7 @@ namespace PIM_WebApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var produtos = await _produtoService.ObterTodosAsync();
+            var produtos = await _produtoService.ObterTodosAdminAsync();
             var cupons = await _cupomService.ObterTodosAsync();
 
             var auditorias = new List<AuditoriaVendaDto>();
@@ -80,6 +80,7 @@ namespace PIM_WebApplication.Controllers
             {
                 ProdutosCadastrados = produtos,
                 NovoProduto = new NovoProdutoViewModel(),
+                EditarProduto = new EditarProdutoViewModel(),
                 AdicionarEstoque = new AdicionarEstoqueViewModel(),
                 CuponsCadastrados = cupons,
                 NovoCupom = new NovoCupomViewModel(),
@@ -95,7 +96,6 @@ namespace PIM_WebApplication.Controllers
         {
             model ??= new NovoProdutoViewModel();
 
-            // Extração manual de contingência caso o model binder não tenha mapeado pelo prefixo
             if (string.IsNullOrWhiteSpace(model.Nome))
             {
                 model.Nome = Request.Form["NovoProduto.Nome"].FirstOrDefault() 
@@ -108,6 +108,12 @@ namespace PIM_WebApplication.Controllers
                 model.Modelo = Request.Form["NovoProduto.Modelo"].FirstOrDefault() 
                             ?? Request.Form["Modelo"].FirstOrDefault() 
                             ?? string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Descricao))
+            {
+                model.Descricao = Request.Form["NovoProduto.Descricao"].FirstOrDefault() 
+                               ?? Request.Form["Descricao"].FirstOrDefault();
             }
 
             if (model.Preco <= 0)
@@ -147,7 +153,7 @@ namespace PIM_WebApplication.Controllers
 
             if (string.IsNullOrWhiteSpace(model.Nome) || string.IsNullOrWhiteSpace(model.Modelo) || model.Preco <= 0)
             {
-                TempData["MensagemToast"] = "Por favor, preencha a categoria, a descrição/modelo e um preço válido maior que zero.";
+                TempData["MensagemToast"] = "Por favor, preencha a categoria, a descricao/modelo e um preco valido maior que zero.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -160,13 +166,13 @@ namespace PIM_WebApplication.Controllers
 
                 if (!extensoesPermitidas.Contains(extensao))
                 {
-                    TempData["MensagemToast"] = "Formato de imagem inválido. São permitidos apenas arquivos .jpg, .jpeg, .png, .webp e .gif.";
+                    TempData["MensagemToast"] = "Formato de imagem invalido. Sao permitidos apenas arquivos .jpg, .jpeg, .png, .webp e .gif.";
                     return RedirectToAction(nameof(Index));
                 }
 
                 if (arquivoUpload.Length > 5 * 1024 * 1024)
                 {
-                    TempData["MensagemToast"] = "A imagem excede o tamanho máximo de 5MB.";
+                    TempData["MensagemToast"] = "A imagem excede o tamanho maximo de 5MB.";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -195,7 +201,9 @@ namespace PIM_WebApplication.Controllers
                 TipoInstrumento = model.Nome.Trim(),
                 Preco = model.Preco,
                 Modelo = !string.IsNullOrWhiteSpace(model.Modelo) ? model.Modelo.Trim() : (model.Tamanho ?? string.Empty),
-                ImagemUrl = finalImagemUrl
+                Descricao = !string.IsNullOrWhiteSpace(model.Descricao) ? model.Descricao.Trim() : null,
+                ImagemUrl = finalImagemUrl,
+                Ativo = true
             };
 
             try
@@ -206,6 +214,149 @@ namespace PIM_WebApplication.Controllers
             catch (Exception ex)
             {
                 TempData["MensagemToast"] = $"Erro ao cadastrar instrumento: {ex.Message}";
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarProduto([Bind(Prefix = "EditarProduto")] EditarProdutoViewModel? model)
+        {
+            model ??= new EditarProdutoViewModel();
+
+            if (model.IdProduto <= 0)
+            {
+                var idStr = Request.Form["EditarProduto.IdProduto"].FirstOrDefault() 
+                         ?? Request.Form["IdProduto"].FirstOrDefault();
+                if (int.TryParse(idStr, out int idVal)) model.IdProduto = idVal;
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Nome))
+            {
+                model.Nome = Request.Form["EditarProduto.Nome"].FirstOrDefault() 
+                          ?? Request.Form["Nome"].FirstOrDefault() 
+                          ?? string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Modelo))
+            {
+                model.Modelo = Request.Form["EditarProduto.Modelo"].FirstOrDefault() 
+                            ?? Request.Form["Modelo"].FirstOrDefault() 
+                            ?? string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Descricao))
+            {
+                model.Descricao = Request.Form["EditarProduto.Descricao"].FirstOrDefault() 
+                               ?? Request.Form["Descricao"].FirstOrDefault();
+            }
+
+            if (model.Preco <= 0)
+            {
+                var precoRaw = Request.Form["EditarProduto.Preco"].FirstOrDefault() 
+                            ?? Request.Form["Preco"].FirstOrDefault();
+                if (!string.IsNullOrWhiteSpace(precoRaw))
+                {
+                    precoRaw = precoRaw.Replace(",", ".");
+                    if (decimal.TryParse(precoRaw, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal pVal))
+                    {
+                        model.Preco = pVal;
+                    }
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(model.ImagemUrl))
+            {
+                model.ImagemUrl = Request.Form["EditarProduto.ImagemUrl"].FirstOrDefault() 
+                               ?? Request.Form["ImagemUrl"].FirstOrDefault();
+            }
+
+            var arquivoUpload = model.ImagemArquivo 
+                             ?? Request.Form.Files["EditarProduto.ImagemArquivo"] 
+                             ?? Request.Form.Files["ImagemArquivo"] 
+                             ?? (Request.Form.Files.Count > 0 ? Request.Form.Files[0] : null);
+
+            if (model.IdProduto <= 0 || string.IsNullOrWhiteSpace(model.Nome) || string.IsNullOrWhiteSpace(model.Modelo) || model.Preco <= 0)
+            {
+                TempData["MensagemToast"] = "Por favor, preencha a categoria, a especificacao/modelo e um preco valido maior que zero.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var produtoExistente = await _produtoService.ObterPorIdAsync(model.IdProduto);
+            if (produtoExistente == null)
+            {
+                TempData["MensagemToast"] = "Produto nao encontrado para edicao.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            string? finalImagemUrl = !string.IsNullOrWhiteSpace(model.ImagemUrl) ? model.ImagemUrl.Trim() : produtoExistente.ImagemUrl;
+
+            if (arquivoUpload != null && arquivoUpload.Length > 0)
+            {
+                var extensoesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
+                var extensao = Path.GetExtension(arquivoUpload.FileName).ToLowerInvariant();
+
+                if (!extensoesPermitidas.Contains(extensao))
+                {
+                    TempData["MensagemToast"] = "Formato de imagem invalido. Sao permitidos apenas arquivos .jpg, .jpeg, .png, .webp e .gif.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                if (arquivoUpload.Length > 5 * 1024 * 1024)
+                {
+                    TempData["MensagemToast"] = "A imagem excede o tamanho maximo de 5MB.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var webRoot = _webHostEnvironment.WebRootPath 
+                           ?? Path.Combine(_webHostEnvironment.ContentRootPath, "wwwroot");
+                var uploadsFolder = Path.Combine(webRoot, "img", "uploads");
+
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var nomeArquivoUnico = $"{DateTime.UtcNow:yyyyMMddHHmmss}_{Guid.NewGuid():N}{extensao}";
+                var caminhoCompleto = Path.Combine(uploadsFolder, nomeArquivoUnico);
+
+                using (var stream = new FileStream(caminhoCompleto, FileMode.Create))
+                {
+                    await arquivoUpload.CopyToAsync(stream);
+                }
+
+                finalImagemUrl = $"/img/uploads/{nomeArquivoUnico}";
+            }
+
+            produtoExistente.TipoInstrumento = model.Nome.Trim();
+            produtoExistente.Modelo = model.Modelo.Trim();
+            produtoExistente.Preco = model.Preco;
+            produtoExistente.Descricao = !string.IsNullOrWhiteSpace(model.Descricao) ? model.Descricao.Trim() : null;
+            produtoExistente.ImagemUrl = finalImagemUrl;
+
+            var ativoForm = Request.Form["EditarProduto.Ativo"].FirstOrDefault() 
+                         ?? Request.Form["Ativo"].FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(ativoForm))
+            {
+                if (bool.TryParse(ativoForm, out bool ativoBool))
+                {
+                    produtoExistente.Ativo = ativoBool;
+                }
+            }
+            else
+            {
+                produtoExistente.Ativo = model.Ativo;
+            }
+
+            try
+            {
+                await _produtoService.AtualizarProdutoAsync(produtoExistente.IdProduto, produtoExistente);
+                TempData["MensagemToast"] = $"Instrumento '{produtoExistente.Modelo}' atualizado com sucesso!";
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemToast"] = $"Erro ao atualizar instrumento: {ex.Message}";
             }
 
             return RedirectToAction(nameof(Index));
@@ -252,6 +403,30 @@ namespace PIM_WebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlternarStatusProduto(int id)
+        {
+            try
+            {
+                bool alterado = await _produtoService.AlternarStatusProdutoAsync(id);
+                if (alterado)
+                {
+                    TempData["MensagemToast"] = "Status do produto atualizado com sucesso!";
+                }
+                else
+                {
+                    TempData["MensagemToast"] = "Produto nao encontrado.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemToast"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExcluirProduto(int id)
         {
             try
@@ -259,11 +434,11 @@ namespace PIM_WebApplication.Controllers
                 bool excluido = await _produtoService.ExcluirProdutoAsync(id);
                 if (excluido)
                 {
-                    TempData["MensagemToast"] = "Produto removido com sucesso.";
+                    TempData["MensagemToast"] = "Produto desativado com sucesso (soft delete).";
                 }
                 else
                 {
-                    TempData["MensagemToast"] = "Produto não encontrado.";
+                    TempData["MensagemToast"] = "Produto nao encontrado.";
                 }
             }
             catch (Exception ex)
@@ -308,7 +483,7 @@ namespace PIM_WebApplication.Controllers
 
             if (string.IsNullOrWhiteSpace(model.Valor) || model.Desconto < 1 || model.Desconto > 99)
             {
-                TempData["MensagemToast"] = "Por favor, preencha o código do cupom e o desconto corretamente (ex: digite 50 para conceder 50% de desconto).";
+                TempData["MensagemToast"] = "Por favor, preencha o codigo do cupom e o desconto corretamente (ex: digite 50 para conceder 50% de desconto).";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -320,16 +495,40 @@ namespace PIM_WebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlternarStatusCupom(int id)
+        {
+            try
+            {
+                bool alterado = await _cupomService.AlternarStatusCupomAsync(id);
+                if (alterado)
+                {
+                    TempData["MensagemToast"] = "Status do cupom atualizado com sucesso!";
+                }
+                else
+                {
+                    TempData["MensagemToast"] = "Cupom nao encontrado.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MensagemToast"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExcluirCupom(int id)
         {
             bool excluido = await _cupomService.ExcluirCupomAsync(id);
             if (excluido)
             {
-                TempData["MensagemToast"] = "Cupom removido com sucesso do banco de dados.";
+                TempData["MensagemToast"] = "Cupom desativado com sucesso (soft delete).";
             }
             else
             {
-                TempData["MensagemToast"] = "Cupom não encontrado.";
+                TempData["MensagemToast"] = "Cupom nao encontrado.";
             }
 
             return RedirectToAction(nameof(Index));

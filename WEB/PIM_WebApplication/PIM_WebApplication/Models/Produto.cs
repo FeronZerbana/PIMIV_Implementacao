@@ -49,6 +49,13 @@ namespace PIM_WebApplication.Models
         [NotMapped]
         public string TipoModelo => TipoInstrumento;
 
+        [Column("Descricao")]
+        [StringLength(1000)]
+        public string? Descricao { get; set; }
+
+        [Column("Ativo")]
+        public bool Ativo { get; set; } = true;
+
         [Column("Imagem_Url")]
         [StringLength(255)]
         public string? ImagemUrl { get; set; }

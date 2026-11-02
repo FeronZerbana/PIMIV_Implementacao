@@ -8,6 +8,7 @@ namespace PIM_WebApplication.ViewModels
     {
         public List<Produto> ProdutosCadastrados { get; set; } = new();
         public NovoProdutoViewModel NovoProduto { get; set; } = new();
+        public EditarProdutoViewModel EditarProduto { get; set; } = new();
         public AdicionarEstoqueViewModel AdicionarEstoque { get; set; } = new();
         public List<Cupom> CuponsCadastrados { get; set; } = new();
         public NovoCupomViewModel NovoCupom { get; set; } = new();
@@ -29,6 +30,10 @@ namespace PIM_WebApplication.ViewModels
         [Display(Name = "MODELO / ESPECIFICACAO")]
         public string Modelo { get; set; } = string.Empty;
 
+        [Display(Name = "DESCRICAO DETALHADA")]
+        [StringLength(1000, ErrorMessage = "A descricao pode conter no maximo 1000 caracteres.")]
+        public string? Descricao { get; set; }
+
         [Display(Name = "TAMANHO")]
         public string? Tamanho { get; set; }
 
@@ -41,6 +46,41 @@ namespace PIM_WebApplication.ViewModels
         [Display(Name = "ESTOQUE INICIAL")]
         [Range(0, 10000, ErrorMessage = "A quantidade deve ser positiva.")]
         public int EstoqueInicial { get; set; } = 0;
+    }
+
+    public class EditarProdutoViewModel
+    {
+        [Required]
+        public int IdProduto { get; set; }
+
+        [Required(ErrorMessage = "A categoria / nome do instrumento e obrigatoria.")]
+        [Display(Name = "CATEGORIA / NOME")]
+        public string Nome { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "O preco e obrigatorio.")]
+        [Range(0.01, 99999.99, ErrorMessage = "Informe um preco valido maior que zero.")]
+        [Display(Name = "PRECO (R$)")]
+        public decimal Preco { get; set; }
+
+        [Required(ErrorMessage = "O modelo / especificacao e obrigatorio.")]
+        [Display(Name = "MODELO / ESPECIFICACAO")]
+        public string Modelo { get; set; } = string.Empty;
+
+        [Display(Name = "DESCRICAO DETALHADA")]
+        [StringLength(1000, ErrorMessage = "A descricao pode conter no maximo 1000 caracteres.")]
+        public string? Descricao { get; set; }
+
+        [Display(Name = "TAMANHO")]
+        public string? Tamanho { get; set; }
+
+        [Display(Name = "NOVA FOTO (ARQUIVO)")]
+        public IFormFile? ImagemArquivo { get; set; }
+
+        [Display(Name = "URL DA IMAGEM")]
+        public string? ImagemUrl { get; set; }
+
+        [Display(Name = "STATUS")]
+        public bool Ativo { get; set; } = true;
     }
 
     public class AdicionarEstoqueViewModel

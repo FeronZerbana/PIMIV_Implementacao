@@ -42,6 +42,8 @@ namespace PIM_WebApplication.Data
                 entity.Property(e => e.TipoInstrumento).HasColumnName("Tipo_Instrumento").HasMaxLength(150).IsRequired();
                 entity.Property(e => e.Preco).HasColumnName("Preco").HasColumnType("decimal(8,2)").IsRequired();
                 entity.Property(e => e.Modelo).HasColumnName("Modelo").HasMaxLength(100);
+                entity.Property(e => e.Descricao).HasColumnName("Descricao").HasMaxLength(1000);
+                entity.Property(e => e.Ativo).HasColumnName("Ativo").HasDefaultValue(true);
                 entity.Property(e => e.ImagemUrl).HasColumnName("Imagem_Url").HasMaxLength(255);
 
                 entity.HasOne(p => p.Estoque)
