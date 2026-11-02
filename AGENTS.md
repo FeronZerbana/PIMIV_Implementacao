@@ -1,28 +1,25 @@
-# Regras de Governança do Projeto (Implementacao)
+# Regras de Governanca do Projeto (Implementacao)
 
-> O repositório de documentação oficial e fonte única da verdade (SSOT) está localizado em `Vault/`.
+> O repositorio de documentacao oficial e fonte unica da verdade (SSOT) esta localizado em `Vault/`.
 
 ---
 
-## 1. Regras Mandatórias de Desenvolvimento
+## 1. Regras Mandatorias de Desenvolvimento
 
-1. **Proibido Código Sem Spec**: Antes de criar ou modificar qualquer código nos diretórios `WEB/`, `DESKTOP/` ou `MOBILE/`, consulte e valide a respectiva especificação no Vault (`04-Specs-Backlog/Active/` ou `03-Systems/`).
-2. **Proibição Estrita de Emojis**: É terminantemente proibido o uso de emojis em arquivos de documentação, especificações, ADRs, mensagens de commit e comentários de código. Toda a comunicação técnica deve ser formal, sóbria e profissional.
+1. **Proibido Codigo Sem Spec**: Antes de criar ou modificar qualquer codigo nos diretorios `WEB/`, `DESKTOP/` ou `MOBILE/`, consulte e valide a respectiva especificacao no Vault (`04-Specs-Backlog/Active/` ou `03-Systems/`).
+2. **Proibicao Estrita de Emojis**: E terminantemente proibido o uso de emojis em arquivos de documentacao, especificacoes, ADRs, mensagens de commit e comentarios de codigo. Toda a comunicacao tecnica deve ser formal, sobria e profissional.
 3. **Branching Model**:
-   - `feat/web`: Alterações e desenvolvimento do sistema Web.
-   - `feat/desktop`: Alterações e desenvolvimento do sistema Desktop.
-   - `feat/mobile`: Alterações e desenvolvimento do sistema Mobile.
-   - `develop`: Branch de integração e testes conjuntos.
-   - `production`: Branch estável de entrega final consolidada.
-4. **Core Domain Unificado**: Todas as regras de negócio de precificação, estoque, checkout, cupons e pagamento devem seguir estritamente o definido em `Vault/01-Core-Domain/Business-Rules.md`.
-5. **Sincronização Contínua**: Toda alteração, refatoração ou commit deve ser documentada no Vault utilizando a skill `vault-sync`.
-6. **Diagnóstico Legado First**: Mapeie débitos e regras ocultas em `Vault/02-Legacy-Analysis/Debt-And-Bottlenecks.md` antes de reescrever módulos para ASP.NET Core MVC.
-7. **Guia Prático Git**: Para instruções detalhadas de criação de sub-branches (`feat/web/...`), prevenção de `detached HEAD` e regras de push, consulte `GIT-INSTRUCTIONS.md` na raiz do repositório agregador.
-8. **Tratamento de Funcionalidades Incompletas**: Ao identificar funcionalidades ou fluxos incompletos no código, não realize alterações arbitrárias; registre no Vault (`02-Legacy-Analysis/Debt-And-Bottlenecks.md` ou na respectiva spec) e notifique a equipe para planejamento formal.
-9. **Identidade Mandatória e Redação de Commits**: Todos os commits devem obrigatoriamente ser efetuados com o usuário configurado na máquina (`user.name` e `user.email` válidos). Caso não haja usuário configurado, solicite a configuração formal antes de commitar. É proibido commitar com usuários temporários ou de improviso. Além disso, evite verbos no infinitivo no texto dos commits; priorize o uso de substantivos e formato nominal (ex: "inclusão de...", "implementação de...", "ajuste em...", "correção de...").
-10. **Verificação e Realização de Push Seguro**: Os pushs devem ser efetuados após os commits. Antes de realizar o push, verifique o estado do repositório remoto para assegurar que a operação é segura. Se for seguro, efetue o push; caso contrário, notifique o usuário com referência à especificação para tomada de decisão.
-11. **Isolamento de Branches no Vault**: Toda e qualquer documentação ou sincronização com o Vault deve ser realizada exclusivamente na branch correspondente ao fluxo de trabalho atual (`docs/api`, `docs/web`, `docs/desktop`, `docs/mobile`), sendo proibido registrar alterações de outras plataformas de forma cruzada. A branch `master` do Vault atua como SSOT consolidada e recebe atualizações exclusivamente via Pull Request homologado.
-
-
-
-
+   - `feat/web`: Alteracoes e desenvolvimento do sistema Web.
+   - `feat/desktop`: Alteracoes e desenvolvimento do sistema Desktop.
+   - `feat/mobile`: Alteracoes e desenvolvimento do sistema Mobile.
+   - `develop`: Branch de integracao e testes conjuntos.
+   - `production`: Branch estavel de entrega final consolidada.
+4. **Core Domain Unificado**: Todas as regras de negocio de precificacao, estoque, checkout, cupons e pagamento devem seguir estritamente o definido em `Vault/01-Core-Domain/Business-Rules.md`.
+5. **Sincronizacao Continua**: Toda alteracao, refatoracao ou commit deve ser documentada no Vault utilizando a skill `vault-sync`.
+6. **Diagnostico Legado First**: Mapeie debitos e regras ocultas em `Vault/02-Legacy-Analysis/Debt-And-Bottlenecks.md` antes de reescrever modulos para ASP.NET Core MVC.
+7. **Guia Pratico Git**: Para instrucoes detalhadas de criacao de sub-branches (`feat/web/...`), prevencao de `detached HEAD` e regras de push, consulte `GIT-INSTRUCTIONS.md` na raiz do repositorio agregador.
+8. **Tratamento de Funcionalidades Incompletas**: Ao identificar funcionalidades ou fluxos incompletos no codigo, nao realize alteracoes arbitrarias; registre no Vault (`02-Legacy-Analysis/Debt-And-Bottlenecks.md` ou na respectiva spec) e notifique a equipe para planejamento formal.
+9. **Identidade Mandatoria e Redacao de Commits**: Todos os commits devem obrigatoriamente ser efetuados com o usuario configurado na maquina (`user.name` e `user.email` validos). Caso nao haja usuario configurado, solicite a configuracao formal antes de commitar. E proibido commitar com usuarios temporarios ou de improviso. Alem disso, evite verbos no infinitivo no texto dos commits; priorize o uso de substantivos e formato nominal (ex: "inclusao de...", "implementacao de...", "ajuste em...", "correcao de...").
+10. **Verificacao e Realizacao de Push Seguro**: Os pushs devem ser efetuados apos os commits. Antes de realizar o push, verifique o estado do repositorio remoto para assegurar que a operacao e segura. Se for seguro, efetue o push; caso contrario, notifique o usuario com referencia a especificacao para tomada de decisao.
+11. **Isolamento de Branches no Vault**: Toda e qualquer documentacao ou sincronizacao com o Vault deve ser realizada exclusivamente na branch correspondente ao fluxo de trabalho atual (`docs/api`, `docs/web`, `docs/desktop`, `docs/mobile`), sendo proibido registrar alteracoes de outras plataformas de forma cruzada. A branch `master` do Vault atua como SSOT consolidada e recebe atualizacoes exclusivamente via Pull Request homologado.
+12. **Mapa de Referencias Cruzadas e Impacto**: Antes de alterar modelos de dados, endpoints ou regras centrais, consulte obrigatoriamente `Vault/00-Meta/Cross-Reference-Map.md` para identificar dependencias de entrada (`depends_on`) e sistemas impactados (`impacts`). Ao concluir alteracoes com impacto em outros subsistemas, registre os documentos dependentes em `docs_to_sync` e atualize a matriz de impacto do mapa antes do commit.
