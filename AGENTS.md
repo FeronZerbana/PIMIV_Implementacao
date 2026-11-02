@@ -10,8 +10,8 @@
 2. **Proibicao Estrita de Emojis**: E terminantemente proibido o uso de emojis em arquivos de documentacao, especificacoes, ADRs, mensagens de commit e comentarios de codigo. Toda a comunicacao tecnica deve ser formal, sobria e profissional.
 3. **Branching Model**:
    - `feat/web`: Alteracoes e desenvolvimento do sistema Web.
-   - `feat/desktop`: Alteracoes e desenvolvimento do sistema Desktop.
-   - `feat/mobile`: Alteracoes e desenvolvimento do sistema Mobile.
+   - `feat/desktop`: (Deprecada / Obsoleta) O cliente Desktop foi unificado na aplicacao Flutter em `MOBILE/` via branch `feat/mobile`.
+   - `feat/mobile`: Alteracoes e desenvolvimento do sistema Mobile e Desktop (Flutter multiplataforma).
    - `develop`: Branch de integracao e testes conjuntos.
    - `production`: Branch estavel de entrega final consolidada.
 4. **Core Domain Unificado**: Todas as regras de negocio de precificacao, estoque, checkout, cupons e pagamento devem seguir estritamente o definido em `Vault/01-Core-Domain/Business-Rules.md`.
