@@ -11,10 +11,12 @@ namespace PIM_WebApplication.Controllers
     public class ContaController : Controller
     {
         private readonly IUsuarioService _usuarioService;
+        private readonly IVendaService _vendaService;
 
-        public ContaController(IUsuarioService usuarioService)
+        public ContaController(IUsuarioService usuarioService, IVendaService vendaService)
         {
             _usuarioService = usuarioService;
+            _vendaService = vendaService;
         }
 
         [HttpGet]
@@ -107,8 +109,39 @@ namespace PIM_WebApplication.Controllers
                 return View(model);
             }
 
-            TempData["MensagemToast"] = "Conta criada com sucesso! Faça seu login para continuar.";
+            TempData["MensagemToast"] = "Conta criada com sucesso! Faca seu login para continuar.";
             return RedirectToAction(nameof(Login));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Perfil()
+        {
+            var idClienteClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(idClienteClaim, out int idCliente))
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            var cliente = await _usuarioService.ObterPorIdAsync(idCliente);
+            if (cliente == null)
+            {
+                return RedirectToAction(nameof(Login));
+            }
+
+            var pedidos = await _vendaService.ObterHistoricoPorClienteAsync(idCliente);
+
+            var viewModel = new PerfilUsuarioViewModel
+            {
+                IdCliente = cliente.IdCliente,
+                Nome = cliente.Nome,
+                Email = cliente.Email,
+                Telefone = cliente.Telefone,
+                IsAdmin = cliente.IsAdmin,
+                Pedidos = pedidos
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -118,7 +151,7 @@ namespace PIM_WebApplication.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
-            TempData["MensagemToast"] = "Você encerrou sua sessão com sucesso.";
+            TempData["MensagemToast"] = "Voce encerrou sua sessao com sucesso.";
             return RedirectToAction("Index", "Home");
         }
 

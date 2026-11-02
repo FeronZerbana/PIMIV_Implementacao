@@ -74,15 +74,38 @@
                 }
             </div>
 
-            <div class="cart-coupon">
-                <form asp-controller="Carrinho" asp-action="AplicarCupom" method="post" style="display:flex; flex:1; gap:0.8rem;">
-                    <input type="text" name="codigoCupom" value="@Model.CupomAplicado" placeholder="Cupom" />
-                    <button type="submit" class="btn-coupon">Aplicar</button>
-                </form>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                <div class="cart-coupon" style="flex: 1; min-width: 250px;">
+                    <form asp-controller="Carrinho" asp-action="AplicarCupom" method="post" style="display:flex; flex:1; gap:0.8rem;">
+                        <input type="text" name="codigoCupom" value="@Model.CupomAplicado" placeholder="Cupom de desconto" />
+                        <button type="submit" class="btn-coupon">Aplicar</button>
+                    </form>
+                </div>
+
+                <div class="cart-coupon" style="flex: 1; min-width: 250px;">
+                    <form asp-controller="Carrinho" asp-action="CalcularFrete" method="post" style="display:flex; flex:1; gap:0.8rem;">
+                        <input type="text" name="cep" value="@Model.CepDestino" placeholder="CEP (00000-000)" maxlength="9" />
+                        <button type="submit" class="btn-coupon">Calcular Frete</button>
+                    </form>
+                </div>
             </div>
+
+            @if (Model.FreteCalculado)
+            {
+                <div style="margin-top: 0.8rem; font-size: 0.88rem; color: #93c5fd; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; padding: 0.6rem 0.9rem;">
+                    @if (Model.Frete == 0)
+                    {
+                        <span>Frete Grátis aplicado com sucesso para o CEP @Model.CepDestino!</span>
+                    }
+                    else
+                    {
+                        <span>Frete fixo de R$ 9,99 calculado para o CEP @Model.CepDestino. (Compras a partir de R$ 800,00 garantem frete grátis!)</span>
+                    }
+                </div>
+            }
         }
 
-        <a asp-controller="Home" asp-action="Index" class="btn-back">&larr; Continuar comprando</a>
+        <a asp-controller="Home" asp-action="Index" class="btn-back" style="margin-top: 1.5rem; display: inline-block;">&larr; Continuar comprando</a>
     </div>
 
     <div class="cart-right">
@@ -91,16 +114,16 @@
                 Resumo da compra
             </div>
 
-            @if (Model.PrimeiraCompraElegivel)
+            @if (Model.FreteGratisElegivel)
             {
-                <div style="background: rgba(124, 58, 237, 0.15); border: 1px solid var(--accent); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem; font-size: 0.85rem; color: #d8b4fe;">
-                    <strong>Oferta de 1ª Compra:</strong> 50% de desconto aplicado no seu pedido!
+                <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem; font-size: 0.85rem; color: #a7f3d0;">
+                    <strong>Frete Grátis Ativo:</strong> Seu pedido atingiu o valor de compras acima de R$ 800,00!
                 </div>
             }
-            else if (!User.Identity?.IsAuthenticated ?? true)
+            else if (Model.Subtotal > 0)
             {
-                <div style="background: rgba(255, 255, 255, 0.04); border: 1px dashed var(--muted); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem; font-size: 0.82rem; color: var(--muted);">
-                    Faça login ou registre-se para receber <strong>50% OFF</strong> na sua 1ª compra!
+                <div style="background: rgba(124, 58, 237, 0.12); border: 1px solid var(--accent); border-radius: 8px; padding: 0.65rem 0.85rem; margin-bottom: 0.85rem; font-size: 0.82rem; color: #d8b4fe;">
+                    Adicione mais <strong>R$ @Model.FaltaParaFreteGratis.ToString("N2")</strong> para garantir <strong>Frete Grátis</strong>!
                 </div>
             }
 
@@ -108,14 +131,6 @@
                 <span>Subtotal (@Model.TotalQuantidade @(Model.TotalQuantidade == 1 ? "produto" : "produtos"))</span>
                 <span>R$ @Model.Subtotal.ToString("N2")</span>
             </div>
-
-            @if (Model.DescontoPrimeiraCompra > 0)
-            {
-                <div class="summary-row" style="color:#c084fc; font-size:0.85rem;">
-                    <span>&bull; Desconto 1ª Compra (50%)</span>
-                    <span>– R$ @Model.DescontoPrimeiraCompra.ToString("N2")</span>
-                </div>
-            }
 
             @if (Model.DescontoCupom > 0)
             {
@@ -131,8 +146,10 @@
             </div>
 
             <div class="summary-row">
-                <span>Frete <span class="frete-info" title="Grátis acima de R$ 99,00"></span></span>
-                <span class="summary-frete">@(Model.Frete == 0 ? "Grátis" : $"R$ {Model.Frete:N2}")</span>
+                <span>Frete <span class="frete-info" title="Grátis acima de R$ 800,00"></span></span>
+                <span class="summary-frete" style="@(Model.Frete == 0 ? "color:#60a5fa;" : "")">
+                    @(Model.Frete == 0 ? "Grátis" : $"R$ {Model.Frete:N2}")
+                </span>
             </div>
 
             <div class="summary-divider"></div>
@@ -164,17 +181,17 @@
         </div>
 
         <div class="cart-benefits">
-            <div class="cart-benefits-title">Por que comprar na Loja de Música?</div>
+            <div class="cart-benefits-title">Por que comprar na ShopNow?</div>
             <div class="benefit-item">
                 <div>
                     <strong>Frete grátis</strong>
-                    <p>Em compras acima de R$ 99,00</p>
+                    <p>Em compras acima de R$ 800,00</p>
                 </div>
             </div>
             <div class="benefit-item">
                 <div>
                     <strong>Entrega rápida</strong>
-                    <p>Para todo o Brasil</p>
+                    <p>Taxa fixa reduzida de R$ 9,99 para todo o Brasil</p>
                 </div>
             </div>
             <div class="benefit-item">
@@ -192,7 +209,7 @@
         <div><strong>Compra segura</strong><span>Seus dados protegidos</span></div>
     </div>
     <div class="trust-item">
-        <div><strong>Atendimento 24h</strong><span>Suporte para desenvolvedores</span></div>
+        <div><strong>Atendimento 24h</strong><span>Suporte para clientes e músicos</span></div>
     </div>
     <div class="trust-item">
         <div><strong>Parcele em até 4x</strong><span>Sem juros no cartão</span></div>

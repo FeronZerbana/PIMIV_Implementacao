@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using PIM_WebApplication.Models;
 
 namespace PIM_WebApplication.ViewModels
 {
@@ -43,5 +44,15 @@ namespace PIM_WebApplication.ViewModels
         [Compare("Senha", ErrorMessage = "As senhas nao coincidem.")]
         [Display(Name = "CONFIRMAR SENHA")]
         public string ConfirmarSenha { get; set; } = string.Empty;
+    }
+
+    public class PerfilUsuarioViewModel
+    {
+        public int IdCliente { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Telefone { get; set; }
+        public bool IsAdmin { get; set; }
+        public List<VendaHistoricoDto> Pedidos { get; set; } = new();
     }
 }

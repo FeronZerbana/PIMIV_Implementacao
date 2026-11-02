@@ -6,7 +6,7 @@ namespace PIM_WebApplication.Services
 {
     public interface IVendaService
     {
-        Task<(bool Sucesso, string Mensagem, int VendaId)> FinalizarVendaAsync(int codCliente, List<ItemCarrinhoDto> itens, string? codigoCupom = null);
+        Task<(bool Sucesso, string Mensagem, int VendaId)> FinalizarVendaAsync(int codCliente, List<ItemCarrinhoDto> itens, string? codigoCupom = null, decimal? valorFrete = null);
         Task<decimal> CalcularDescontoCupomAsync(string codigoCupom, decimal subtotal, int? codCliente = null);
         Task<List<VendaHistoricoDto>> ObterHistoricoPorClienteAsync(int codCliente);
     }
@@ -47,7 +47,11 @@ namespace PIM_WebApplication.Services
             return desconto;
         }
 
-        public async Task<(bool Sucesso, string Mensagem, int VendaId)> FinalizarVendaAsync(int codCliente, List<ItemCarrinhoDto> itens, string? codigoCupom = null)
+        public async Task<(bool Sucesso, string Mensagem, int VendaId)> FinalizarVendaAsync(
+            int codCliente, 
+            List<ItemCarrinhoDto> itens, 
+            string? codigoCupom = null, 
+            decimal? valorFrete = null)
         {
             if (itens == null || !itens.Any())
             {
@@ -61,7 +65,7 @@ namespace PIM_WebApplication.Services
                 return (false, "Cliente nao encontrado.", 0);
             }
 
-            // Validacao prévia de cupom se informado
+            // Validacao previa de cupom se informado
             if (!string.IsNullOrWhiteSpace(codigoCupom))
             {
                 var (cupomValido, msgCupom, _) = await _cupomService.ValidarCupomClienteAsync(codigoCupom, codCliente);
@@ -145,7 +149,36 @@ namespace PIM_WebApplication.Services
                     _context.ItemVendas.Add(itemVenda);
                 }
 
-                // Atualizacao da regra de primeira compra (FirstTime)
+                // Calculo do desconto por cupom
+                decimal valorDesconto = 0m;
+                if (!string.IsNullOrWhiteSpace(codigoCupom))
+                {
+                    valorDesconto = await CalcularDescontoCupomAsync(codigoCupom, subtotalTotal, codCliente);
+                }
+
+                // Regra de Frete: Grátis acima de R$ 800,00; caso contrário R$ 9,99 (ou valor informado)
+                decimal freteCalculado = 0m;
+                if (subtotalTotal >= 800m)
+                {
+                    freteCalculado = 0m;
+                }
+                else if (valorFrete.HasValue)
+                {
+                    freteCalculado = valorFrete.Value;
+                }
+                else
+                {
+                    freteCalculado = 9.99m;
+                }
+
+                decimal totalFinal = Math.Max(0m, subtotalTotal - valorDesconto + freteCalculado);
+
+                venda.ValorFrete = freteCalculado;
+                venda.ValorDesconto = valorDesconto;
+                venda.ValorTotal = totalFinal;
+                _context.Vendas.Update(venda);
+
+                // Atualizacao cadastral do cliente
                 if (cliente.FirstTime)
                 {
                     cliente.FirstTime = false;
@@ -174,21 +207,40 @@ namespace PIM_WebApplication.Services
                 .AsNoTracking()
                 .ToListAsync();
 
-            return vendas.Select(v => new VendaHistoricoDto
+            var vendaIds = vendas.Select(v => v.IdVenda).ToList();
+            var cuponsUsados = await _context.CupomUsos
+                .Where(u => u.IdVenda != null && vendaIds.Contains(u.IdVenda.Value))
+                .AsNoTracking()
+                .ToListAsync();
+
+            return vendas.Select(v =>
             {
-                IdVenda = v.IdVenda,
-                DataVenda = v.DataVenda,
-                TotalVenda = v.Itens.Sum(i => i.ValorTotal),
-                Itens = v.Itens.Select(i => new ItemVendaDetalheDto
+                var subtotal = v.Itens.Sum(i => i.ValorTotal);
+                var cupomUso = cuponsUsados.FirstOrDefault(u => u.IdVenda == v.IdVenda);
+                decimal frete = v.ValorFrete;
+                decimal desconto = v.ValorDesconto;
+                decimal totalPago = v.ValorTotal ?? Math.Max(0m, subtotal - desconto + frete);
+
+                return new VendaHistoricoDto
                 {
-                    IdItemVenda = i.IdItemVenda,
-                    CodProduto = i.CodProduto,
-                    NomeProduto = i.Produto?.TipoInstrumento ?? $"Instrumento #{i.CodProduto}",
-                    Quantidade = i.Quantidade,
-                    ValorUnitario = i.ValorUnitario,
-                    ValorTotal = i.ValorTotal,
-                    IdCupomUso = i.IdCupomUso
-                }).ToList()
+                    IdVenda = v.IdVenda,
+                    DataVenda = v.DataVenda,
+                    Subtotal = subtotal,
+                    ValorFrete = frete,
+                    ValorDesconto = desconto,
+                    TotalVenda = totalPago,
+                    CodigoCupom = cupomUso?.CodigoCupom,
+                    Itens = v.Itens.Select(i => new ItemVendaDetalheDto
+                    {
+                        IdItemVenda = i.IdItemVenda,
+                        CodProduto = i.CodProduto,
+                        NomeProduto = i.Produto?.TipoInstrumento ?? $"Instrumento #{i.CodProduto}",
+                        Quantidade = i.Quantidade,
+                        ValorUnitario = i.ValorUnitario,
+                        ValorTotal = i.ValorTotal,
+                        IdCupomUso = i.IdCupomUso
+                    }).ToList()
+                };
             }).ToList();
         }
     }

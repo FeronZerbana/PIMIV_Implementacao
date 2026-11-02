@@ -68,6 +68,9 @@ namespace PIM_WebApplication.Data
                 entity.Property(e => e.IdVenda).HasColumnName("id_Vendas");
                 entity.Property(e => e.CodCliente).HasColumnName("Cod_do_Cliente").IsRequired();
                 entity.Property(e => e.DataVenda).HasColumnName("Data_Venda").IsRequired();
+                entity.Property(e => e.ValorFrete).HasColumnName("Valor_Frete").HasColumnType("decimal(8,2)").HasDefaultValue(0m);
+                entity.Property(e => e.ValorDesconto).HasColumnName("Valor_Desconto").HasColumnType("decimal(8,2)").HasDefaultValue(0m);
+                entity.Property(e => e.ValorTotal).HasColumnName("Valor_Total").HasColumnType("decimal(8,2)");
 
                 entity.HasMany(v => v.Itens)
                       .WithOne(i => i.Venda)

@@ -83,6 +83,7 @@ namespace PIM_WebApplication.Models
         public int CodCliente { get; set; }
         public List<ItemCarrinhoDto> Itens { get; set; } = new();
         public string? Cupom { get; set; }
+        public decimal? ValorFrete { get; set; }
     }
 
     public class ItemCarrinhoDto
@@ -97,7 +98,11 @@ namespace PIM_WebApplication.Models
     {
         public int IdVenda { get; set; }
         public DateTime DataVenda { get; set; }
+        public decimal Subtotal { get; set; }
+        public decimal ValorFrete { get; set; }
+        public decimal ValorDesconto { get; set; }
         public decimal TotalVenda { get; set; }
+        public string? CodigoCupom { get; set; }
         public List<ItemVendaDetalheDto> Itens { get; set; } = new();
     }
 

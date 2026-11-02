@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using PIM_WebApplication.Helpers;
 using PIM_WebApplication.Models;
@@ -11,6 +12,7 @@ namespace PIM_WebApplication.Controllers
     {
         public const string SessionCartKey = "SessionCart";
         public const string SessionCouponKey = "SessionCoupon";
+        public const string SessionCepKey = "SessionCep";
 
         private readonly IProdutoService _produtoService;
         private readonly IVendaService _vendaService;
@@ -44,11 +46,14 @@ namespace PIM_WebApplication.Controllers
         {
             var itens = ObterCarrinhoDaSessao();
             var cupom = HttpContext.Session.GetString(SessionCouponKey);
+            var cep = HttpContext.Session.GetString(SessionCepKey);
 
             var viewModel = new CarrinhoViewModel
             {
                 Itens = itens,
-                CupomAplicado = cupom
+                CupomAplicado = cupom,
+                CepDestino = cep,
+                FreteCalculado = !string.IsNullOrWhiteSpace(cep)
             };
 
             int? idCliente = null;
@@ -58,12 +63,6 @@ namespace PIM_WebApplication.Controllers
                 if (int.TryParse(idClienteClaim, out int id))
                 {
                     idCliente = id;
-                    var cliente = await _usuarioService.ObterPorIdAsync(id);
-                    if (cliente?.FirstTime == true)
-                    {
-                        viewModel.PrimeiraCompraElegivel = true;
-                        viewModel.DescontoPrimeiraCompra = Math.Round(viewModel.Subtotal * 0.50m, 2);
-                    }
                 }
             }
 
@@ -86,6 +85,30 @@ namespace PIM_WebApplication.Controllers
             }
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult CalcularFrete(string cep)
+        {
+            if (string.IsNullOrWhiteSpace(cep))
+            {
+                HttpContext.Session.Remove(SessionCepKey);
+                TempData["MensagemToast"] = "Informe o CEP para calculo do frete.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var limpo = Regex.Replace(cep, @"[^\d]", "");
+            if (limpo.Length != 8)
+            {
+                TempData["MensagemToast"] = "Formato de CEP invalido. Utilize o formato 00000-000.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var cepFormatado = $"{limpo.Substring(0, 5)}-{limpo.Substring(5, 3)}";
+            HttpContext.Session.SetString(SessionCepKey, cepFormatado);
+            TempData["MensagemToast"] = $"Frete calculado com sucesso para o CEP {cepFormatado}!";
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -172,7 +195,6 @@ namespace PIM_WebApplication.Controllers
                     Preco = finalPreco,
                     Tamanho = finalVariacao,
                     ImagemUrl = imagemUrl,
-                    Emoji = string.Empty,
                     Quantidade = Math.Min(quantidade, estoqueDisponivel),
                     EstoqueDisponivel = estoqueDisponivel
                 });
@@ -302,15 +324,21 @@ namespace PIM_WebApplication.Controllers
             }).ToList();
 
             var cupom = HttpContext.Session.GetString(SessionCouponKey);
-            var (sucesso, mensagem, vendaId) = await _vendaService.FinalizarVendaAsync(idCliente, dtos, cupom);
+            var subtotal = itens.Sum(i => i.Subtotal);
+
+            // Regra de Frete: Grátis acima de R$ 800,00; caso contrário taxa fixa de R$ 9,99
+            decimal frete = subtotal >= 800m ? 0m : 9.99m;
+
+            var (sucesso, mensagem, vendaId) = await _vendaService.FinalizarVendaAsync(idCliente, dtos, cupom, frete);
 
             if (sucesso)
             {
                 HttpContext.Session.Remove(SessionCartKey);
                 HttpContext.Session.Remove(SessionCouponKey);
+                HttpContext.Session.Remove(SessionCepKey);
 
                 TempData["MensagemToast"] = $"Pedido #{vendaId} realizado com sucesso! Obrigado pela compra.";
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Perfil", "Conta");
             }
 
             TempData["MensagemToast"] = $"Erro ao finalizar compra: {mensagem}";

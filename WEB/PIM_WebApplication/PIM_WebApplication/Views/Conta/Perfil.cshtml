@@ -1,0 +1,555 @@
+@model PIM_WebApplication.ViewModels.PerfilUsuarioViewModel
+@{
+    ViewData["Title"] = "Meu Perfil - ShopNow";
+}
+
+@section Styles {
+    <style>
+        .perfil-container {
+            max-width: 1140px;
+            margin: 2.5rem auto 4rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .perfil-header-card {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .perfil-header-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+        }
+
+        .perfil-user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .perfil-avatar {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent) 0%, var(--accent-dark) 100%);
+            border: 2px solid var(--accent-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'Playfair Display', Georgia, serif;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .perfil-meta h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.75rem;
+            color: var(--text-heading);
+            margin-bottom: 0.25rem;
+        }
+
+        .perfil-meta p {
+            color: var(--muted);
+            font-size: 0.92rem;
+            margin: 0;
+        }
+
+        .perfil-badge-admin {
+            display: inline-block;
+            background: rgba(124, 58, 237, 0.25);
+            color: var(--accent-light);
+            border: 1px solid var(--accent);
+            padding: 0.25rem 0.65rem;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.4rem;
+        }
+
+        .perfil-actions {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .btn-perfil-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.2rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-perfil-logout {
+            background: rgba(239, 68, 68, 0.12);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-perfil-logout:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: #ffffff;
+            border-color: var(--danger);
+        }
+
+        /* ── NAVEGAÇÃO DE ABAS ── */
+        .perfil-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .perfil-tab-btn {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.05rem;
+            font-weight: 600;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .perfil-tab-btn:hover {
+            color: var(--text-heading);
+        }
+
+        .perfil-tab-btn.active {
+            color: var(--accent-light);
+        }
+
+        .perfil-tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ── CARDS DE PEDIDOS ── */
+        .order-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+        }
+
+        .order-card:hover {
+            border-color: var(--border-light);
+        }
+
+        .order-header {
+            background: var(--surface2);
+            padding: 1.2rem 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .order-id-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .order-number {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .order-date {
+            color: var(--dim);
+            font-size: 0.85rem;
+        }
+
+        .order-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.75rem;
+            border-radius: var(--radius-pill);
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .order-total-badge {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            text-align: right;
+        }
+
+        .order-total-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: normal;
+        }
+
+        .order-body {
+            padding: 1.5rem 1.6rem;
+        }
+
+        .order-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.2rem;
+        }
+
+        .order-items-table th {
+            text-align: left;
+            padding: 0.6rem 0.8rem;
+            color: var(--dim);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .order-items-table td {
+            padding: 0.85rem 0.8rem;
+            color: var(--text);
+            font-size: 0.92rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .order-items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .order-finance-summary {
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 2rem;
+            flex-wrap: wrap;
+            border: 1px solid var(--border);
+        }
+
+        .finance-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .finance-pill-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .finance-pill-val {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .finance-pill-val.desconto {
+            color: #34d399;
+        }
+
+        .finance-pill-val.frete-gratis {
+            color: #60a5fa;
+        }
+
+        .finance-pill-val.destaque {
+            font-size: 1.15rem;
+            color: var(--accent-light);
+            font-weight: 700;
+        }
+
+        /* ── DADOS CADASTRAIS ── */
+        .dados-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .dado-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+        }
+
+        .dado-label {
+            font-size: 0.78rem;
+            color: var(--dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+        }
+
+        .dado-valor {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-orders {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--surface);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+
+        .empty-orders svg {
+            color: var(--muted);
+            margin-bottom: 1.2rem;
+        }
+
+        .empty-orders h3 {
+            color: var(--text-heading);
+            font-size: 1.35rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+
+        .empty-orders p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .btn-explorar {
+            display: inline-block;
+            background: var(--accent);
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.75rem 1.6rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-explorar:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+    </style>
+}
+
+<div class="perfil-container">
+    <!-- Cabeçalho do Perfil -->
+    <div class="perfil-header-card">
+        <div class="perfil-user-info">
+            <div class="perfil-avatar">
+                @(string.IsNullOrWhiteSpace(Model.Nome) ? "U" : Model.Nome.Substring(0, 1).ToUpperInvariant())
+            </div>
+            <div class="perfil-meta">
+                <h1>@Model.Nome</h1>
+                <p>@Model.Email &middot; Código do Cliente: #@Model.IdCliente</p>
+                @if (Model.IsAdmin)
+                {
+                    <span class="perfil-badge-admin">Administrador</span>
+                }
+            </div>
+        </div>
+        <div class="perfil-actions">
+            <a asp-controller="Conta" asp-action="Logout" class="btn-perfil-action btn-perfil-logout">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span>Sair</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Navegação de Abas -->
+    <div class="perfil-tabs">
+        <button type="button" class="perfil-tab-btn active" onclick="alternarAba('pedidos', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            <span>Meus Pedidos (@Model.Pedidos.Count)</span>
+        </button>
+        <button type="button" class="perfil-tab-btn" onclick="alternarAba('dados', this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Dados Cadastrais</span>
+        </button>
+    </div>
+
+    <!-- Conteúdo da Aba: Meus Pedidos -->
+    <div id="aba-pedidos" class="tab-panel active">
+        @if (Model.Pedidos.Any())
+        {
+            @foreach (var pedido in Model.Pedidos)
+            {
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-id-group">
+                            <span class="order-number">Pedido #@pedido.IdVenda</span>
+                            <span class="order-date">Realizado em @pedido.DataVenda.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap: 1.2rem;">
+                            <span class="order-status-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Confirmado
+                            </span>
+                            <div class="order-total-badge">
+                                <span class="order-total-label">Total Pago</span>
+                                R$ @pedido.TotalVenda.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="order-body">
+                        <table class="order-items-table">
+                            <thead>
+                                <tr>
+                                    <th>Instrumento / Acessório</th>
+                                    <th style="text-align:center;">Qtd</th>
+                                    <th style="text-align:right;">Preço Unitário</th>
+                                    <th style="text-align:right;">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in pedido.Itens)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@item.NomeProduto</strong>
+                                        </td>
+                                        <td style="text-align:center;">@item.Quantidade</td>
+                                        <td style="text-align:right;">R$ @item.ValorUnitario.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>
+                                        <td style="text-align:right; font-weight:600;">R$ @item.ValorTotal.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="order-finance-summary">
+                            <div class="finance-pill">
+                                <span class="finance-pill-label">Subtotal</span>
+                                <span class="finance-pill-val">R$ @pedido.Subtotal.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</span>
+                            </div>
+
+                            @if (pedido.ValorDesconto > 0)
+                            {
+                                <div class="finance-pill">
+                                    <span class="finance-pill-label">
+                                        Desconto @(!string.IsNullOrEmpty(pedido.CodigoCupom) ? $"({pedido.CodigoCupom})" : "")
+                                    </span>
+                                    <span class="finance-pill-val desconto">– R$ @pedido.ValorDesconto.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</span>
+                                </div>
+                            }
+
+                            <div class="finance-pill">
+                                <span class="finance-pill-label">Frete</span>
+                                <span class="finance-pill-val @(pedido.ValorFrete == 0 ? "frete-gratis" : "")">
+                                    @(pedido.ValorFrete == 0 ? "Grátis" : $"R$ {pedido.ValorFrete.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))}")
+                                </span>
+                            </div>
+
+                            <div class="finance-pill">
+                                <span class="finance-pill-label">Total Pago (Líquido)</span>
+                                <span class="finance-pill-val destaque">R$ @pedido.TotalVenda.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-orders">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                <h3>Nenhum pedido realizado ainda</h3>
+                <p>Navegue pelo nosso catálogo de instrumentos musicais e finalize sua primeira compra.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn-explorar">Explorar Produtos</a>
+            </div>
+        }
+    </div>
+
+    <!-- Conteúdo da Aba: Dados Cadastrais -->
+    <div id="aba-dados" class="tab-panel">
+        <div class="dados-grid">
+            <div class="dado-card">
+                <div class="dado-label">Nome Completo</div>
+                <div class="dado-valor">@Model.Nome</div>
+            </div>
+            <div class="dado-card">
+                <div class="dado-label">E-mail Cadastrado</div>
+                <div class="dado-valor">@Model.Email</div>
+            </div>
+            <div class="dado-card">
+                <div class="dado-label">Telefone de Contato</div>
+                <div class="dado-valor">@(string.IsNullOrWhiteSpace(Model.Telefone) ? "Não informado" : Model.Telefone)</div>
+            </div>
+            <div class="dado-card">
+                <div class="dado-label">Perfil de Acesso</div>
+                <div class="dado-valor">@(Model.IsAdmin ? "Administrador de Loja" : "Cliente ShopNow")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function alternarAba(aba, btn) {
+            document.querySelectorAll('.perfil-tab-btn').forEach(function(b) {
+                b.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-panel').forEach(function(p) {
+                p.classList.remove('active');
+            });
+
+            btn.classList.add('active');
+            var target = document.getElementById('aba-' + aba);
+            if (target) {
+                target.classList.add('active');
+            }
+        }
+    </script>
+}

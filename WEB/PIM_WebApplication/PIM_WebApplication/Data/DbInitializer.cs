@@ -134,10 +134,35 @@ namespace PIM_WebApplication.Data
                                 FOREIGN KEY (id_CupomUso) REFERENCES CUPOM_USOS(id_CupomUso);
                         END;
                     END;
+
+                    -- 9. Adiciona colunas financeiras na tabela VENDAS se ainda nao existirem
+                    IF NOT EXISTS (
+                        SELECT 1 FROM sys.columns 
+                        WHERE object_id = OBJECT_ID('VENDAS') AND name = 'Valor_Frete'
+                    )
+                    BEGIN
+                        ALTER TABLE VENDAS ADD Valor_Frete DECIMAL(8,2) NOT NULL CONSTRAINT DF_VENDAS_Valor_Frete DEFAULT 0;
+                    END;
+
+                    IF NOT EXISTS (
+                        SELECT 1 FROM sys.columns 
+                        WHERE object_id = OBJECT_ID('VENDAS') AND name = 'Valor_Desconto'
+                    )
+                    BEGIN
+                        ALTER TABLE VENDAS ADD Valor_Desconto DECIMAL(8,2) NOT NULL CONSTRAINT DF_VENDAS_Valor_Desconto DEFAULT 0;
+                    END;
+
+                    IF NOT EXISTS (
+                        SELECT 1 FROM sys.columns 
+                        WHERE object_id = OBJECT_ID('VENDAS') AND name = 'Valor_Total'
+                    )
+                    BEGIN
+                        ALTER TABLE VENDAS ADD Valor_Total DECIMAL(8,2) NULL;
+                    END;
                 ";
 
                 await context.Database.ExecuteSqlRawAsync(sqlAtualizacao);
-                logger.LogInformation("Estrutura do banco de dados (PRODUTOS, CLIENTES, CUPONS, CUPOM_USOS, ITEM_VENDAS) verificada e sincronizada.");
+                logger.LogInformation("Estrutura do banco de dados (PRODUTOS, CLIENTES, CUPONS, CUPOM_USOS, ITEM_VENDAS, VENDAS) verificada e sincronizada.");
             }
             catch (Exception ex)
             {

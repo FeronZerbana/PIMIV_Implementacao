@@ -21,7 +21,8 @@ namespace PIM_WebApplication.Controllers.Api
             var (sucesso, mensagem, vendaId) = await _vendaService.FinalizarVendaAsync(
                 request.CodCliente,
                 request.Itens,
-                request.Cupom);
+                request.Cupom,
+                request.ValorFrete);
 
             if (!sucesso)
             {
