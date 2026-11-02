@@ -46,5 +46,20 @@ namespace PIM_WebApplication.Controllers.Api
                 return BadRequest(new { erro = ex.Message });
             }
         }
+
+        // PUT: api/estoque/definir/{idProduto}
+        [HttpPut("Definir/{idProduto}")]
+        public async Task<IActionResult> DefinirEstoque(int idProduto, [FromBody] int novaQuantidade)
+        {
+            try
+            {
+                int novaQtd = await _estoqueService.DefinirEstoqueAsync(idProduto, novaQuantidade);
+                return Ok(new { mensagem = "Estoque redefinido com sucesso", novaQuantidade = novaQtd });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { erro = ex.Message });
+            }
+        }
     }
 }

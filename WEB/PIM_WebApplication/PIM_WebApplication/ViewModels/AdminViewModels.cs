@@ -9,7 +9,12 @@ namespace PIM_WebApplication.ViewModels
         public List<Produto> ProdutosCadastrados { get; set; } = new();
         public NovoProdutoViewModel NovoProduto { get; set; } = new();
         public EditarProdutoViewModel EditarProduto { get; set; } = new();
-        public AdicionarEstoqueViewModel AdicionarEstoque { get; set; } = new();
+        public AlterarEstoqueViewModel AlterarEstoque { get; set; } = new();
+        public AdicionarEstoqueViewModel AdicionarEstoque => new AdicionarEstoqueViewModel 
+        { 
+            IdProduto = AlterarEstoque.IdProduto, 
+            Quantidade = AlterarEstoque.Quantidade 
+        };
         public List<Cupom> CuponsCadastrados { get; set; } = new();
         public NovoCupomViewModel NovoCupom { get; set; } = new();
         public List<AuditoriaVendaDto> RegistrosAuditoria { get; set; } = new();
@@ -81,6 +86,22 @@ namespace PIM_WebApplication.ViewModels
 
         [Display(Name = "STATUS")]
         public bool Ativo { get; set; } = true;
+    }
+
+    public class AlterarEstoqueViewModel
+    {
+        [Required(ErrorMessage = "Selecione um produto.")]
+        [Display(Name = "SELECIONE UM INSTRUMENTO")]
+        public int IdProduto { get; set; }
+
+        [Required(ErrorMessage = "Selecione o tipo de operacao.")]
+        [Display(Name = "TIPO DE OPERACAO")]
+        public string TipoOperacao { get; set; } = "Incrementar"; // "Incrementar" ou "Definir"
+
+        [Required(ErrorMessage = "Informe a quantidade.")]
+        [Range(0, 10000, ErrorMessage = "A quantidade deve ser positiva.")]
+        [Display(Name = "QUANTIDADE")]
+        public int Quantidade { get; set; }
     }
 
     public class AdicionarEstoqueViewModel

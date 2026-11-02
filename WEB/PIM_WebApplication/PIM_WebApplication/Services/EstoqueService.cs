@@ -8,6 +8,7 @@ namespace PIM_WebApplication.Services
     {
         Task<Estoque?> ObterPorProdutoAsync(int idProduto);
         Task<int> AdicionarEstoqueAsync(int idProduto, int quantidade);
+        Task<int> DefinirEstoqueAsync(int idProduto, int novaQuantidade);
     }
 
     public class EstoqueService : IEstoqueService
@@ -48,6 +49,34 @@ namespace PIM_WebApplication.Services
             else
             {
                 estoque.QuantidadeDisponivel += quantidade;
+            }
+
+            await _context.SaveChangesAsync();
+            return estoque.QuantidadeDisponivel;
+        }
+
+        public async Task<int> DefinirEstoqueAsync(int idProduto, int novaQuantidade)
+        {
+            if (novaQuantidade < 0)
+            {
+                throw new ArgumentException("A quantidade de estoque nao pode ser negativa.", nameof(novaQuantidade));
+            }
+
+            var estoque = await _context.Estoques
+                .FirstOrDefaultAsync(e => e.CodProduto == idProduto);
+
+            if (estoque == null)
+            {
+                estoque = new Estoque
+                {
+                    CodProduto = idProduto,
+                    QuantidadeDisponivel = novaQuantidade
+                };
+                _context.Estoques.Add(estoque);
+            }
+            else
+            {
+                estoque.QuantidadeDisponivel = novaQuantidade;
             }
 
             await _context.SaveChangesAsync();

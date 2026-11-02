@@ -81,7 +81,7 @@ namespace PIM_WebApplication.Controllers
                 ProdutosCadastrados = produtos,
                 NovoProduto = new NovoProdutoViewModel(),
                 EditarProduto = new EditarProdutoViewModel(),
-                AdicionarEstoque = new AdicionarEstoqueViewModel(),
+                AlterarEstoque = new AlterarEstoqueViewModel(),
                 CuponsCadastrados = cupons,
                 NovoCupom = new NovoCupomViewModel(),
                 RegistrosAuditoria = auditorias
@@ -364,41 +364,87 @@ namespace PIM_WebApplication.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AdicionarEstoque([Bind(Prefix = "AdicionarEstoque")] AdicionarEstoqueViewModel? model)
+        public async Task<IActionResult> AlterarEstoque([Bind(Prefix = "AlterarEstoque")] AlterarEstoqueViewModel? model)
         {
-            model ??= new AdicionarEstoqueViewModel();
+            model ??= new AlterarEstoqueViewModel();
 
             if (model.IdProduto <= 0)
             {
-                var idStr = Request.Form["AdicionarEstoque.IdProduto"].FirstOrDefault() 
+                var idStr = Request.Form["AlterarEstoque.IdProduto"].FirstOrDefault() 
+                         ?? Request.Form["AdicionarEstoque.IdProduto"].FirstOrDefault() 
                          ?? Request.Form["IdProduto"].FirstOrDefault();
                 if (int.TryParse(idStr, out int idVal)) model.IdProduto = idVal;
             }
 
-            if (model.Quantidade <= 0)
+            var tipoOperacao = Request.Form["AlterarEstoque.TipoOperacao"].FirstOrDefault() 
+                            ?? Request.Form["TipoOperacao"].FirstOrDefault() 
+                            ?? (string.IsNullOrWhiteSpace(model.TipoOperacao) ? "Incrementar" : model.TipoOperacao);
+
+            var qtdStr = Request.Form["AlterarEstoque.Quantidade"].FirstOrDefault() 
+                      ?? Request.Form["AdicionarEstoque.Quantidade"].FirstOrDefault() 
+                      ?? Request.Form["Quantidade"].FirstOrDefault();
+            if (int.TryParse(qtdStr, out int qtdVal))
             {
-                var qtdStr = Request.Form["AdicionarEstoque.Quantidade"].FirstOrDefault() 
-                          ?? Request.Form["Quantidade"].FirstOrDefault();
-                if (int.TryParse(qtdStr, out int qtdVal)) model.Quantidade = qtdVal;
+                model.Quantidade = qtdVal;
             }
 
-            if (model.IdProduto <= 0 || model.Quantidade <= 0)
+            if (model.IdProduto <= 0)
             {
-                TempData["MensagemToast"] = "Selecione um produto e informe uma quantidade positiva para o estoque.";
+                TempData["MensagemToast"] = "Selecione um produto para alterar o estoque.";
                 return RedirectToAction(nameof(Index));
             }
 
-            try
+            if (tipoOperacao.Equals("Definir", StringComparison.OrdinalIgnoreCase))
             {
-                int novaQuantidade = await _estoqueService.AdicionarEstoqueAsync(model.IdProduto, model.Quantidade);
-                TempData["MensagemToast"] = $"Estoque atualizado com sucesso! Novo saldo: {novaQuantidade} un.";
+                if (model.Quantidade < 0)
+                {
+                    TempData["MensagemToast"] = "O novo saldo de estoque nao pode ser negativo.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                try
+                {
+                    int novoSaldo = await _estoqueService.DefinirEstoqueAsync(model.IdProduto, model.Quantidade);
+                    TempData["MensagemToast"] = $"Estoque redefinido com sucesso! Novo saldo absoluto: {novoSaldo} un.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["MensagemToast"] = $"Erro ao definir estoque: {ex.Message}";
+                }
             }
-            catch (Exception ex)
+            else
             {
-                TempData["MensagemToast"] = $"Erro ao atualizar estoque: {ex.Message}";
+                if (model.Quantidade <= 0)
+                {
+                    TempData["MensagemToast"] = "A quantidade a adicionar deve ser maior que zero.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                try
+                {
+                    int novoSaldo = await _estoqueService.AdicionarEstoqueAsync(model.IdProduto, model.Quantidade);
+                    TempData["MensagemToast"] = $"Estoque incrementado com sucesso! Novo saldo: {novoSaldo} un.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["MensagemToast"] = $"Erro ao incrementar estoque: {ex.Message}";
+                }
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdicionarEstoque([Bind(Prefix = "AdicionarEstoque")] AdicionarEstoqueViewModel? model)
+        {
+            var alterarModel = new AlterarEstoqueViewModel
+            {
+                IdProduto = model?.IdProduto ?? 0,
+                Quantidade = model?.Quantidade ?? 0,
+                TipoOperacao = "Incrementar"
+            };
+            return await AlterarEstoque(alterarModel);
         }
 
         [HttpPost]

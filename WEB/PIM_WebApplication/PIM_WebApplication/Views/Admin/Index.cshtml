@@ -101,41 +101,58 @@
         </form>
     </div>
 
-    <!-- CARD 2: Adicionar Estoque -->
+    <!-- CARD 2: Gestão de Saldo de Estoque -->
     <div class="admin-card">
         <div class="admin-card-header">
             <div>
-                <h2 class="admin-card-titulo">Entrada de Estoque</h2>
-                <p class="admin-card-sub">Incremente o saldo físico de um item já existente no banco de dados</p>
+                <h2 class="admin-card-titulo">Gestão de Estoque</h2>
+                <p class="admin-card-sub">Incremente unidades ou defina um novo saldo absoluto para itens cadastrados</p>
             </div>
         </div>
 
-        <form asp-controller="Admin" asp-action="AdicionarEstoque" method="post" class="admin-form">
+        <form asp-controller="Admin" asp-action="AlterarEstoque" method="post" class="admin-form">
             @Html.AntiForgeryToken()
 
             <div class="admin-form-row">
                 <div class="admin-field">
-                    <label asp-for="AdicionarEstoque.IdProduto" class="admin-label">Selecionar Instrumento</label>
-                    <select asp-for="AdicionarEstoque.IdProduto" class="admin-select" required>
+                    <label class="admin-label" for="selectProdutoEstoque">Selecionar Instrumento</label>
+                    <select id="selectProdutoEstoque" name="AlterarEstoque.IdProduto" class="admin-select" required onchange="atualizarInfoEstoqueAtual(this)">
                         <option value="" disabled selected>Selecione um produto</option>
                         @foreach (var p in Model.ProdutosCadastrados)
                         {
-                            <option value="@p.IdProduto">
+                            <option value="@p.IdProduto" data-estoque="@(p.Estoque?.QuantidadeDisponivel ?? 0)">
                                 [@p.TipoInstrumento] @p.Modelo — R$ @p.Preco.ToString("N2") [Atual: @(p.Estoque?.QuantidadeDisponivel ?? 0) un] @(!p.Ativo ? "(Inativo)" : "")
                             </option>
                         }
                     </select>
-                    <span asp-validation-for="AdicionarEstoque.IdProduto" class="text-danger"></span>
                 </div>
 
                 <div class="admin-field">
-                    <label asp-for="AdicionarEstoque.Quantidade" class="admin-label">Quantidade a Adicionar</label>
-                    <input asp-for="AdicionarEstoque.Quantidade" type="number" min="1" class="admin-input" placeholder="Ex: 10" required />
-                    <span asp-validation-for="AdicionarEstoque.Quantidade" class="text-danger"></span>
+                    <label class="admin-label" for="selectTipoOperacaoEstoque">Tipo de Operação</label>
+                    <select id="selectTipoOperacaoEstoque" name="AlterarEstoque.TipoOperacao" class="admin-select" required onchange="alternarModoOperacaoEstoque(this.value)">
+                        <option value="Incrementar" selected>Incrementar Saldo (Adicionar ao estoque existente)</option>
+                        <option value="Definir">Definir Novo Saldo (Sobrescrever valor absoluto)</option>
+                    </select>
                 </div>
             </div>
 
-            <button type="submit" class="admin-btn">Atualizar Saldo de Estoque</button>
+            <div class="admin-form-row">
+                <div class="admin-field">
+                    <label id="labelQtdEstoque" class="admin-label" for="inputQtdEstoque">Quantidade a Adicionar</label>
+                    <input id="inputQtdEstoque" name="AlterarEstoque.Quantidade" type="number" min="1" class="admin-input" placeholder="Ex: 10" required />
+                    <small id="ajudaQtdEstoque" style="color: var(--muted); font-size: 0.8rem; margin-top: 0.3rem; display: block;">
+                        As unidades informadas serão somadas ao saldo físico já existente.
+                    </small>
+                </div>
+
+                <div class="admin-field" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                    <div id="boxSaldoPrevisto" style="background: var(--surface2); border: 1px solid var(--border); padding: 0.85rem 1.1rem; border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--muted);">
+                        Saldo atual: <strong id="lblSaldoAtual" style="color: var(--text-heading);">—</strong> | Saldo previsto: <strong id="lblSaldoPrevisto" style="color: #4ade80;">—</strong>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" id="btnSubmitEstoque" class="admin-btn">Incrementar Estoque</button>
         </form>
     </div>
 
@@ -450,6 +467,59 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        function alternarModoOperacaoEstoque(modo) {
+            const label = document.getElementById('labelQtdEstoque');
+            const input = document.getElementById('inputQtdEstoque');
+            const ajuda = document.getElementById('ajudaQtdEstoque');
+            const btn = document.getElementById('btnSubmitEstoque');
+
+            if (modo === 'Definir') {
+                label.textContent = 'Novo Saldo Absoluto (Unidades)';
+                input.min = '0';
+                input.placeholder = 'Ex: 25 (saldo total)';
+                ajuda.textContent = 'O saldo do produto será ajustado exatamente para esta quantidade (pode ser 0).';
+                btn.textContent = 'Definir Novo Saldo';
+            } else {
+                label.textContent = 'Quantidade a Adicionar';
+                input.min = '1';
+                input.placeholder = 'Ex: 10';
+                ajuda.textContent = 'As unidades informadas serão somadas ao saldo físico já existente.';
+                btn.textContent = 'Incrementar Estoque';
+            }
+            calcularSaldoPrevisto();
+        }
+
+        function atualizarInfoEstoqueAtual(select) {
+            const selectedOption = select.options[select.selectedIndex];
+            const estoque = selectedOption ? selectedOption.getAttribute('data-estoque') : null;
+            document.getElementById('lblSaldoAtual').textContent = estoque !== null ? estoque + ' un' : '—';
+            calcularSaldoPrevisto();
+        }
+
+        function calcularSaldoPrevisto() {
+            const select = document.getElementById('selectProdutoEstoque');
+            const selectedOption = select.options[select.selectedIndex];
+            const estoqueAttr = selectedOption ? selectedOption.getAttribute('data-estoque') : null;
+            const estoqueAtual = estoqueAttr !== null && estoqueAttr !== '' ? parseInt(estoqueAttr, 10) : null;
+            const inputQtdVal = document.getElementById('inputQtdEstoque').value;
+            const inputQtd = inputQtdVal !== '' ? parseInt(inputQtdVal, 10) : null;
+            const modo = document.getElementById('selectTipoOperacaoEstoque').value;
+            const lblPrevisto = document.getElementById('lblSaldoPrevisto');
+
+            if (estoqueAtual === null || inputQtd === null || isNaN(inputQtd)) {
+                lblPrevisto.textContent = '—';
+                return;
+            }
+
+            if (modo === 'Definir') {
+                lblPrevisto.textContent = inputQtd + ' un';
+            } else {
+                lblPrevisto.textContent = (estoqueAtual + inputQtd) + ' un';
+            }
+        }
+
+        document.getElementById('inputQtdEstoque').addEventListener('input', calcularSaldoPrevisto);
+
         function abrirModalEdicao(id, nome, modelo, preco, descricao, imagemUrl, ativo) {
             document.getElementById('editIdProduto').value = id;
             document.getElementById('editNome').value = nome;
