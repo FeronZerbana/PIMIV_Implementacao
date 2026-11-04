@@ -94,7 +94,22 @@
 
     <div id="toast" data-msg="@TempData["MensagemToast"]"></div>
 
+    <!-- MODAL COMPARTILHADO DE DETALHES DO PRODUTO -->
+    <partial name="_ModalDetalhesProduto" />
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- VLIBRAS: SUITE DE ACESSIBILIDADE EM LIBRAS (GOVERNO FEDERAL) -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
 </body>
 </html>

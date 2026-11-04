@@ -1,0 +1,72 @@
+@model PIM_WebApplication.Models.Produto
+@{
+    ViewData["Title"] = $"{Model.Modelo} - ShopNow";
+    var fallbackImg = Url.Content("~/img/guitarra.jpeg");
+    var imgFinal = !string.IsNullOrWhiteSpace(Model.ImagemUrl) ? Model.ImagemUrl : fallbackImg;
+    var estoque = Model.Estoque?.QuantidadeDisponivel ?? 0;
+    var temEstoque = estoque > 0;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/categorias.css" asp-append-version="true" />
+}
+
+<div class="categoria-page">
+    <div style="margin-bottom: 2rem;">
+        <a href="javascript:history.back()" class="categoria-voltar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Voltar
+        </a>
+    </div>
+
+    <div class="produto-detalhe-page-container">
+        <div class="produto-detalhe-imagem-col">
+            <div class="produto-detalhe-img-wrapper">
+                <img src="@imgFinal" alt="@Model.Modelo" class="produto-detalhe-img" onerror="this.onerror=null;this.src='@fallbackImg';" />
+            </div>
+        </div>
+
+        <div class="produto-detalhe-info-col">
+            <span class="modal-produto-categoria">@Model.TipoInstrumento</span>
+            <h1 class="produto-detalhe-titulo">@Model.Modelo</h1>
+            <div class="produto-detalhe-preco">R$ @Model.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</div>
+
+            <div style="margin: 1rem 0;">
+                <span class="modal-estoque-badge @(temEstoque ? "em-estoque" : "esgotado")">
+                    @(temEstoque ? $"Em estoque ({estoque} unidades disponíveis)" : "Produto fora de estoque")
+                </span>
+            </div>
+
+            <div class="modal-produto-bloco-descricao" style="margin-bottom: 2rem;">
+                <h2 class="modal-descricao-titulo">Especificações e Descrição</h2>
+                <p class="modal-produto-descricao">
+                    @(string.IsNullOrWhiteSpace(Model.Descricao) 
+                        ? "Instrumento musical de alto padrão de acabamento, projetado para oferecer versatilidade acústica, afinação precisa e timbres ricos tanto para estudo quanto para performances ao vivo."
+                        : Model.Descricao)
+                </p>
+            </div>
+
+            <form asp-controller="Carrinho" asp-action="Adicionar" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="idProduto" value="@Model.IdProduto" />
+                <input type="hidden" name="nome" value="@Model.TipoInstrumento" />
+                <input type="hidden" name="preco" value="@Model.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="modelo" value="@Model.Modelo" />
+                <input type="hidden" name="tamanho" value="@Model.Modelo" />
+                <input type="hidden" name="imagemUrl" value="@imgFinal" />
+
+                <button type="submit" class="btn-carrinho" style="max-width: 350px; padding: 0.9rem 1.8rem; font-size: 1rem;" @(!temEstoque ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "")>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span>@(temEstoque ? "Adicionar ao carrinho" : "Fora de estoque")</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

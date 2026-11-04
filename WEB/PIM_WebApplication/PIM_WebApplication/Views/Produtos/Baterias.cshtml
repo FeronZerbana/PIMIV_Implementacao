@@ -2,9 +2,7 @@
 @{
     ViewData["Title"] = "Baterias - Loja de Música";
     var fallbackCategoria = Url.Content("~/img/bateria.jpeg");
-
-    var marcas = new[] { "Pearl", "Yamaha", "Tama", "Ludwig", "Odery", "Mapex", "Outras" };
-    var tipos = new[] { "Acústica", "Eletrônica", "Compacta (bateria infantil)", "Kit completo" };
+    var ordemAtual = ViewData["OrdemAtual"]?.ToString() ?? "populares";
 }
 
 @section Styles {
@@ -58,18 +56,25 @@
                     <!-- Prato Chimbal (esquerda) -->
                     <ellipse cx="72" cy="28" rx="14" ry="4" stroke="#c084fc" stroke-width="1.8" />
                     <line x1="72" y1="28" x2="72" y2="76" stroke="#a855f7" stroke-width="1.6" />
-                    <line x1="65" y1="76" x2="79" y2="76" stroke="#a855f7" stroke-width="2" />
+                    <path d="M60 76 L72 76 L84 76" stroke="#c084fc" stroke-width="1.5" />
 
-                    <!-- Prato de Condução / Ataque (direita) -->
-                    <ellipse cx="158" cy="22" rx="16" ry="4" stroke="#c084fc" stroke-width="1.8" />
+                    <!-- Prato Condução / Ataque (direita) -->
+                    <ellipse cx="158" cy="22" rx="15" ry="4" stroke="#c084fc" stroke-width="1.8" />
                     <line x1="158" y1="22" x2="158" y2="76" stroke="#a855f7" stroke-width="1.6" />
-                    <line x1="151" y1="76" x2="165" y2="76" stroke="#a855f7" stroke-width="2" />
+                    <path d="M148 76 L158 76 L168 76" stroke="#c084fc" stroke-width="1.5" />
 
-                    <!-- Notas musicais -->
-                    <path d="M185 18 Q195 8 205 18 L205 34" stroke="#e9d5ff" stroke-width="1.8" stroke-linecap="round" />
-                    <ellipse cx="199" cy="34" rx="3.5" ry="2.5" fill="#e9d5ff" transform="rotate(-20 199 34)" />
-                    <path d="M180 44 Q188 38 192 46 L192 56" stroke="#a855f7" stroke-width="1.5" stroke-linecap="round" />
-                    <ellipse cx="188" cy="56" rx="3" ry="2" fill="#a855f7" transform="rotate(-20 188 56)" />
+                    <!-- Caixa (lado esquerdo do bumbo) -->
+                    <ellipse cx="80" cy="48" rx="11" ry="5" stroke="#c084fc" stroke-width="1.8" />
+                    <line x1="69" y1="48" x2="69" y2="56" stroke="#c084fc" stroke-width="1.5" />
+                    <line x1="91" y1="48" x2="91" y2="56" stroke="#c084fc" stroke-width="1.5" />
+                    <path d="M69 56 Q80 61 91 56" stroke="#c084fc" stroke-width="1.5" />
+                    <line x1="80" y1="58" x2="80" y2="78" stroke="#a855f7" stroke-width="1.5" />
+
+                    <!-- Notas Musicais flutuando à direita -->
+                    <path d="M190 14 Q200 4 210 16 L210 34" stroke="#e9d5ff" stroke-width="2" stroke-linecap="round" />
+                    <ellipse cx="204" cy="34" rx="4" ry="3" fill="#e9d5ff" transform="rotate(-20 204 34)" />
+                    <path d="M182 36 Q190 30 194 38 L194 50" stroke="#a855f7" stroke-width="1.6" stroke-linecap="round" />
+                    <ellipse cx="190" cy="50" rx="3.5" ry="2.5" fill="#a855f7" transform="rotate(-20 190 50)" />
                 </svg>
             </div>
         </div>
@@ -81,127 +86,74 @@
     <div class="categoria-toolbar">
         <label for="ordenarPor" class="toolbar-label">Ordenar por:</label>
         <div class="select-ordenar-wrapper">
-            <select id="ordenarPor" class="select-ordenar" aria-label="Ordenar produtos">
-                <option value="populares" selected>Mais populares</option>
-                <option value="menor-preco">Menor preço</option>
-                <option value="maior-preco">Maior preço</option>
+            <select id="ordenarPor" class="select-ordenar" aria-label="Ordenar produtos" onchange="tratarAlteracaoOrdenacao(this.value)">
+                <!option value="populares" @(ordemAtual == "populares" ? "selected" : "")>Mais populares</!option>
+                <!option value="menor-preco" @(ordemAtual == "menor-preco" ? "selected" : "")>Menor preço</!option>
+                <!option value="maior-preco" @(ordemAtual == "maior-preco" ? "selected" : "")>Maior preço</!option>
             </select>
         </div>
     </div>
 
-    <!-- ÁREA PRINCIPAL: FILTROS + PRODUTOS -->
-    <div class="categoria-conteudo">
-        <!-- BARRA LATERAL DE FILTROS -->
-        <aside class="categoria-filtros" aria-label="Filtros de produtos">
-            <h2 class="filtros-titulo">Filtros</h2>
+    <!-- GRADE DE PRODUTOS EXPANSIVA (SEM FILTROS LATERAIS) -->
+    <main class="categoria-produtos-grid" role="region" aria-label="Lista de Baterias">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var produto in Model)
+            {
+                var imgFinal = !string.IsNullOrWhiteSpace(produto.ImagemUrl) ? produto.ImagemUrl : fallbackCategoria;
+                var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
+                var temEstoque = estoqueDisponivel > 0;
+                var descricaoProduto = !string.IsNullOrWhiteSpace(produto.Descricao) 
+                    ? produto.Descricao 
+                    : "Bateria acustica ou eletronica com cascos selecionados, ferragens reforcadas e alta projecao ritmica.";
 
-            <!-- Filtro de Marca -->
-            <div class="filtro-secao">
-                <div class="filtro-secao-header">
-                    <span>Marca</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="18 15 12 9 6 15"></polyline>
-                    </svg>
-                </div>
-                <ul class="filtro-lista">
-                    @foreach (var marca in marcas)
-                    {
-                        <li>
-                            <label class="filtro-item">
-                                <input type="checkbox" name="marca" value="@marca" class="filtro-checkbox" />
-                                <span>@marca</span>
-                            </label>
-                        </li>
-                    }
-                </ul>
-            </div>
+                <article class="instrumento-card"
+                         data-id="@produto.IdProduto"
+                         data-nome="@produto.Modelo"
+                         data-categoria="@produto.TipoInstrumento"
+                         data-preco="@produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))"
+                         data-preco-raw="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                         data-descricao="@descricaoProduto"
+                         data-estoque="@estoqueDisponivel"
+                         data-imagem="@imgFinal"
+                         onclick="abrirModalDetalhesPorCard(this, event)">
 
-            <!-- Filtro de Tipo -->
-            <div class="filtro-secao">
-                <div class="filtro-secao-header">
-                    <span>Tipo</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="18 15 12 9 6 15"></polyline>
-                    </svg>
-                </div>
-                <ul class="filtro-lista">
-                    @foreach (var tipo in tipos)
-                    {
-                        <li>
-                            <label class="filtro-item">
-                                <input type="checkbox" name="tipo" value="@tipo" class="filtro-checkbox" />
-                                <span>@tipo</span>
-                            </label>
-                        </li>
-                    }
-                </ul>
-            </div>
-
-            <!-- Filtro de Faixa de Preço -->
-            <div class="filtro-secao">
-                <div class="filtro-secao-header">
-                    <span>Faixa de preço</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
-                </div>
-                <div class="filtro-preco-box">
-                    <input type="range" min="1000" max="15000" value="7000" class="preco-slider-range" aria-label="Faixa de preço" />
-                    <div class="preco-valores">
-                        <span>R$ 1.000</span>
-                        <span>R$ 15.000+</span>
+                    <div class="instrumento-img-area">
+                        <img src="@imgFinal" alt="@produto.Modelo" class="instrumento-img" loading="lazy" onerror="this.onerror=null;this.src='@fallbackCategoria';" />
                     </div>
-                </div>
+
+                    <div class="instrumento-info">
+                        <h2 class="instrumento-nome" title="@produto.Modelo">@produto.Modelo</h2>
+                        <span class="instrumento-marca">@produto.TipoInstrumento</span>
+                        <div class="instrumento-preco">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</div>
+
+                        <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;" onclick="event.stopPropagation();">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="idProduto" value="@produto.IdProduto" />
+                            <input type="hidden" name="nome" value="@produto.TipoInstrumento" />
+                            <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                            <input type="hidden" name="modelo" value="@produto.Modelo" />
+                            <input type="hidden" name="tamanho" value="@produto.Modelo" />
+                            <input type="hidden" name="imagemUrl" value="@imgFinal" />
+                            <button type="submit" class="btn-carrinho" title="Adicionar ao carrinho" @(!temEstoque ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "")>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                                <span>@(temEstoque ? "Adicionar ao carrinho" : "Fora de estoque")</span>
+                            </button>
+                        </form>
+                    </div>
+                </article>
+            }
+        }
+        else
+        {
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--muted);">
+                <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Nenhum produto cadastrado nesta categoria no momento.</p>
+                <a asp-controller="Home" asp-action="Index" class="btn-hero" style="display:inline-block; margin-top:1rem;">Ver outras categorias</a>
             </div>
-        </aside>
-
-        <!-- GRADE DE PRODUTOS -->
-        <main class="categoria-produtos-grid" role="region" aria-label="Lista de Baterias">
-            @if (Model != null && Model.Any())
-            {
-                @foreach (var produto in Model)
-                {
-                    var imgFinal = !string.IsNullOrWhiteSpace(produto.ImagemUrl) ? produto.ImagemUrl : fallbackCategoria;
-                    var estoqueDisponivel = produto.Estoque?.QuantidadeDisponivel ?? 0;
-                    var temEstoque = estoqueDisponivel > 0;
-
-                    <article class="instrumento-card">
-                        <div class="instrumento-img-area">
-                            <img src="@imgFinal" alt="@produto.Modelo" class="instrumento-img" loading="lazy" onerror="this.onerror=null;this.src='@fallbackCategoria';" />
-                        </div>
-
-                        <div class="instrumento-info">
-                            <h2 class="instrumento-nome" title="@produto.Modelo">@produto.Modelo</h2>
-                            <span class="instrumento-marca">@produto.TipoInstrumento</span>
-                            <div class="instrumento-preco">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</div>
-
-                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
-                                <input type="hidden" name="idProduto" value="@produto.IdProduto" />
-                                <input type="hidden" name="nome" value="@produto.TipoInstrumento" />
-                                <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
-                                <input type="hidden" name="modelo" value="@produto.Modelo" />
-                                <input type="hidden" name="tamanho" value="@produto.Modelo" />
-                                <input type="hidden" name="imagemUrl" value="@imgFinal" />
-                                <button type="submit" class="btn-carrinho" title="Adicionar ao carrinho" @(!temEstoque ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "")>
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="9" cy="21" r="1"></circle>
-                                        <circle cx="20" cy="21" r="1"></circle>
-                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                    </svg>
-                                    <span>@(temEstoque ? "Adicionar ao carrinho" : "Fora de estoque")</span>
-                                </button>
-                            </form>
-                        </div>
-                    </article>
-                }
-            }
-            else
-            {
-                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--muted);">
-                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Nenhum produto cadastrado nesta categoria no momento.</p>
-                    <a asp-controller="Home" asp-action="Index" class="btn-hero" style="display:inline-block; margin-top:1rem;">Ver outras categorias</a>
-                </div>
-            }
-        </main>
-    </div>
+        }
+    </main>
 </div>

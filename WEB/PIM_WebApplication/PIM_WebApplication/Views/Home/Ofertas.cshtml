@@ -28,15 +28,13 @@
             <li>Cupons adicionais exclusivos com utilização única por cliente</li>
             <li>Instrumentos revisados com procedência e garantia total de loja</li>
         </ul>
-        <a asp-controller="Home" asp-action="Index" class="oferta-banner-btn">Aproveitar agora &rarr;</a>
-    </div>
-
-    <div class="oferta-banner-emoji-area">
-        <div class="oferta-badge-50">FRETE<br />GRÁTIS</div>
+        <div class="oferta-banner-btn-area">
+            <a href="#catalogo-ofertas" class="btn-ofertas-banner">Ver instrumentos em destaque</a>
+        </div>
     </div>
 </div>
 
-<div class="ofertas-section">
+<div id="catalogo-ofertas" class="section section-center" style="padding-top: 1.5rem;">
     <div class="ofertas-section-header">
         <h2>Instrumentos e Acessórios em Destaque</h2>
         <p>Aproveite frete grátis para compras acima de R$ 800,00 e aplique seus cupons de desconto no carrinho!</p>
@@ -60,8 +58,21 @@
                 else fallback = "/img/outros.png";
 
                 var imagemFinal = !string.IsNullOrWhiteSpace(produto.ImagemUrl) ? produto.ImagemUrl : fallback;
+                var descricaoProduto = !string.IsNullOrWhiteSpace(produto.Descricao) 
+                    ? produto.Descricao 
+                    : "Instrumento musical em destaque com excelente timbre, acabamento selecionado e garantia total de loja.";
 
-                <div class="product-card">
+                <div class="product-card"
+                     data-id="@produto.IdProduto"
+                     data-nome="@produto.Modelo"
+                     data-categoria="@produto.TipoInstrumento"
+                     data-preco="@produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))"
+                     data-preco-raw="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                     data-descricao="@descricaoProduto"
+                     data-estoque="@estoqueDisponivel"
+                     data-imagem="@imagemFinal"
+                     onclick="abrirModalDetalhesPorCard(this, event)">
+
                     <div class="product-img">
                         <img src="@imagemFinal" alt="@produto.Modelo" onerror="this.onerror=null;this.src='@fallback';" />
                     </div>
@@ -70,14 +81,15 @@
                         <div class="product-desc">Categoria: @produto.TipoInstrumento &middot; Estoque: @estoqueDisponivel un</div>
                         <div class="product-footer">
                             <span class="product-price">R$ @produto.Preco.ToString("N2", new System.Globalization.CultureInfo("pt-BR"))</span>
-                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;">
+                            <form asp-controller="Carrinho" asp-action="Adicionar" method="post" style="display:inline;" onclick="event.stopPropagation();">
+                                @Html.AntiForgeryToken()
                                 <input type="hidden" name="idProduto" value="@produto.IdProduto" />
                                 <input type="hidden" name="nome" value="@produto.TipoInstrumento" />
                                 <input type="hidden" name="preco" value="@produto.Preco.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
                                 <input type="hidden" name="modelo" value="@produto.Modelo" />
                                 <input type="hidden" name="tamanho" value="@produto.Modelo" />
                                 <input type="hidden" name="imagemUrl" value="@imagemFinal" />
-                                <button type="submit" class="add-btn" @(!temEstoque ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "")>
+                                <button type="submit" class="add-btn" title="Adicionar ao carrinho" @(!temEstoque ? "disabled style='opacity:0.5;cursor:not-allowed;'" : "")>
                                     @(temEstoque ? "+ Adicionar" : "Fora de estoque")
                                 </button>
                             </form>
