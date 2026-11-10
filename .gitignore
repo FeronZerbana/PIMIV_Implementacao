@@ -25,6 +25,9 @@ local.properties
 *.aab
 ios/Pods/
 ios/.symlinks/
+.idea/
+*.iml
+.flutter-plugins-dependencies
 
 # OS Files
 Thumbs.db
